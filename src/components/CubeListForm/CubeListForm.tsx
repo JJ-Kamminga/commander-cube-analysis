@@ -106,10 +106,14 @@ export const CubeListForm: React.FC = () => {
                   return (
                     <tr key={`${card.id}-${index}`}>
                       <td>{card.name}</td>
-                      <td>Type: {card.type_line}</td>
-                      <td>Oracle text: {card.oracle_text}</td>
-                      <td>Colors: {card.colors}</td>
-                      <td>Color identity: {card.color_identity}</td>
+                      <td>{card.type_line}</td>
+                      <td>{card.card_faces
+                        ? card.card_faces.map(face => face.oracle_text).join(' // ')
+                        : card.oracle_text
+                      }
+                      </td>
+                      <td>{card.colors}</td>
+                      <td>{card.color_identity}</td>
                     </tr>
                   )
                 })}</tbody>
