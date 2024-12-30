@@ -2,7 +2,7 @@
 
 import { fetchCollection } from '@/app/utils/fetchCollection';
 import { Card } from '@/app/utils/types';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, CircularProgress, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, CircularProgress, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -15,7 +15,7 @@ export const CubeListForm: React.FC = () => {
   const [errorLog, setErrorLog] = useState<string[]>([]);
   const [cardData, setCardData] = useState<Card[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(JSON.parse(localStorage.getItem('active-step') || '') || 0);
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -53,6 +53,7 @@ export const CubeListForm: React.FC = () => {
     };
     fetchCubeList();
     fetchCardData();
+    fetchActiveStep();
   }, []);
 
   const handleFetchCardData = async () => {
@@ -86,6 +87,7 @@ export const CubeListForm: React.FC = () => {
     console.log(cubeList);
     setCubeList(cubeList => cubeList);
     updateData(cubeList);
+    cubeList.length && handleStepNext();
   }
 
   const updateData = (newData) => {
@@ -119,13 +121,20 @@ export const CubeListForm: React.FC = () => {
               <textarea id="cube-list-input" rows={25} defaultValue={cubeList.join('\n')} /><br />
               <Button variant='outlined' type="submit" disabled={loading}>Submit</Button>
             </form>
-            <Button
-              variant="contained"
-              onClick={handleStepNext}
-              sx={{ mt: 1, mr: 1 }}
-            >
-              Continue
-            </Button>
+            <ButtonGroup>
+              {
+                cubeList.length
+                  ? (
+                    <Button
+                      onClick={handleStepNext}
+                    >
+                      Continue with existing list
+                    </Button>
+                  )
+                  : (<>Please submit a list to continue</>)
+              }
+            </ButtonGroup>
+            <br />
           </StepContent>
         </Step>
         <Step key='fetch-card-data'>
@@ -139,14 +148,14 @@ export const CubeListForm: React.FC = () => {
                   : (<>Click to fetch card data.</>)
               }
             </p>
-            <Button variant='outlined' onClick={handleFetchCardData} disabled={!cubeList.length || loading}>(Re)fetch card data.</Button>
-            <Button
-              variant="contained"
-              onClick={handleStepNext}
-              sx={{ mt: 1, mr: 1 }}
-            >
-              Continue?
-            </Button>
+            <ButtonGroup>
+              <Button onClick={handleFetchCardData} disabled={!cubeList.length || loading}>(Re)fetch card data.</Button>
+              <Button
+                onClick={handleStepNext}
+              >
+                Continue with existing data
+              </Button>
+            </ButtonGroup>
             <Accordion>
               <AccordionSummary
                 expandIcon={<ArrowDownwardIcon />}
@@ -212,6 +221,7 @@ export const CubeListForm: React.FC = () => {
         <Step key='legendary-analysis'>
           <StepLabel>{steps[2].label}</StepLabel>
           <StepContent>
+            <p>Coming soon!</p>
             <Button
               onClick={handleStepBack}
               sx={{ mt: 1, mr: 1 }}
