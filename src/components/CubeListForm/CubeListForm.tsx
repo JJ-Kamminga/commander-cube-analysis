@@ -1,5 +1,8 @@
+'use client';
+
 import { fetchCollection } from '@/app/utils/fetchCollection';
 import { Card } from '@/app/utils/types';
+import { Button, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useState, useEffect } from 'react';
 
 const parseList = (cubeTextList: string) => {
@@ -13,6 +16,7 @@ export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [errorLog, setErrorLog] = useState<string[]>([]);
   const [cardData, setCardData] = useState<Card[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCubeList = async () => {
@@ -33,10 +37,11 @@ export const CubeListForm: React.FC = () => {
 
   const handleFetchCardData = async () => {
     if (!cubeList.length) return;
-
+    setLoading(true);
     const collectionCards = await fetchCollection([
       ...cubeList
     ]);
+    setLoading(false);
 
     if (collectionCards.error) {
       setErrorLog((errorLog) => [...errorLog, `${collectionCards.error}`]
@@ -75,7 +80,7 @@ export const CubeListForm: React.FC = () => {
         <form name="cube list input" onSubmit={handleSubmit}>
           <label htmlFor="cube-list-input">Paste in cube list</label><br />
           <textarea id="cube-list-input" rows={25} defaultValue={cubeList.join('\n')} /><br />
-          <button type="submit">Submit</button>
+          <Button variant='outlined' type="submit" disabled={loading}>Submit</Button>
         </form>
       </section>
       <section>
@@ -88,39 +93,48 @@ export const CubeListForm: React.FC = () => {
               : (<>Click to fetch card data.</>)
           }
         </p>
-        <button onClick={handleFetchCardData} disabled={!cubeList.length}>(Re)fetch card data.</button>
-        <>
+        <Button variant='outlined' onClick={handleFetchCardData} disabled={!cubeList.length || loading}>(Re)fetch card data.</Button>
+        <TableContainer>
           {
-            cardData.length ? (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Oracle text</th>
-                    <th>Colors</th>
-                    <th>Color identity</th>
-                  </tr>
-                </thead>
-                <tbody>{cardData.map((card, index) => {
-                  return (
-                    <tr key={`${card.id}-${index}`}>
-                      <td>{card.name}</td>
-                      <td>{card.type_line}</td>
-                      <td>{card.card_faces
-                        ? card.card_faces.map(face => face.oracle_text).join(' // ')
-                        : card.oracle_text
-                      }
-                      </td>
-                      <td>{card.colors}</td>
-                      <td>{card.color_identity}</td>
-                    </tr>
-                  )
-                })}</tbody>
-              </table>
-            ) : (<></>)
+            loading
+              ? (<CircularProgress />)
+              : (
+                <>
+                  {
+                    cardData.length ? (
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Oracle text</TableCell>
+                            <TableCell>Colors</TableCell>
+                            <TableCell>Color identity</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>{cardData.map((card, index) => {
+                          return (
+                            <TableRow key={`${card.id}-${index}`}>
+                              <TableCell>{card.name}</TableCell>
+                              <TableCell>{card.type_line}</TableCell>
+                              <TableCell>{card.card_faces
+                                ? card.card_faces.map(face => face.oracle_text).join(' // ')
+                                : card.oracle_text
+                              }
+                              </TableCell>
+                              <TableCell>{card.colors}</TableCell>
+                              <TableCell>{card.color_identity}</TableCell>
+                            </TableRow>
+                          )
+                        })}</TableBody>
+                      </Table>
+                    ) : (<></>)
+                  }
+                </>
+              )
           }
-        </>
+
+        </TableContainer>
       </section >
       <section>
         <h2>Log</h2>
