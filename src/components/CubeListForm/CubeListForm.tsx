@@ -1,23 +1,29 @@
 'use client';
 
-import { fetchCollection } from '@/app/utils/fetchCollection';
-import { Card } from '@/app/utils/types';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, CircularProgress, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { fetchCollection } from '@/utils/mtg-scripting-toolkit/fetchCollection';
+import { Card } from '@/utils/mtg-scripting-toolkit/types';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, CircularProgress, List, ListItem, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { parseList } from '@/app/utils/listHelpers';
+import { parseList } from '@/utils/mtg-scripting-toolkit/listHelpers';
+import { initialAnalysisObject, searchByTypeLine } from '@/utils/analysis';
+import { Analysis, Commander } from '@/utils/types';
 
 export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [errorLog, setErrorLog] = useState<string[]>([]);
   const [cardData, setCardData] = useState<Card[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
 
-  console.log(cardData);
+  // const handleAnalysis = (callback: () => Card[]) => {
+  //   const result = callback();
+  //   console.log(result.length)
+  // };
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -94,6 +100,16 @@ export const CubeListForm: React.FC = () => {
     updateData(cubeList);
     cubeList.length && handleStepNext();
   }
+
+  const handleFetchLegendaryCreatures = () => {
+    const legendaries = searchByTypeLine(cardData, 'Legendary Creature')
+    setAnalysis((analysis) => {
+      return [
+        ...analysis,
+
+      ]
+    })
+  };
 
   const updateData = (newData) => {
     setCubeList(newData);
@@ -230,7 +246,23 @@ export const CubeListForm: React.FC = () => {
         <Step key='legendary-analysis'>
           <StepLabel>{steps[2].label}</StepLabel>
           <StepContent>
-            <p>Coming soon!</p>
+            <Button onClick={handleFetchLegendaryCreatures}>
+              Fetch legeneds
+            </Button>
+            <List>
+              {Object.entries(analysis).map((commander) => {
+                const data = commander[1];
+                return (
+                  <li key={data.id}>
+                    <label>
+                      <h4>{data.labelHeading}</h4>
+                      <span>{data.labelDescription}</span>
+                    </label>
+                  </li>
+                )
+              })}
+            </List>
+            {analysis.legendaryCreatures.cardNames.length || '?'} Legendary creatures
             <Button
               onClick={handleStepBack}
               sx={{ mt: 1, mr: 1 }}
