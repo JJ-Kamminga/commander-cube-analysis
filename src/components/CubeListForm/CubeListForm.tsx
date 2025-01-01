@@ -2,14 +2,14 @@
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/fetchCollection';
 import { Card } from '@/utils/mtg-scripting-toolkit/types';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, CircularProgress, List, ListItem, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, CircularProgress, List, ListItem, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useState, useEffect, useMemo } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { parseList } from '@/utils/mtg-scripting-toolkit/listHelpers';
-import { initialAnalysisObject, searchByOracleText, searchByTypeLine, searchPlaneswalkerCommanders } from '@/utils/analysis';
+import { initialAnalysisObject, searchByTypeLine, searchPlaneswalkerCommanders, searchUniquePartnerPairings } from '@/utils/analysis';
 import { Analysis } from '@/utils/types';
 
 export const CubeListForm: React.FC = () => {
@@ -87,18 +87,23 @@ export const CubeListForm: React.FC = () => {
     console.log(cardData);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const cubeList = parseList(event.target.elements["cube-list-input"].value);
     console.log(cubeList);
     setCubeList(cubeList => cubeList);
+    setCardData([]);
+    localStorage.removeItem('card-data');
     updateData(cubeList);
     cubeList.length && handleStepNext();
   }
 
   const handleFetchLegendaryAnalysis = () => {
+
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
+    const uniquePartnerPairs = searchUniquePartnerPairings(cardData);
+    console.log(uniquePartnerPairs)
     setAnalysis((analysis) => {
       return {
         ...analysis,
@@ -109,12 +114,16 @@ export const CubeListForm: React.FC = () => {
         planeswalkerCommanders: {
           ...analysis.planeswalkerCommanders,
           cardNames: planeswalkers,
+        },
+        partners: {
+          ...analysis.partners,
+          cardNames: uniquePartnerPairs
         }
       }
     })
   };
 
-  const updateData = (newData) => {
+  const updateData = (newData: string[]) => {
     setCubeList(newData);
     localStorage.setItem('latest-list', JSON.stringify(newData)); // Update stored data
   };
@@ -260,6 +269,26 @@ export const CubeListForm: React.FC = () => {
                     <label>
                       <h4>{data.cardNames.length || '?'} {data.labelHeading}</h4>
                       <span>{data.labelDescription}</span>
+                      <Accordion>
+                        <AccordionSummary>Click to see card names</AccordionSummary>
+                        <AccordionDetails>
+                          <List>
+                            {data.cardNames.map((card, index) => {
+                              return (
+                                <ListItem key={`${data.id}-${index}`}>
+                                  <Typography>
+                                    {
+                                      Array.isArray(card)
+                                        ? card.map((card) => card.name).join(' + ')
+                                        : card.name
+                                    }
+                                  </Typography>
+                                </ListItem>
+                              )
+                            })}
+                          </List>
+                        </AccordionDetails>
+                      </Accordion>
                     </label>
                   </li>
                 )

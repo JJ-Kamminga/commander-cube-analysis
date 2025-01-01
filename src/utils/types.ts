@@ -1,8 +1,10 @@
+import { Card } from "./mtg-scripting-toolkit/types";
+
 export type Commander = {
   id: string,
   labelHeading: string,
   labelDescription: string,
-  cardNames: (string | Pairing[])[]
+  cardNames: (Card | Card[])[]
 }
 
 export type Analysis = {
@@ -14,5 +16,3 @@ export type Analysis = {
   doctorPartners: Commander,
   backgroundPairings: Commander,
 };
-
-type Pairing = string[];

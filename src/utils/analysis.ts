@@ -49,7 +49,6 @@ export const initialAnalysisObject: Analysis = {
 export const searchByTypeLine = (cards: Card[], query: string) => {
   return cards
     .filter((card) => card.type_line.includes(query))
-    .map((card) => card.name)
 };
 
 export const searchPlaneswalkerCommanders = (cards: Card[]) => {
@@ -57,22 +56,23 @@ export const searchPlaneswalkerCommanders = (cards: Card[]) => {
     .filter(
       (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
     )
-    .map((card) => card.name)
 };
 
+function getUniquePairs<T>(array: T[]): [T, T][] {
+  const pairs: [T, T][] = [];
+  for (let i = 0; i < array.length; i++) {
+    for (let j = i + 1; j < array.length; j++) {
+      pairs.push([array[i], array[j]]);
+    }
+  }
+  return pairs;
+}
 
-// export const searchPartnerPairings = (cards: Card[]) => {
-//   const partners = cards.filter((card) => {
-//     card.type_line.includes('Legendary') &&
-//       card.oracle_text?.includes('Partner') &&
-//       !card.oracle_text?.includes('Partner with')
-//   });
-//   partners.forEach((firstPartner) => {
-//     let partnerPairings = [];
-//     const secondPartners = partners.filter((secondPartner) => firstPartner.id !== secondPartner.id);
-//     secondPartners.forEach((secondPartner) =>
-//       partnerPairings.push([firstPartner.name, secondPartner.name]);
-//     )
-// });
-
-// };
+export const searchUniquePartnerPairings = (cards: Card[]) => {
+  const partners = cards.filter((card) =>
+    card.type_line.includes('Legendary') &&
+    card.oracle_text?.includes('Partner') &&
+    !card.oracle_text?.includes('Partner with')
+  );
+  return getUniquePairs(partners);
+};
