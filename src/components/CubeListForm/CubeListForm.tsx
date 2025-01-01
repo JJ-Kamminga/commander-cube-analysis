@@ -15,7 +15,9 @@ export const CubeListForm: React.FC = () => {
   const [errorLog, setErrorLog] = useState<string[]>([]);
   const [cardData, setCardData] = useState<Card[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState(JSON.parse(localStorage.getItem('active-step') || '') || 0);
+  const [activeStep, setActiveStep] = useState(0);
+
+  console.log(cardData);
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -49,7 +51,10 @@ export const CubeListForm: React.FC = () => {
       const storedData = localStorage.getItem('active-step');
       if (storedData) {
         setActiveStep(JSON.parse(storedData));
-      }
+      } else {
+        setActiveStep(0);
+        localStorage.setItem('active-step', '0');
+      };
     };
     fetchCubeList();
     fetchCardData();
@@ -109,9 +114,11 @@ export const CubeListForm: React.FC = () => {
 
   return (
     <>
-      <Button variant='outlined' onClick={handleStepReset} sx={{ mt: 1, mr: 1 }}>
-        Back to step 1
-      </Button>
+      {activeStep !== 0 && (
+        <Button variant='outlined' onClick={handleStepReset} sx={{ mt: 1, mr: 1 }}>
+          Back to step 1
+        </Button>
+      )}
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step key='cube-list-input'>
           <StepLabel>{steps[0].label}</StepLabel>
@@ -150,11 +157,13 @@ export const CubeListForm: React.FC = () => {
             </p>
             <ButtonGroup>
               <Button onClick={handleFetchCardData} disabled={!cubeList.length || loading}>(Re)fetch card data.</Button>
-              <Button
-                onClick={handleStepNext}
-              >
-                Continue with existing data
-              </Button>
+              {cardData.length && (
+                <Button
+                  onClick={handleStepNext}
+                >
+                  Continue with existing data
+                </Button>
+              )}
             </ButtonGroup>
             <Accordion>
               <AccordionSummary
