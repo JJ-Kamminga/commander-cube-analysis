@@ -9,7 +9,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { parseList } from '@/utils/mtg-scripting-toolkit/listHelpers';
-import { initialAnalysisObject, searchByTypeLine, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
+import { initialAnalysisObject, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
 import { Analysis } from '@/utils/types';
 
 export const CubeListForm: React.FC = () => {
@@ -105,6 +105,8 @@ export const CubeListForm: React.FC = () => {
     const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
     const partnerWithPairings = searchPartnerWithPairings(cardData);
     const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
+    const doctorCompanionPairings = searchDoctorCompanionPairings(cardData);
+    const backgroundPairings = searchBackgroundPairings(cardData);
     setAnalysis((analysis) => {
       return {
         ...analysis,
@@ -128,6 +130,15 @@ export const CubeListForm: React.FC = () => {
           ...analysis.friendsForever,
           cardNames: friendsForeverPairings
         },
+        backgroundPairings: {
+          ...analysis.backgroundPairings,
+          cardNames: backgroundPairings
+        },
+        doctorPartners: {
+          ...analysis.doctorPartners,
+          cardNames: doctorCompanionPairings
+        },
+
       }
     })
   };

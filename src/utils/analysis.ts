@@ -58,6 +58,18 @@ export const searchPlaneswalkerCommanders = (cards: Card[]) => {
     )
 };
 
+/** generates an array of all unique pairs, with one element from the first array and one element from the second array */
+function getPairs<T, U>(array1: T[], array2: U[]): [T, U][] {
+  const pairs: [T, U][] = [];
+  for (const item1 of array1) {
+    for (const item2 of array2) {
+      pairs.push([item1, item2]);
+    }
+  }
+  return pairs;
+}
+
+/** return each unique pairing of two objects from an array of objects */
 function getUniquePairs<T>(array: T[]): [T, T][] {
   const pairs: [T, T][] = [];
   for (let i = 0; i < array.length; i++) {
@@ -100,4 +112,28 @@ export const searchPartnerWithPairings = (cards: Card[]) => {
     covered.push(card, ...partnerWithPartner);;
   });
   return partnerWithPairings;
+};
+
+export const searchDoctorCompanionPairings = (cards: Card[]) => {
+  const doctors = cards.filter((card) =>
+    card.type_line.includes('Legendary') &&
+    card.type_line.includes('Time Lord Doctor')
+  );
+
+  const companions = cards.filter((card) =>
+    card.type_line.includes('Legendary') &&
+    card.keywords?.includes('Doctor\'s companion')
+  );
+  return getPairs(doctors, companions);
+};
+
+export const searchBackgroundPairings = (cards: Card[]) => {
+  const creatures = cards.filter((card) =>
+    card.oracle_text?.includes('Choose a Background')
+  );
+
+  const backgrounds = cards.filter((card) =>
+    card.type_line.includes('Background')
+  );
+  return getPairs(creatures, backgrounds);
 }
