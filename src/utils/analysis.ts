@@ -4,43 +4,43 @@ import { Analysis } from "./types";
 export const initialAnalysisObject: Analysis = {
   legendaryCreatures: {
     id: 'legendaryCreatures',
-    labelHeading: 'Legendary Creatures',
+    labelHeading: 'Legendary creature(s)',
     labelDescription: 'Creatures that are commanders because they have the legendary supertype.',
     cardNames: [],
   },
   planeswalkerCommanders: {
     id: 'planeswalkerCommanders',
-    labelHeading: 'Planeswalker commanders',
+    labelHeading: 'Planeswalker commander(s)',
     labelDescription: 'Planeswalkers that are explicitly allowed as commanders.',
     cardNames: [],
   },
   partners: {
     id: 'partners',
-    labelHeading: 'Partner Pairings',
+    labelHeading: 'Partner pairing(s)',
     labelDescription: 'Unique possible pairings for creatures with the Partner ability.',
     cardNames: [],
   },
   partnerWiths: {
     id: 'partnerWiths',
-    labelHeading: 'Named partners',
+    labelHeading: 'Named partner(s)',
     labelDescription: 'Pairings for creatures with the Partner With ability.',
     cardNames: [],
   },
   friendsForever: {
     id: 'friendsForever',
-    labelHeading: 'Friends Forever',
+    labelHeading: 'Friends Forever pairings',
     labelDescription: 'Unique possible pairings for creatures with the Friends Forever ability.',
     cardNames: [],
   },
   doctorPartners: {
     id: 'doctorPartners',
-    labelHeading: 'Doctor partners',
+    labelHeading: 'Doctor & Companion pairing(s)',
     labelDescription: 'Unique possible pairings of each Doctor with all possible Doctor\'s Companions.',
     cardNames: [],
   },
   backgroundPairings: {
     id: 'backgroundPairings',
-    labelHeading: 'Background pairings',
+    labelHeading: 'Background pairing(s)',
     labelDescription: 'Unique possible pairings of creatures with the Choose a Background ability and Backgrounds.',
     cardNames: [],
   },
@@ -76,3 +76,28 @@ export const searchUniquePartnerPairings = (cards: Card[]) => {
   );
   return getUniquePairs(partners);
 };
+
+export const searchUniqueFriendsForeverPairings = (cards: Card[]) => {
+  const friendsForever = cards.filter((card) =>
+    card.keywords?.find((keyword) => keyword == 'Friends forever')
+  );
+  return getUniquePairs(friendsForever);
+}
+
+export const searchPartnerWithPairings = (cards: Card[]) => {
+  const partnerWiths = cards.filter((card) =>
+    card.keywords?.find((keyword) => keyword == 'Partner with')
+  );
+  let partnerWithPairings: Card[][] = [];
+  let covered: Card[] = [];
+  partnerWiths.forEach((card) => {
+    if (covered.includes(card)) return;
+    const partnerWithPartner = partnerWiths.filter((partnerWith) =>
+      partnerWith.id !== card.id &&
+      partnerWith.all_parts?.find((part) => part.name == card.name)
+    );
+    partnerWithPairings.push([card, ...partnerWithPartner]);
+    covered.push(card, ...partnerWithPartner);;
+  });
+  return partnerWithPairings;
+}

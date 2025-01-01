@@ -9,7 +9,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { parseList } from '@/utils/mtg-scripting-toolkit/listHelpers';
-import { initialAnalysisObject, searchByTypeLine, searchPlaneswalkerCommanders, searchUniquePartnerPairings } from '@/utils/analysis';
+import { initialAnalysisObject, searchByTypeLine, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
 import { Analysis } from '@/utils/types';
 
 export const CubeListForm: React.FC = () => {
@@ -102,8 +102,9 @@ export const CubeListForm: React.FC = () => {
 
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
-    const uniquePartnerPairs = searchUniquePartnerPairings(cardData);
-    console.log(uniquePartnerPairs)
+    const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
+    const partnerWithPairings = searchPartnerWithPairings(cardData);
+    const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
     setAnalysis((analysis) => {
       return {
         ...analysis,
@@ -117,8 +118,16 @@ export const CubeListForm: React.FC = () => {
         },
         partners: {
           ...analysis.partners,
-          cardNames: uniquePartnerPairs
-        }
+          cardNames: uniquePartnerPairings
+        },
+        partnerWiths: {
+          ...analysis.partnerWiths,
+          cardNames: partnerWithPairings
+        },
+        friendsForever: {
+          ...analysis.friendsForever,
+          cardNames: friendsForeverPairings
+        },
       }
     })
   };
@@ -138,7 +147,7 @@ export const CubeListForm: React.FC = () => {
     {
       label: 'Commander analysis'
     }
-  ]
+  ];
 
   return (
     <>
@@ -267,28 +276,33 @@ export const CubeListForm: React.FC = () => {
                 return (
                   <li key={data.id}>
                     <label>
-                      <h4>{data.cardNames.length || '?'} {data.labelHeading}</h4>
+                      <h4>{data.cardNames.length || '0'} {data.labelHeading}</h4>
                       <span>{data.labelDescription}</span>
-                      <Accordion>
-                        <AccordionSummary>Click to see card names</AccordionSummary>
-                        <AccordionDetails>
-                          <List>
-                            {data.cardNames.map((card, index) => {
-                              return (
-                                <ListItem key={`${data.id}-${index}`}>
-                                  <Typography>
-                                    {
-                                      Array.isArray(card)
-                                        ? card.map((card) => card.name).join(' + ')
-                                        : card.name
-                                    }
-                                  </Typography>
-                                </ListItem>
-                              )
-                            })}
-                          </List>
-                        </AccordionDetails>
-                      </Accordion>
+                      {
+                        data.cardNames.length ? (
+                          <Accordion>
+                            <AccordionSummary>Click to see card names</AccordionSummary>
+                            <AccordionDetails>
+                              <List>
+                                {data.cardNames.map((card, index) => {
+                                  return (
+                                    <ListItem key={`${data.id}-${index}`}>
+                                      <Typography>
+                                        {
+                                          Array.isArray(card)
+                                            ? card.map((card) => card.name).join(' + ')
+                                            : card.name
+                                        }
+                                      </Typography>
+                                    </ListItem>
+                                  )
+                                })}
+                              </List>
+                            </AccordionDetails>
+                          </Accordion>
+                        )
+                          : <></>
+                      }
                     </label>
                   </li>
                 )
