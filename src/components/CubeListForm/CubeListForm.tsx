@@ -3,14 +3,14 @@
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/fetchCollection';
 import { Card } from '@/utils/mtg-scripting-toolkit/types';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, ButtonGroup, CircularProgress, List, ListItem, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { parseList } from '@/utils/mtg-scripting-toolkit/listHelpers';
-import { initialAnalysisObject, searchByTypeLine } from '@/utils/analysis';
-import { Analysis, Commander } from '@/utils/types';
+import { initialAnalysisObject, searchByOracleText, searchByTypeLine, searchPlaneswalkerCommanders } from '@/utils/analysis';
+import { Analysis } from '@/utils/types';
 
 export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
@@ -19,11 +19,6 @@ export const CubeListForm: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
-
-  // const handleAnalysis = (callback: () => Card[]) => {
-  //   const result = callback();
-  //   console.log(result.length)
-  // };
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -101,13 +96,21 @@ export const CubeListForm: React.FC = () => {
     cubeList.length && handleStepNext();
   }
 
-  const handleFetchLegendaryCreatures = () => {
-    const legendaries = searchByTypeLine(cardData, 'Legendary Creature')
+  const handleFetchLegendaryAnalysis = () => {
+    const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
+    const planeswalkers = searchPlaneswalkerCommanders(cardData);
     setAnalysis((analysis) => {
-      return [
+      return {
         ...analysis,
-
-      ]
+        legendaryCreatures: {
+          ...analysis.legendaryCreatures,
+          cardNames: legendaries,
+        },
+        planeswalkerCommanders: {
+          ...analysis.planeswalkerCommanders,
+          cardNames: planeswalkers,
+        }
+      }
     })
   };
 
@@ -246,8 +249,8 @@ export const CubeListForm: React.FC = () => {
         <Step key='legendary-analysis'>
           <StepLabel>{steps[2].label}</StepLabel>
           <StepContent>
-            <Button onClick={handleFetchLegendaryCreatures}>
-              Fetch legeneds
+            <Button onClick={handleFetchLegendaryAnalysis}>
+              Fetch
             </Button>
             <List>
               {Object.entries(analysis).map((commander) => {
@@ -255,14 +258,13 @@ export const CubeListForm: React.FC = () => {
                 return (
                   <li key={data.id}>
                     <label>
-                      <h4>{data.labelHeading}</h4>
+                      <h4>{data.cardNames.length || '?'} {data.labelHeading}</h4>
                       <span>{data.labelDescription}</span>
                     </label>
                   </li>
                 )
               })}
             </List>
-            {analysis.legendaryCreatures.cardNames.length || '?'} Legendary creatures
             <Button
               onClick={handleStepBack}
               sx={{ mt: 1, mr: 1 }}

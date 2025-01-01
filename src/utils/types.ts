@@ -7,11 +7,11 @@ export type Commander = {
 
 export type Analysis = {
   legendaryCreatures: Commander,
+  planeswalkerCommanders: Commander,
   partners: Commander,
   partnerWiths: Commander,
   friendsForever: Commander,
   doctorPartners: Commander,
-  planeswalkerCommanders: Commander,
   backgroundPairings: Commander,
 };
 
