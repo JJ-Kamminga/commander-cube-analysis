@@ -1,14 +1,14 @@
 'use client';
 
-import { fetchCollection } from '@/utils/mtg-scripting-toolkit/fetchCollection';
-import { Card } from '@/utils/mtg-scripting-toolkit/types';
+import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
+import { Card } from '@/utils/mtg-scripting-toolkit/scryfall/types';
 import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { parseList } from '@/utils/mtg-scripting-toolkit/listHelpers';
+import { parseList } from '@/utils/mtg-scripting-toolkit/scryfall/listHelpers';
 import { initialAnalysisObject, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
 import { Analysis } from '@/utils/types';
 

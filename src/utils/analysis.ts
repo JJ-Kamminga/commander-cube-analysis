@@ -1,4 +1,4 @@
-import { Card } from "./mtg-scripting-toolkit/types";
+import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis } from "./types";
 
 export const initialAnalysisObject: Analysis = {
