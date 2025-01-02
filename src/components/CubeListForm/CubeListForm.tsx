@@ -13,6 +13,7 @@ import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
 import { Info } from '@mui/icons-material';
+import { getRandomId } from '@/utils/helpers';
 
 export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
@@ -259,7 +260,7 @@ export const CubeListForm: React.FC = () => {
                     {/* <Typography> */}
                     <List>
                       {cubeList.map((card) => (
-                        <ListItem key={card}>{card}</ListItem>
+                        <ListItem key={card + getRandomId()}>{card}</ListItem>
                       ))}
                     </List>
                     {/* </Typography> */}
@@ -319,7 +320,7 @@ export const CubeListForm: React.FC = () => {
                                     </TableHead>
                                     <TableBody>{cardData.map((card) => {
                                       return (
-                                        <TableRow key={`${card.id}`}>
+                                        <TableRow key={card.id + getRandomId()}>
                                           <TableCell>{card.name}</TableCell>
                                           <TableCell>{card.type_line}</TableCell>
                                           <TableCell>{card.card_faces
@@ -368,7 +369,7 @@ export const CubeListForm: React.FC = () => {
               {Object.entries(analysis).map((commander) => {
                 const data = commander[1];
                 return (
-                  <li key={data.id}>
+                  <li key={data.id + getRandomId()}>
                     <label>
                       <h4>{data.cardNames.length || '0'} {data.labelHeading}</h4>
                       <span>{data.labelDescription}</span>
@@ -383,7 +384,7 @@ export const CubeListForm: React.FC = () => {
                                     ? card.map((card) => card.name).join(' + ')
                                     : card.name
                                   return (
-                                    <ListItem key={cardName}>
+                                    <ListItem key={cardName + getRandomId()}>
                                       <Typography>
                                         {cardName}
                                       </Typography>
