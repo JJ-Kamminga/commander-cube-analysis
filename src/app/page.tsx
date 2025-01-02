@@ -23,7 +23,7 @@ const theme = createTheme({
   },
 });
 
-export function Home() {
+function App() {
   const { mode, setMode } = useColorScheme();
   if (!mode) {
     return null;
@@ -120,7 +120,7 @@ export function Home() {
 export default function ToggleColorMode() {
   return (
     <ThemeProvider theme={theme}>
-      <Home />
+      <App />
     </ThemeProvider>
   );
 }
