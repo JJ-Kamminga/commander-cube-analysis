@@ -15,6 +15,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import Link from 'next/link';
+import { GitHub } from '@mui/icons-material';
 
 const theme = createTheme({
   colorSchemes: {
@@ -56,17 +57,17 @@ export function Home() {
         </Container>
         <Container
           sx={{
-            border: 3,
+            borderTop: 3,
+            borderTopStyle: 'groove',
             padding: 5,
             margin: 5,
           }}
         >
+          <h3>Theme</h3>
           <Box
             sx={{
               display: 'flex',
               width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
               bgcolor: 'background.default',
               color: 'text.primary',
               borderRadius: 1,
@@ -75,7 +76,7 @@ export function Home() {
             }}
           >
             <FormControl>
-              <FormLabel id="theme-toggle">Theme</FormLabel>
+              <FormLabel id="theme-toggle">Theme controls</FormLabel>
               <RadioGroup
                 aria-labelledby="theme-toggle"
                 name="theme-toggle"
@@ -91,11 +92,12 @@ export function Home() {
               </RadioGroup>
             </FormControl>
           </Box>
-          Image credits:
+          <h3>Image credits</h3>
           <ul>
             <li>Jesper Ejsing, Deep Analysis (published by Wizards of the Coast)</li>
+            <li><a target="_blank" href="https://icons8.com/icon/6665/cube">Cube</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></li>
           </ul>
-          Site credits:
+          <h3>Site credits</h3>
           <ul>
             <li>Created with <Link href="https://nextjs.org/">Next.js</Link> by <Link href='https://github.com/JJ-Kamminga'>Jakob Jan Kamminga
             </Link></li>
@@ -105,9 +107,13 @@ export function Home() {
             <li>Magic Card data is supplied by <Link href='https://scryfall.com/'>Scryfall</Link> and copyrighted by Wizards of the Coast</li>
             <li>My work was made much easier with <b>ahmattox</b>&apos;s <Link href="https://github.com/ahmattox/mtg-scripting-toolkit">MTG Scripting Toolkit</Link></li>
           </ul>
+          <h3>Links</h3>
+          <Link href="https://github.com/JJ-Kamminga/commander-cube-analysis">
+            <GitHub />
+          </Link>
         </Container>
       </main>
-    </CssBaseline>
+    </CssBaseline >
   );
 }
 

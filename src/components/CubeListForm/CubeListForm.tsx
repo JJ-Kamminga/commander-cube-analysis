@@ -12,15 +12,16 @@ import { Analysis } from '@/utils/types';
 import { stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
+import { Info } from '@mui/icons-material';
 
 export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
+  const [cubeCobraID, setCubeCobraID] = useState<string>('');
   const [errorLog, setErrorLog] = useState<string[]>([]);
   const [cardData, setCardData] = useState<MagicCard[]>([]);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
-  const [cubeCobraID, setCubeCobraID] = useState<string>('');
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -49,6 +50,12 @@ export const CubeListForm: React.FC = () => {
         setCubeList(JSON.parse(storedData));
       }
     };
+    const fetchCubeCobraID = async () => {
+      const storedData = localStorage.getItem('cube-cobra-id');
+      if (storedData) {
+        setCubeCobraID(JSON.parse(storedData));
+      }
+    }
     const fetchCardData = async () => {
       const storedData = localStorage.getItem('card-data');
       if (storedData) {
@@ -66,6 +73,7 @@ export const CubeListForm: React.FC = () => {
     };
     fetchActiveStep();
     fetchCubeList();
+    fetchCubeCobraID();
     fetchCardData();
   }, []);
 
@@ -93,8 +101,6 @@ export const CubeListForm: React.FC = () => {
 
 
     if (!collectionCards.error && !collectionCards.notFound?.length) {
-      console.log('just before call')
-      handleStepNext();
       handleFetchLegendaryAnalysis();
     } else {
       setErrorLog(errorLog => [...errorLog, 'Error fetching card data from Scryfall.']);
@@ -102,7 +108,6 @@ export const CubeListForm: React.FC = () => {
   };
 
   interface FormElements extends HTMLFormControlsCollection {
-    cubeListInput: HTMLInputElement
     cubeCobraInput: HTMLInputElement
   }
   interface CubeCobraFormElement extends HTMLFormElement {
@@ -112,11 +117,11 @@ export const CubeListForm: React.FC = () => {
   const handleCubeCobraSubmit = async (event: React.FormEvent<CubeCobraFormElement>) => {
     event.preventDefault();
 
+    setCubeCobraID('');
     setCubeList([]);
     localStorage.setItem('latest-list', JSON.stringify([]));
     setCardData([]);
     localStorage.removeItem('card-data');
-    setCubeCobraID('');
 
     const cubeID = event.currentTarget.elements["cubeCobraInput"].value;
 
@@ -130,21 +135,20 @@ export const CubeListForm: React.FC = () => {
     try {
       cardNames = await fetchCubeList(cubeID);
       if (cardNames?.length) {
-        setCubeCobraID(cubeID);
+        updateCubeCobraID(cubeID);
         updateCubeList(cardNames);
         handleStepNext();
       } else {
         setErrorLog(errorLog => [...errorLog, 'Cube must contain cards.']);
       };
     } catch (error) {
-      setErrorLog(errorLog => [...errorLog, 'Error fetching cube list from Cube Cobra.']);
+      setErrorLog(errorLog => [...errorLog, 'Error fetching cube list from Cube Cobra: ' + error]);
     } finally {
       setLoading(false);
     };
   };
 
   const handleFetchLegendaryAnalysis = () => {
-    setLoading(true)
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
     const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
@@ -185,12 +189,16 @@ export const CubeListForm: React.FC = () => {
         },
       }
     });
-    setLoading(false);
   };
 
   const updateCubeList = (newData: string[]) => {
     setCubeList(newData);
-    localStorage.setItem('latest-list', JSON.stringify(newData)); // Update stored data
+    localStorage.setItem('latest-list', JSON.stringify(newData));
+  };
+
+  const updateCubeCobraID = (newID: string) => {
+    setCubeCobraID(newID);
+    localStorage.setItem('cube-cobra-id', JSON.stringify(newID));
   };
 
   return (
@@ -205,11 +213,6 @@ export const CubeListForm: React.FC = () => {
         <Step key='cubeListInput'>
           <StepLabel>{stepsConfig[0].label}</StepLabel>
           <StepContent>
-            {/* <form name="cube list input" onSubmit={handleSubmit}>
-              <label htmlFor="cubeListInput">Paste in cube list</label><br />
-              <textarea required id="cubeListInput" rows={25} defaultValue={cubeList.join('\n')} /><br />
-              <Button variant='outlined' type="submit" disabled={isLoading}>Submit</Button>
-            </form> */}
             <form name='cubeCobraInput' onSubmit={handleCubeCobraSubmit}>
               <label htmlFor='cubeCobraInput'>Enter a CubeCobra Cube ID:</label><br />
               <p>Note that maybeboards will be ignored.</p>
@@ -220,9 +223,6 @@ export const CubeListForm: React.FC = () => {
                 defaultValue={cubeCobraID}
                 sx={{ margin: 2 }}
               /><br />
-              {/* <ButtonGroup
-                sx={{ margin: 2 }}
-              > */}
               <Button
                 variant='outlined'
                 type='submit'
@@ -232,75 +232,52 @@ export const CubeListForm: React.FC = () => {
               </Button>
               {cubeCobraID && !isLoading
                 ? (
-                  <Button variant='outlined' sx={{ margin: 2 }} disabled={!cubeCobraID || isLoading} onClick={handleStepNext}>Continue with saved list: {cubeCobraID}</Button>
-                )
-                : (
-                  <></>
-                )
+                  <Button variant='outlined' sx={{ margin: 2 }} disabled={!cubeCobraID || isLoading} onClick={handleStepNext}>
+                    Continue with saved list: {cubeCobraID}
+                  </Button>)
+                : (<></>)
               }
-              {/* </ButtonGroup> */}
-              {
-                isLoading && (
-                  <CircularProgress />
-                )
-              }
+              {isLoading && (<CircularProgress />)}
             </form>
-            <ButtonGroup>
-              {/* {
-                cubeList.length
-                  ? (
-                    <Button
-                      onClick={handleStepNext}
-                    >
-                      Continue with existing list
-                    </Button>
-                  )
-                  : (<>Please submit a list to continue</>)
-              } */}
-            </ButtonGroup>
-            <br />
           </StepContent>
         </Step>
         <Step key='fetch-card-data'>
           <StepLabel>{stepsConfig[1].label}</StepLabel>
           <StepContent>
-            <p>Found the following cube data on Cube Cobra ({cubeList.length} cards).</p>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ArrowDownwardIcon />}
-              >
-                <span>Expand to view cards</span>
-              </AccordionSummary>
-              <AccordionDetails>
-                {/* <Typography> */}
-                <List>
-                  {cubeList.map((card, index) => (
-                    <ListItem key={`${card}-${index}`}>{card}</ListItem>
-                  ))}
-                </List>
-                {/* </Typography> */}
-              </AccordionDetails>
-            </Accordion>
+            <Card>
+              <CardContent>
+                <Info /><span> Found the following cube data on Cube Cobra ({cubeList.length} cards).</span>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ArrowDownwardIcon />}
+                  >
+                    <span>Expand to view cards</span>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {/* <Typography> */}
+                    <List>
+                      {cubeList.map((card) => (
+                        <ListItem key={card}>{card}</ListItem>
+                      ))}
+                    </List>
+                    {/* </Typography> */}
+                  </AccordionDetails>
+                </Accordion>
+              </CardContent>
+            </Card>
             <p>
               {!cubeList.length
                 ? (<>Enter a cube list to fetch card data for.</>)
                 : cardData.length
-                  ? (<>Submitted a new list? Click to refetch data.</>)
-                  : (<>Click to fetch full card data from Scryfall (will take about 5-10 seconds).</>)
+                  ? (<>Data succesfully fetched. If something is wrong, please investigate and resubmit your cube id in step 1.</>)
+                  : (<>To continue, fetch the full card data from Scryfall (will take about 5-10 seconds).</>)
               }
             </p>
             <ButtonGroup>
-              <Button variant='outlined' onClick={handleFetchCardData} disabled={!cubeList.length || isLoading}>
+              <Button variant='outlined' onClick={handleFetchCardData} disabled={!cubeList.length || isLoading || cardData.length == cubeList.length}>
                 {cardData.length ? '(Re)' : <></>}fetch card data.
               </Button>
-              {cardData.length && (
-                <Button
-                  variant='outlined'
-                  onClick={handleFetchLegendaryWithExistingData}
-                >
-                  Continue with existing data
-                </Button>
-              )}
+
             </ButtonGroup>
             {isLoading && (
               <CircularProgress />
@@ -338,9 +315,9 @@ export const CubeListForm: React.FC = () => {
                                         <TableCell>Color identity</TableCell>
                                       </TableRow>
                                     </TableHead>
-                                    <TableBody>{cardData.map((card, index) => {
+                                    <TableBody>{cardData.map((card) => {
                                       return (
-                                        <TableRow key={`${card.id}-${index}`}>
+                                        <TableRow key={`${card.id}`}>
                                           <TableCell>{card.name}</TableCell>
                                           <TableCell>{card.type_line}</TableCell>
                                           <TableCell>{card.card_faces
@@ -368,9 +345,15 @@ export const CubeListForm: React.FC = () => {
               <Button
                 variant='outlined'
                 onClick={handleStepBack}
-                sx={{ mt: 1, mr: 1 }}
               >
                 Back
+              </Button>
+              <Button
+                variant='outlined'
+                disabled={!cardData.length}
+                onClick={handleFetchLegendaryWithExistingData}
+              >
+                Continue
               </Button>
             </p>
           </StepContent>
@@ -378,7 +361,7 @@ export const CubeListForm: React.FC = () => {
         <Step key='legendary-analysis'>
           <StepLabel>{stepsConfig[2].label}</StepLabel>
           <StepContent>
-            <h3>Your cube contains:</h3>
+            <h3>Your cube {cubeCobraID} contains:</h3>
             <List>
               {Object.entries(analysis).map((commander) => {
                 const data = commander[1];
@@ -393,15 +376,14 @@ export const CubeListForm: React.FC = () => {
                             <AccordionSummary>Click to see card names</AccordionSummary>
                             <AccordionDetails>
                               <List>
-                                {data.cardNames.map((card, index) => {
+                                {data.cardNames.map((card) => {
+                                  const cardName = Array.isArray(card)
+                                    ? card.map((card) => card.name).join(' + ')
+                                    : card.name
                                   return (
-                                    <ListItem key={`${data.id}-${index}`}>
+                                    <ListItem key={cardName}>
                                       <Typography>
-                                        {
-                                          Array.isArray(card)
-                                            ? card.map((card) => card.name).join(' + ')
-                                            : card.name
-                                        }
+                                        {cardName}
                                       </Typography>
                                     </ListItem>
                                   )
@@ -420,7 +402,7 @@ export const CubeListForm: React.FC = () => {
             {
               cardData.length && activeStep == 2
                 ? (<Card>
-                  <CardContent><p>Analysis is done on your device, and results will be lost on reload. Click here to retrigger the analysis.</p>
+                  <CardContent><p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis.</p>
                     <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis}>
                       Retrigger analysis
                     </Button>
@@ -443,8 +425,8 @@ export const CubeListForm: React.FC = () => {
             <h2>Log</h2>
             <p>Debugging information will appear here.</p>
             <ul>
-              {errorLog.map((error, index) => (
-                <li key={index}>{error}</li>
+              {errorLog.map((error) => (
+                <li key={error.substring(0, 10)}>{error}</li>
               ))}
             </ul>
           </section>
