@@ -9,3 +9,18 @@ export const stepsConfig = [
     label: 'Commander analysis'
   }
 ];
+
+export const autocompleteOptions = [
+  'improbable-alliances',
+  'cmdr-cube',
+  '167l',
+  'commandercube',
+  '38rph',
+  'miryedh',
+  'mahjscommandercube',
+  'thecommandercube',
+  'micromander',
+  'ccc360',
+  'sandersoncommandercube',
+  'CommanderWho'
+]

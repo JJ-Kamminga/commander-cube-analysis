@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, Card, CardContent, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, ButtonGroup, Card, CardContent, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -9,7 +9,7 @@ import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { initialAnalysisObject, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
 import { Analysis } from '@/utils/types';
-import { stepsConfig } from './config';
+import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
 import { Info } from '@mui/icons-material';
@@ -216,12 +216,13 @@ export const CubeListForm: React.FC = () => {
             <form name='cubeCobraInput' onSubmit={handleCubeCobraSubmit}>
               <label htmlFor='cubeCobraInput'>Enter a CubeCobra Cube ID:</label><br />
               <p>Note that maybeboards will be ignored.</p>
-              <TextField
+              <Autocomplete
                 id='cubeCobraInput'
+                options={autocompleteOptions}
                 disabled={isLoading}
-                required
                 defaultValue={cubeCobraID}
                 sx={{ margin: 2 }}
+                renderInput={(params) => <TextField {...params} required label="Cube ID" />}
               /><br />
               <Button
                 variant='outlined'
@@ -269,7 +270,7 @@ export const CubeListForm: React.FC = () => {
               {!cubeList.length
                 ? (<>Enter a cube list to fetch card data for.</>)
                 : cardData.length
-                  ? (<>Data succesfully fetched. If something is wrong, please investigate and resubmit your cube id in step 1.</>)
+                  ? (<>Data succesfully fetched.</>)
                   : (<>To continue, fetch the full card data from Scryfall (will take about 5-10 seconds).</>)
               }
             </p>
