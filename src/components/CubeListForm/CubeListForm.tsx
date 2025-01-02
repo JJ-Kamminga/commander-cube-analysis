@@ -1,24 +1,26 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Card } from '@/utils/mtg-scripting-toolkit/scryfall/types';
-import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, Card, CardContent, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { parseList } from '@/utils/mtg-scripting-toolkit/scryfall/listHelpers';
 import { initialAnalysisObject, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
 import { Analysis } from '@/utils/types';
+import { stepsConfig } from './config';
+import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
+import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
 
 export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [errorLog, setErrorLog] = useState<string[]>([]);
-  const [cardData, setCardData] = useState<Card[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [cardData, setCardData] = useState<MagicCard[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
+  const [cubeCobraID, setCubeCobraID] = useState<string>('');
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -33,6 +35,11 @@ export const CubeListForm: React.FC = () => {
   const handleStepReset = () => {
     setActiveStep(0);
     localStorage.setItem('active-step', JSON.stringify(0));
+  };
+
+  const handleFetchLegendaryWithExistingData = () => {
+    handleStepNext();
+    handleFetchLegendaryAnalysis();
   };
 
   useEffect(() => {
@@ -57,58 +64,87 @@ export const CubeListForm: React.FC = () => {
         localStorage.setItem('active-step', '0');
       };
     };
+    fetchActiveStep();
     fetchCubeList();
     fetchCardData();
-    fetchActiveStep();
   }, []);
 
   const handleFetchCardData = async () => {
     if (!cubeList.length) return;
     setLoading(true);
+    /** todo: trycatch here */
     const collectionCards = await fetchCollection([
       ...cubeList
     ]);
-    setLoading(false);
-
     if (collectionCards.error) {
       setErrorLog((errorLog) => [...errorLog, `${collectionCards.error}`]
       );
     };
-
     if (collectionCards.notFound?.length) {
       setErrorLog(errorLog => [
         ...errorLog,
         collectionCards.notFound ? `${collectionCards.notFound.length} cards not found: ` : 'collectionCards.notFound.map(card => card.name)',
       ])
     };
+    setLoading(false);
 
     setCardData(collectionCards.cards);
     localStorage.setItem('card-data', JSON.stringify(collectionCards.cards));
-    console.log(cardData);
+
+
+    if (!collectionCards.error && !collectionCards.notFound?.length) {
+      console.log('just before call')
+      handleStepNext();
+      handleFetchLegendaryAnalysis();
+    } else {
+      setErrorLog(errorLog => [...errorLog, 'Error fetching card data from Scryfall.']);
+    }
   };
 
   interface FormElements extends HTMLFormControlsCollection {
     cubeListInput: HTMLInputElement
+    cubeCobraInput: HTMLInputElement
   }
-  interface CubeListFormElement extends HTMLFormElement {
+  interface CubeCobraFormElement extends HTMLFormElement {
     readonly elements: FormElements
   }
 
-  const handleSubmit = (event: React.FormEvent<CubeListFormElement>) => {
+  const handleCubeCobraSubmit = async (event: React.FormEvent<CubeCobraFormElement>) => {
     event.preventDefault();
-    const cubeList = parseList(event.currentTarget.elements["cubeListInput"].value);
-    console.log(cubeList);
-    setCubeList(cubeList => cubeList);
+
+    setCubeList([]);
+    localStorage.setItem('latest-list', JSON.stringify([]));
     setCardData([]);
     localStorage.removeItem('card-data');
-    updateData(cubeList);
-    if (cubeList.length) {
-      handleStepNext()
+    setCubeCobraID('');
+
+    const cubeID = event.currentTarget.elements["cubeCobraInput"].value;
+
+    if (cubeID.length > 50 || cubeID.length === 0) {
+      setErrorLog(errorLog => [...errorLog, 'Cube ID length error']);
+      return;
+    };
+
+    setLoading(true);
+    let cardNames: string[] = [];
+    try {
+      cardNames = await fetchCubeList(cubeID);
+      if (cardNames?.length) {
+        setCubeCobraID(cubeID);
+        updateCubeList(cardNames);
+        handleStepNext();
+      } else {
+        setErrorLog(errorLog => [...errorLog, 'Cube must contain cards.']);
+      };
+    } catch (error) {
+      setErrorLog(errorLog => [...errorLog, 'Error fetching cube list from Cube Cobra.']);
+    } finally {
+      setLoading(false);
     };
   };
 
   const handleFetchLegendaryAnalysis = () => {
-
+    setLoading(true)
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
     const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
@@ -147,30 +183,19 @@ export const CubeListForm: React.FC = () => {
           ...analysis.doctorPartners,
           cardNames: doctorCompanionPairings
         },
-
       }
-    })
+    });
+    setLoading(false);
   };
 
-  const updateData = (newData: string[]) => {
+  const updateCubeList = (newData: string[]) => {
     setCubeList(newData);
     localStorage.setItem('latest-list', JSON.stringify(newData)); // Update stored data
   };
 
-  const steps = [
-    {
-      label: 'Input cube list',
-    },
-    {
-      label: 'Fetch data from Scryfall',
-    },
-    {
-      label: 'Commander analysis'
-    }
-  ];
-
   return (
     <>
+      <h2>Commander analysis</h2>
       {activeStep !== 0 && (
         <Button variant='outlined' onClick={handleStepReset} sx={{ mt: 1, mr: 1 }}>
           Back to step 1
@@ -178,15 +203,50 @@ export const CubeListForm: React.FC = () => {
       )}
       <Stepper activeStep={activeStep} orientation="vertical">
         <Step key='cubeListInput'>
-          <StepLabel>{steps[0].label}</StepLabel>
+          <StepLabel>{stepsConfig[0].label}</StepLabel>
           <StepContent>
-            <form name="cube list input" onSubmit={handleSubmit}>
+            {/* <form name="cube list input" onSubmit={handleSubmit}>
               <label htmlFor="cubeListInput">Paste in cube list</label><br />
-              <textarea id="cubeListInput" rows={25} defaultValue={cubeList.join('\n')} /><br />
-              <Button variant='outlined' type="submit" disabled={loading}>Submit</Button>
+              <textarea required id="cubeListInput" rows={25} defaultValue={cubeList.join('\n')} /><br />
+              <Button variant='outlined' type="submit" disabled={isLoading}>Submit</Button>
+            </form> */}
+            <form name='cubeCobraInput' onSubmit={handleCubeCobraSubmit}>
+              <label htmlFor='cubeCobraInput'>Enter a CubeCobra Cube ID:</label><br />
+              <p>Note that maybeboards will be ignored.</p>
+              <TextField
+                id='cubeCobraInput'
+                disabled={isLoading}
+                required
+                defaultValue={cubeCobraID}
+                sx={{ margin: 2 }}
+              /><br />
+              {/* <ButtonGroup
+                sx={{ margin: 2 }}
+              > */}
+              <Button
+                variant='outlined'
+                type='submit'
+                disabled={isLoading}
+              >
+                Submit
+              </Button>
+              {cubeCobraID && !isLoading
+                ? (
+                  <Button variant='outlined' sx={{ margin: 2 }} disabled={!cubeCobraID || isLoading} onClick={handleStepNext}>Continue with saved list: {cubeCobraID}</Button>
+                )
+                : (
+                  <></>
+                )
+              }
+              {/* </ButtonGroup> */}
+              {
+                isLoading && (
+                  <CircularProgress />
+                )
+              }
             </form>
             <ButtonGroup>
-              {
+              {/* {
                 cubeList.length
                   ? (
                     <Button
@@ -196,100 +256,129 @@ export const CubeListForm: React.FC = () => {
                     </Button>
                   )
                   : (<>Please submit a list to continue</>)
-              }
+              } */}
             </ButtonGroup>
             <br />
           </StepContent>
         </Step>
         <Step key='fetch-card-data'>
-          <StepLabel>{steps[1].label}</StepLabel>
+          <StepLabel>{stepsConfig[1].label}</StepLabel>
           <StepContent>
+            <p>Found the following cube data on Cube Cobra ({cubeList.length} cards).</p>
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ArrowDownwardIcon />}
+              >
+                <span>Expand to view cards</span>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* <Typography> */}
+                <List>
+                  {cubeList.map((card, index) => (
+                    <ListItem key={`${card}-${index}`}>{card}</ListItem>
+                  ))}
+                </List>
+                {/* </Typography> */}
+              </AccordionDetails>
+            </Accordion>
             <p>
               {!cubeList.length
                 ? (<>Enter a cube list to fetch card data for.</>)
                 : cardData.length
                   ? (<>Submitted a new list? Click to refetch data.</>)
-                  : (<>Click to fetch card data.</>)
+                  : (<>Click to fetch full card data from Scryfall (will take about 5-10 seconds).</>)
               }
             </p>
             <ButtonGroup>
-              <Button onClick={handleFetchCardData} disabled={!cubeList.length || loading}>(Re)fetch card data.</Button>
+              <Button variant='outlined' onClick={handleFetchCardData} disabled={!cubeList.length || isLoading}>
+                {cardData.length ? '(Re)' : <></>}fetch card data.
+              </Button>
               {cardData.length && (
                 <Button
-                  onClick={handleStepNext}
+                  variant='outlined'
+                  onClick={handleFetchLegendaryWithExistingData}
                 >
                   Continue with existing data
                 </Button>
               )}
             </ButtonGroup>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ArrowDownwardIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
+            {isLoading && (
+              <CircularProgress />
+            )}
+            {cardData.length
+              ? (
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ArrowDownwardIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                  >
+                    <Typography component="span">Full Cube List ({cardData.length} cards)</Typography>
+
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>
+                      Card data courtesy of Scryfall.
+                    </Typography>
+                    <TableContainer>
+                      {
+                        isLoading
+                          ? (<CircularProgress />)
+                          : (
+                            <section>
+                              {
+                                cardData.length ? (
+                                  <Table>
+                                    <TableHead>
+                                      <TableRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>Type</TableCell>
+                                        <TableCell>Oracle text</TableCell>
+                                        <TableCell>Colors</TableCell>
+                                        <TableCell>Color identity</TableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>{cardData.map((card, index) => {
+                                      return (
+                                        <TableRow key={`${card.id}-${index}`}>
+                                          <TableCell>{card.name}</TableCell>
+                                          <TableCell>{card.type_line}</TableCell>
+                                          <TableCell>{card.card_faces
+                                            ? card.card_faces.map(face => face.oracle_text).join(' // ')
+                                            : card.oracle_text
+                                          }
+                                          </TableCell>
+                                          <TableCell>{card.colors}</TableCell>
+                                          <TableCell>{card.color_identity}</TableCell>
+                                        </TableRow>
+                                      )
+                                    })}</TableBody>
+                                  </Table>
+                                ) : (<></>)
+                              }
+                            </section>
+                          )
+                      }
+                    </TableContainer>
+                  </AccordionDetails>
+                </Accordion>)
+              : (<></>)
+            }
+            <p>
+              <Button
+                variant='outlined'
+                onClick={handleStepBack}
+                sx={{ mt: 1, mr: 1 }}
               >
-                <Typography component="span">Full Cube List ({cardData.length} cards)</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>
-                  Card data courtesy of Scryfall.
-                </Typography>
-                <TableContainer>
-                  {
-                    loading
-                      ? (<CircularProgress />)
-                      : (
-                        <>
-                          {
-                            cardData.length ? (
-                              <Table>
-                                <TableHead>
-                                  <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Type</TableCell>
-                                    <TableCell>Oracle text</TableCell>
-                                    <TableCell>Colors</TableCell>
-                                    <TableCell>Color identity</TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>{cardData.map((card, index) => {
-                                  return (
-                                    <TableRow key={`${card.id}-${index}`}>
-                                      <TableCell>{card.name}</TableCell>
-                                      <TableCell>{card.type_line}</TableCell>
-                                      <TableCell>{card.card_faces
-                                        ? card.card_faces.map(face => face.oracle_text).join(' // ')
-                                        : card.oracle_text
-                                      }
-                                      </TableCell>
-                                      <TableCell>{card.colors}</TableCell>
-                                      <TableCell>{card.color_identity}</TableCell>
-                                    </TableRow>
-                                  )
-                                })}</TableBody>
-                              </Table>
-                            ) : (<></>)
-                          }
-                        </>
-                      )
-                  }
-                </TableContainer>
-              </AccordionDetails>
-            </Accordion>
-            <Button
-              onClick={handleStepBack}
-              sx={{ mt: 1, mr: 1 }}
-            >
-              Back
-            </Button>
+                Back
+              </Button>
+            </p>
           </StepContent>
         </Step >
         <Step key='legendary-analysis'>
-          <StepLabel>{steps[2].label}</StepLabel>
+          <StepLabel>{stepsConfig[2].label}</StepLabel>
           <StepContent>
-            <Button onClick={handleFetchLegendaryAnalysis}>
-              Fetch
-            </Button>
+            <h3>Your cube contains:</h3>
             <List>
               {Object.entries(analysis).map((commander) => {
                 const data = commander[1];
@@ -321,29 +410,45 @@ export const CubeListForm: React.FC = () => {
                             </AccordionDetails>
                           </Accordion>
                         )
-                          : <></>
+                          : (<></>)
                       }
                     </label>
                   </li>
                 )
               })}
             </List>
-            <Button
-              onClick={handleStepBack}
-              sx={{ mt: 1, mr: 1 }}
-            >
-              Back
-            </Button>
+            {
+              cardData.length && activeStep == 2
+                ? (<Card>
+                  <CardContent><p>Analysis is done on your device, and results will be lost on reload. Click here to retrigger the analysis.</p>
+                    <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis}>
+                      Retrigger analysis
+                    </Button>
+                  </CardContent>
+                </Card>)
+                : (<></>)
+            }
+            <p>
+              <Button
+                variant='outlined'
+                onClick={handleStepBack}
+              >
+                Back
+              </Button>
+            </p>
           </StepContent>
         </Step>
-        <section>
-          <h2>Log</h2>
-          <ul>
-            {errorLog.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </section>
+        {errorLog.length > 0 ? (
+          <section>
+            <h2>Log</h2>
+            <p>Debugging information will appear here.</p>
+            <ul>
+              {errorLog.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </section>
+        ) : <></>}
       </Stepper >
     </>
   )
