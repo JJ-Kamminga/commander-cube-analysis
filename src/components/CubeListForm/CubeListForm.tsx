@@ -125,7 +125,7 @@ export const CubeListForm: React.FC = () => {
 
     const cubeID = event.currentTarget.elements["cubeCobraInput"].value;
 
-    if (cubeID.length > 50 || cubeID.length === 0) {
+    if (typeof cubeID !== 'string' || cubeID.length > 50 || cubeID.length === 0) {
       setErrorLog(errorLog => [...errorLog, 'Cube ID length error']);
       return;
     };
@@ -218,6 +218,7 @@ export const CubeListForm: React.FC = () => {
               <p>Note that maybeboards will be ignored.</p>
               <Autocomplete
                 id='cubeCobraInput'
+                freeSolo
                 options={autocompleteOptions}
                 disabled={isLoading}
                 defaultValue={cubeCobraID}
@@ -271,7 +272,7 @@ export const CubeListForm: React.FC = () => {
                 ? (<>Enter a cube list to fetch card data for.</>)
                 : cardData.length
                   ? (<>Data succesfully fetched.</>)
-                  : (<>To continue, fetch the full card data from Scryfall (will take about 5-10 seconds).</>)
+                  : (<>To continue, fetch the full card data from Scryfall (may take up to 20 seconds).</>)
               }
             </p>
             <ButtonGroup>
@@ -403,7 +404,7 @@ export const CubeListForm: React.FC = () => {
             {
               cardData.length && activeStep == 2
                 ? (<Card>
-                  <CardContent><p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis.</p>
+                  <CardContent><p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
                     <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis}>
                       Retrigger analysis
                     </Button>

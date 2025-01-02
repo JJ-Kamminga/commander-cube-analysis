@@ -25,4 +25,4 @@ export const autocompleteOptions = [
   'sanderson-commander-cube',
   'CommanderWho',
   '1jmqj'
-]
+].sort();
