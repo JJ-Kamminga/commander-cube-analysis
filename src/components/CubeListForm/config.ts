@@ -22,5 +22,7 @@ export const autocompleteOptions = [
   'micromander',
   'ccc360',
   'sandersoncommandercube',
-  'CommanderWho'
+  'sanderson-commander-cube',
+  'CommanderWho',
+  '1jmqj'
 ]
