@@ -2,8 +2,8 @@
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/fetchCollection';
 import { Card } from '@/utils/mtg-scripting-toolkit/types';
-import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, CircularProgress, List, ListItem, Paper, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { useState, useEffect, useMemo } from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Button, ButtonGroup, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -87,16 +87,25 @@ export const CubeListForm: React.FC = () => {
     console.log(cardData);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  interface FormElements extends HTMLFormControlsCollection {
+    cubeListInput: HTMLInputElement
+  }
+  interface CubeListFormElement extends HTMLFormElement {
+    readonly elements: FormElements
+  }
+
+  const handleSubmit = (event: React.FormEvent<CubeListFormElement>) => {
     event.preventDefault();
-    const cubeList = parseList(event.target.elements["cube-list-input"].value);
+    const cubeList = parseList(event.currentTarget.elements["cubeListInput"].value);
     console.log(cubeList);
     setCubeList(cubeList => cubeList);
     setCardData([]);
     localStorage.removeItem('card-data');
     updateData(cubeList);
-    cubeList.length && handleStepNext();
-  }
+    if (cubeList.length) {
+      handleStepNext()
+    };
+  };
 
   const handleFetchLegendaryAnalysis = () => {
 
@@ -168,12 +177,12 @@ export const CubeListForm: React.FC = () => {
         </Button>
       )}
       <Stepper activeStep={activeStep} orientation="vertical">
-        <Step key='cube-list-input'>
+        <Step key='cubeListInput'>
           <StepLabel>{steps[0].label}</StepLabel>
           <StepContent>
             <form name="cube list input" onSubmit={handleSubmit}>
-              <label htmlFor="cube-list-input">Paste in cube list</label><br />
-              <textarea id="cube-list-input" rows={25} defaultValue={cubeList.join('\n')} /><br />
+              <label htmlFor="cubeListInput">Paste in cube list</label><br />
+              <textarea id="cubeListInput" rows={25} defaultValue={cubeList.join('\n')} /><br />
               <Button variant='outlined' type="submit" disabled={loading}>Submit</Button>
             </form>
             <ButtonGroup>

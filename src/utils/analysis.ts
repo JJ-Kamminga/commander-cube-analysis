@@ -100,8 +100,8 @@ export const searchPartnerWithPairings = (cards: Card[]) => {
   const partnerWiths = cards.filter((card) =>
     card.keywords?.find((keyword) => keyword == 'Partner with')
   );
-  let partnerWithPairings: Card[][] = [];
-  let covered: Card[] = [];
+  const partnerWithPairings: Card[][] = [];
+  const covered: Card[] = [];
   partnerWiths.forEach((card) => {
     if (covered.includes(card)) return;
     const partnerWithPartner = partnerWiths.filter((partnerWith) =>
