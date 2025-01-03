@@ -72,10 +72,20 @@ export const CubeListForm: React.FC = () => {
         localStorage.setItem('active-step', '0');
       };
     };
+    const fetchAnalysis = async () => {
+      const activeStepFromLS = localStorage.getItem('active-step');
+      if (activeStepFromLS !== '2') return;
+
+      const storedData = localStorage.getItem('analysis');
+      if (storedData) {
+        setAnalysis(JSON.parse(storedData));
+      }
+    };
     fetchActiveStep();
     fetchCubeList();
     fetchCubeCobraID();
     fetchCardData();
+    fetchAnalysis();
   }, []);
 
   const handleFetchCardData = async () => {
@@ -157,6 +167,7 @@ export const CubeListForm: React.FC = () => {
     const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
     const doctorCompanionPairings = searchDoctorCompanionPairings(cardData);
     const backgroundPairings = searchBackgroundPairings(cardData);
+
     setAnalysis((analysis) => {
       return {
         ...analysis,
@@ -190,6 +201,9 @@ export const CubeListForm: React.FC = () => {
         },
       }
     });
+    if (analysis !== initialAnalysisObject) {
+      localStorage.setItem('analysis', JSON.stringify(analysis));
+    };
   };
 
   const updateCubeList = (newData: string[]) => {
@@ -381,8 +395,8 @@ export const CubeListForm: React.FC = () => {
                               <List>
                                 {data.cardNames.map((card) => {
                                   const cardName = Array.isArray(card)
-                                    ? card.map((card) => card.name).join(' + ')
-                                    : card.name
+                                    ? card.map((card) => card).join(' + ')
+                                    : card
                                   return (
                                     <ListItem key={cardName + getRandomId()}>
                                       <Typography>
@@ -406,9 +420,10 @@ export const CubeListForm: React.FC = () => {
               cardData.length && activeStep == 2
                 ? (<Card>
                   <CardContent><p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
-                    <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis}>
+                    <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis} disabled={isLoading}>
                       Retrigger analysis
                     </Button>
+                    {isLoading ? (<CircularProgress />) : <></>}
                   </CardContent>
                 </Card>)
                 : (<></>)

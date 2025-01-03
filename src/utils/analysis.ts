@@ -1,5 +1,98 @@
 import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis } from "./types";
+import { getUniquePairs, getPairs } from "./helpers";
+
+export const searchByTypeLine = (cards: Card[], query: string) => {
+  return cards
+    .filter((card) => card.type_line.includes(query))
+    .map((card) => card.name);
+};
+
+export const searchPlaneswalkerCommanders = (cards: Card[]) => {
+  return cards
+    .filter(
+      (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
+    )
+    .map((card) => card.name);
+};
+
+export const searchUniquePartnerPairings = (cards: Card[]) => {
+  const partners = cards.filter((card) =>
+    card.type_line.includes('Legendary') &&
+    card.oracle_text?.includes('Partner') &&
+    !card.oracle_text?.includes('Partner with')
+  );
+  return getUniquePairs(partners)
+    .map(((pairArray) =>
+      pairArray.map((card) => card.name)
+    ));
+  ;
+};
+
+export const searchUniqueFriendsForeverPairings = (cards: Card[]) => {
+  const friendsForever = cards.filter((card) =>
+    card.keywords?.find((keyword) => keyword == 'Friends forever')
+  );
+  return getUniquePairs(friendsForever)
+    .map(((pairArray) =>
+      pairArray.map((card) => card.name)
+    ));
+}
+
+export const searchPartnerWithPairings = (cards: Card[]) => {
+  const partnerWiths = cards.filter((card) =>
+    card.keywords?.find((keyword) => keyword == 'Partner with')
+  );
+  if (partnerWiths.length <= 1) return [];
+
+  const partnerWithPairings: Card[][] = [];
+  const covered: Card[] = [];
+  partnerWiths.forEach((card) => {
+    if (covered.includes(card)) return;
+    const partnerWithPartner = partnerWiths.filter((partnerWith) =>
+      partnerWith.id !== card.id &&
+      partnerWith.all_parts?.find((part) => part.name == card.name)
+    );
+    if (partnerWithPartner.length == 0) return [];
+
+    partnerWithPairings.push([card, ...partnerWithPartner]);
+    covered.push(card, ...partnerWithPartner);;
+  });
+  return partnerWithPairings
+    .map(((pairArray) =>
+      pairArray.map((card) => card.name)
+    ));
+};
+
+export const searchDoctorCompanionPairings = (cards: Card[]) => {
+  const doctors = cards.filter((card) =>
+    card.type_line.includes('Legendary') &&
+    card.type_line.includes('Time Lord Doctor')
+  );
+
+  const companions = cards.filter((card) =>
+    card.type_line.includes('Legendary') &&
+    card.keywords?.includes('Doctor\'s companion')
+  );
+  return getPairs(doctors, companions)
+    .map(((pairArray) =>
+      pairArray.map((card) => card.name))
+    );
+};
+
+export const searchBackgroundPairings = (cards: Card[]) => {
+  const creatures = cards.filter((card) =>
+    card.oracle_text?.includes('Choose a Background')
+  );
+
+  const backgrounds = cards.filter((card) =>
+    card.type_line.includes('Background')
+  );
+  return getPairs(creatures, backgrounds)
+    .map(((pairArray) =>
+      pairArray.map((card) => card.name)
+    ));
+}
 
 export const initialAnalysisObject: Analysis = {
   legendaryCreatures: {
@@ -45,95 +138,3 @@ export const initialAnalysisObject: Analysis = {
     cardNames: [],
   },
 };
-
-export const searchByTypeLine = (cards: Card[], query: string) => {
-  return cards
-    .filter((card) => card.type_line.includes(query))
-};
-
-export const searchPlaneswalkerCommanders = (cards: Card[]) => {
-  return cards
-    .filter(
-      (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
-    )
-};
-
-/** generates an array of all unique pairs, with one element from the first array and one element from the second array */
-function getPairs<T, U>(array1: T[], array2: U[]): [T, U][] {
-  const pairs: [T, U][] = [];
-  for (const item1 of array1) {
-    for (const item2 of array2) {
-      pairs.push([item1, item2]);
-    }
-  }
-  return pairs;
-}
-
-/** return each unique pairing of two objects from an array of objects */
-function getUniquePairs<T>(array: T[]): [T, T][] {
-  const pairs: [T, T][] = [];
-  for (let i = 0; i < array.length; i++) {
-    for (let j = i + 1; j < array.length; j++) {
-      pairs.push([array[i], array[j]]);
-    }
-  }
-  return pairs;
-}
-
-export const searchUniquePartnerPairings = (cards: Card[]) => {
-  const partners = cards.filter((card) =>
-    card.type_line.includes('Legendary') &&
-    card.oracle_text?.includes('Partner') &&
-    !card.oracle_text?.includes('Partner with')
-  );
-  return getUniquePairs(partners);
-};
-
-export const searchUniqueFriendsForeverPairings = (cards: Card[]) => {
-  const friendsForever = cards.filter((card) =>
-    card.keywords?.find((keyword) => keyword == 'Friends forever')
-  );
-  return getUniquePairs(friendsForever);
-}
-
-export const searchPartnerWithPairings = (cards: Card[]) => {
-  const partnerWiths = cards.filter((card) =>
-    card.keywords?.find((keyword) => keyword == 'Partner with')
-  );
-  const partnerWithPairings: Card[][] = [];
-  const covered: Card[] = [];
-  partnerWiths.forEach((card) => {
-    if (covered.includes(card)) return;
-    const partnerWithPartner = partnerWiths.filter((partnerWith) =>
-      partnerWith.id !== card.id &&
-      partnerWith.all_parts?.find((part) => part.name == card.name)
-    );
-    partnerWithPairings.push([card, ...partnerWithPartner]);
-    covered.push(card, ...partnerWithPartner);;
-  });
-  return partnerWithPairings;
-};
-
-export const searchDoctorCompanionPairings = (cards: Card[]) => {
-  const doctors = cards.filter((card) =>
-    card.type_line.includes('Legendary') &&
-    card.type_line.includes('Time Lord Doctor')
-  );
-
-  const companions = cards.filter((card) =>
-    card.type_line.includes('Legendary') &&
-    card.keywords?.includes('Doctor\'s companion')
-  );
-  return getPairs(doctors, companions);
-};
-
-export const searchBackgroundPairings = (cards: Card[]) => {
-  const creatures = cards.filter((card) =>
-    card.oracle_text?.includes('Choose a Background')
-  );
-
-  const backgrounds = cards.filter((card) =>
-    card.type_line.includes('Background')
-  );
-  return getPairs(creatures, backgrounds);
-}

@@ -1,10 +1,8 @@
-import { Card } from "./mtg-scripting-toolkit/scryfall/types";
-
 export type Commander = {
   id: string,
   labelHeading: string,
   labelDescription: string,
-  cardNames: (Card | Card[])[]
+  cardNames: (string | string[])[]
 }
 
 export type Analysis = {
