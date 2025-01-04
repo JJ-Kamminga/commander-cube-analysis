@@ -1,5 +1,6 @@
 export type Commander = {
   id: string,
+  type: 'card' | 'pair';
   labelHeading: string,
   labelDescription: string,
   cardNames: (string | string[])[]

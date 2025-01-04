@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, ButtonGroup, Card, CardContent, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, ButtonGroup, Card, CardContent, Chip, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,17 +12,25 @@ import { Analysis } from '@/utils/types';
 import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
-import { Info } from '@mui/icons-material';
+import { ExpandMore, Info } from '@mui/icons-material';
 import { getRandomId } from '@/utils/helpers';
+import { DraftConfigControlPanel } from '../DraftConfigControlPanel/DraftConfigControlPanel';
 
 export const CubeListForm: React.FC = () => {
+  /** UI State */
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  /** Data State */
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [cubeCobraID, setCubeCobraID] = useState<string>('');
-  const [errorLog, setErrorLog] = useState<string[]>([]);
   const [cardData, setCardData] = useState<MagicCard[]>([]);
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [activeStep, setActiveStep] = useState<number>(0);
   const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
+  /** Config State */
+  const [playerCount, setPlayerCount] = useState<number>(8);
+  const [packsPerPlayer, setPacksPerPlayer] = useState<number>(3);
+  const [cardsPerPack, seCardsPerPack] = useState<number>(20);
+  /** Other */
+  const [errorLog, setErrorLog] = useState<string[]>([]);
 
   const handleStepNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -91,6 +99,7 @@ export const CubeListForm: React.FC = () => {
   const handleFetchCardData = async () => {
     if (!cubeList.length) return;
     setLoading(true);
+    setAnalysis(initialAnalysisObject);
     /** todo: trycatch here */
     const collectionCards = await fetchCollection([
       ...cubeList
@@ -308,7 +317,6 @@ export const CubeListForm: React.FC = () => {
                     id="panel1-header"
                   >
                     <Typography component="span">Full Cube List ({cardData.length} cards)</Typography>
-
                   </AccordionSummary>
                   <AccordionDetails>
                     <Typography>
@@ -378,39 +386,82 @@ export const CubeListForm: React.FC = () => {
         <Step key='legendary-analysis'>
           <StepLabel>{stepsConfig[2].label}</StepLabel>
           <StepContent>
+            <h3>Analysis</h3>
+            <Info />Analysis is done based on a draft configuration of
+            <Chip color='info' label={playerCount} sx={{ margin: '5px' }} />
+            players,
+            <Chip color='info' label={packsPerPlayer} sx={{ margin: '5px' }} />
+            packs per player, and
+            <Chip color='info' label={cardsPerPack} sx={{ margin: '5px' }} />
+            cards per pack.
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />}
+              >Click to change draft configuration</AccordionSummary>
+              <AccordionDetails>
+                <DraftConfigControlPanel
+                  playerCount={playerCount}
+                  packsPerPlayer={packsPerPlayer}
+                  cardsPerPack={cardsPerPack}
+                  totalCubeCount={cardData.length}
+                  onPlayerCountChange={setPlayerCount}
+                  onPacksPerPlayerChange={setPacksPerPlayer}
+                  onCardsPerPackChange={seCardsPerPack}
+                />
+              </AccordionDetails>
+            </Accordion>
             <h3>Your cube {cubeCobraID} contains:</h3>
             <List>
               {Object.entries(analysis).map((commander) => {
                 const data = commander[1];
+                const percentageOfCube = data.cardNames.length / cardData.length * 100;
+                const percentageOfCubeFixedNotation = (data.cardNames.length / cardData.length * 100).toFixed(2);
+                const draftPoolSize = playerCount * packsPerPlayer * cardsPerPack;
+                const numberOfCardsOfTypeInDraftPool = Math.ceil(draftPoolSize * percentageOfCube / 100);
+
                 return (
                   <li key={data.id + getRandomId()}>
                     <label>
                       <h4>{data.cardNames.length || '0'} {data.labelHeading}</h4>
-                      <span>{data.labelDescription}</span>
-                      {
-                        data.cardNames.length ? (
-                          <Accordion>
-                            <AccordionSummary>Click to see card names</AccordionSummary>
-                            <AccordionDetails>
-                              <List>
-                                {data.cardNames.map((card) => {
-                                  const cardName = Array.isArray(card)
-                                    ? card.map((card) => card).join(' + ')
-                                    : card
-                                  return (
-                                    <ListItem key={cardName + getRandomId()}>
-                                      <Typography>
-                                        {cardName}
-                                      </Typography>
-                                    </ListItem>
-                                  )
-                                })}
-                              </List>
-                            </AccordionDetails>
-                          </Accordion>
-                        )
-                          : (<></>)
-                      }
+                      {data.cardNames.length ? (
+                        <>
+                          <p>{data.labelDescription}</p>
+                          <p>
+                            {data.type == 'card'
+                              ? (
+                                <>
+                                  <Chip color='primary' sx={{ margin: '2px' }} label={percentageOfCubeFixedNotation + '% of cube'} />
+                                  <Chip color='primary' sx={{ margin: '2px' }} label={`On average, ${numberOfCardsOfTypeInDraftPool} will be opened given your draft configuration (${draftPoolSize} card pool)`} />
+                                </>
+                              )
+                              : <></>
+                            }
+                          </p>
+                          {
+                            data.cardNames.length ? (
+                              <Accordion>
+                                <AccordionSummary expandIcon={<ExpandMore />}>Click to see card names</AccordionSummary>
+                                <AccordionDetails>
+                                  <List>
+                                    {data.cardNames.map((card) => {
+                                      const cardName = Array.isArray(card)
+                                        ? card.map((card) => card).join(' + ')
+                                        : card
+                                      return (
+                                        <ListItem key={cardName + getRandomId()}>
+                                          <Typography>
+                                            {cardName}
+                                          </Typography>
+                                        </ListItem>
+                                      )
+                                    })}
+                                  </List>
+                                </AccordionDetails>
+                              </Accordion>
+                            )
+                              : (<></>)
+                          }
+                        </>
+                      ) : (<></>)}
                     </label>
                   </li>
                 )
@@ -418,14 +469,18 @@ export const CubeListForm: React.FC = () => {
             </List>
             {
               cardData.length && activeStep == 2
-                ? (<Card>
-                  <CardContent><p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
-                    <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis} disabled={isLoading}>
-                      Retrigger analysis
-                    </Button>
-                    {isLoading ? (<CircularProgress />) : <></>}
-                  </CardContent>
-                </Card>)
+                ? (<>
+                  <Card >
+                    <CardContent>
+                      <h3>Actions</h3>
+                      <p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
+                      <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis} disabled={isLoading}>
+                        Retrigger analysis
+                      </Button>
+                      {isLoading ? (<CircularProgress />) : <></>}
+                    </CardContent>
+                  </Card>
+                </>)
                 : (<></>)
             }
             <p>
