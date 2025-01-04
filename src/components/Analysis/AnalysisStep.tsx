@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Chip, List, ListItem, Ty
 import { DraftConfigControlPanel } from "../DraftConfigControlPanel/DraftConfigControlPanel";
 import { useState } from "react";
 import { Analysis } from "@/utils/types";
-import { getRandomId } from "@/utils/helpers";
+import { getRandomId, probabilityBothInSubset } from "@/utils/helpers";
 
 type AnalysisProps = {
   analysis: Analysis,
@@ -52,11 +52,13 @@ export const AnalysisStep: React.FC<AnalysisProps> = ({ ...props }) => {
           const percentageOfCubeFixedNotation = (data.cardNames.length / totalCubeCount * 100).toFixed(2);
           const draftPoolSize = playerCount * packsPerPlayer * cardsPerPack;
           const numberOfCardsOfTypeInDraftPool = Math.ceil(draftPoolSize * percentageOfCube / 100);
-
+          const partnerWithProbability = data.id == 'partnerWiths' ? probabilityBothInSubset(totalCubeCount, draftPoolSize).toFixed(2) : 0;
+          /** maybe use this for images in the future */
+          // const firstCard = Array.isArray(data.cardNames[0]) ? data.cardNames[0][0] : data.cardNames[0];
           return (
             <li key={data.id + getRandomId()}>
               <label>
-                <h4>{data.cardNames.length || '0'} {data.labelHeading}</h4>
+                <h4 style={{ display: 'inline' }}>{data.cardNames.length || '0'} {data.labelHeading}</h4>
                 {data.cardNames.length ? (
                   <>
                     <p>{data.labelDescription}</p>
@@ -64,11 +66,28 @@ export const AnalysisStep: React.FC<AnalysisProps> = ({ ...props }) => {
                       {data.type == 'card'
                         ? (
                           <>
-                            <Chip color='primary' sx={{ margin: '2px' }} label={percentageOfCubeFixedNotation + '% of cube'} />
-                            <Chip color='primary' sx={{ margin: '2px' }} label={`On average, ${numberOfCardsOfTypeInDraftPool} will be opened in a ${draftPoolSize} card pool`} />
+                            <Chip
+                              color='primary'
+                              sx={{ margin: '2px' }}
+                              label={percentageOfCubeFixedNotation + '% of cube'} />
+                            <Chip
+                              color='primary'
+                              sx={{ margin: '2px' }}
+                              label={`On average, ${numberOfCardsOfTypeInDraftPool} will be opened in a ${draftPoolSize} card pool`} />
                           </>
                         )
                         : <></>
+                      }
+                      {data.id == 'partnerWiths' ? (
+                        <>
+                          <Chip
+                            color='primary' sx={{ margin: '2px' }}
+                            label={`${partnerWithProbability}% probability of both partners of any given pair being in a ${draftPoolSize} draft pool.`} />
+                        </>
+                      ) : (
+                        <></>
+                      )
+
                       }
                     </p>
                     {
@@ -101,6 +120,6 @@ export const AnalysisStep: React.FC<AnalysisProps> = ({ ...props }) => {
             </li>
           )
         })}
-      </List>
+      </List >
     </ >)
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, ButtonGroup, Card, CardContent, Chip, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Button, ButtonGroup, Card, CardContent, CircularProgress, List, ListItem, StepContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,9 +12,8 @@ import { Analysis } from '@/utils/types';
 import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
-import { ExpandMore, Info } from '@mui/icons-material';
+import { Info } from '@mui/icons-material';
 import { getRandomId } from '@/utils/helpers';
-import { DraftConfigControlPanel } from '../DraftConfigControlPanel/DraftConfigControlPanel';
 import { AnalysisStep } from '../Analysis/AnalysisStep';
 
 export const CubeListForm: React.FC = () => {

@@ -23,3 +23,143 @@ export const getUniquePairs = <T>(array: T[]): [T, T][] => {
   }
   return pairs;
 }
+
+/** to determine probability of both partner withs being in a draft pool 
+ * To calculate the probability that two elements of an array are both part of a random subset of a given size, we can use the principles of combinatorics. Here's the breakdown:
+
+Formula:
+Let the array have 
+𝑛
+n elements.
+Let the subset have 
+𝑘
+k elements.
+Let the two specific elements be 
+𝑒
+1
+e 
+1
+​
+  and 
+𝑒
+2
+e 
+2
+​
+ .
+The probability that both 
+𝑒
+1
+e 
+1
+​
+  and 
+𝑒
+2
+e 
+2
+​
+  are in the subset is:
+
+𝑃
+(
+both in subset
+)
+=
+(
+𝑛
+−
+2
+𝑘
+−
+2
+)
+(
+𝑛
+𝑘
+)
+P(both in subset)= 
+( 
+k
+n
+​
+ )
+( 
+k−2
+n−2
+​
+ )
+​
+ 
+Where:
+
+(
+𝑛
+𝑘
+)
+( 
+k
+n
+​
+ ) is the number of ways to choose 
+𝑘
+k elements from 
+𝑛
+n.
+(
+𝑛
+−
+2
+𝑘
+−
+2
+)
+( 
+k−2
+n−2
+​
+ ) is the number of ways to choose 
+𝑘
+−
+2
+k−2 elements from the remaining 
+𝑛
+−
+2
+n−2 elements after 
+𝑒
+1
+e 
+1
+​
+  and 
+𝑒
+2
+e 
+2
+​
+  are included.
+
+*/
+export const probabilityBothInSubset = (n: number, k: number): number => {
+  if (k > n || k < 2) {
+    return 0; // Not possible to choose a subset of size k with 2 elements if k < 2 or k > n
+  }
+
+  // Helper function to calculate n choose k (binomial coefficient)
+  const binomialCoefficient = (n: number, k: number): number => {
+    if (k > n) return 0;
+    if (k === 0 || k === n) return 1;
+    let result = 1;
+    for (let i = 1; i <= k; i++) {
+      result = result * (n - i + 1) / i;
+    }
+    return result;
+  };
+
+  // Calculate the probability
+  const totalWays = binomialCoefficient(n, k);
+  const favorableWays = binomialCoefficient(n - 2, k - 2);
+
+  return favorableWays / totalWays;
+}
