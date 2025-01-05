@@ -1,7 +1,5 @@
 import { ExpandMore, Info } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Chip, List, ListItem, Typography } from "@mui/material";
-import { DraftConfigControlPanel } from "../DraftConfigControlPanel/DraftConfigControlPanel";
-import { useState } from "react";
 import { Analysis } from "@/utils/types";
 import { getRandomId, probabilityBothInSubset } from "@/utils/helpers";
 
