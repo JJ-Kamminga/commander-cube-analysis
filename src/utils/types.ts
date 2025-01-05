@@ -3,7 +3,6 @@ export type Commander = {
   type: 'card' | 'pair';
   labelHeading: string,
   labelDescription: string,
-  cardNames: (string | string[])[]
 }
 
 export type Analysis = {

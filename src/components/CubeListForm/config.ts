@@ -9,7 +9,7 @@ export const stepsConfig = [
     label: 'How is your cube drafted?'
   },
   {
-    label: 'Commander analysis'
+    label: 'Cube analysis results'
   }
 ];
 

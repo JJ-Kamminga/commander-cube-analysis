@@ -12,7 +12,6 @@ type DraftConfigControlProps = {
   onCardsPerPackChange: (cardsPerPack: number) => void;
 }
 
-
 export const DraftConfigControlPanel: React.FC<DraftConfigControlProps> = ({ ...props }) => {
   const { playerCount, packsPerPlayer, cardsPerPack, totalCubeCount, onPlayerCountChange, onPacksPerPlayerChange, onCardsPerPackChange } = props;
   const draftPoolSize = playerCount * packsPerPlayer * cardsPerPack;

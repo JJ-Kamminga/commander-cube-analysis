@@ -6,8 +6,7 @@ import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import { initialAnalysisObject, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from '@/utils/analysis';
-import { Analysis } from '@/utils/types';
+import { initialAnalysisObject } from '@/utils/analysis';
 import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
@@ -23,34 +22,12 @@ export const CubeListForm: React.FC = () => {
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [cubeCobraID, setCubeCobraID] = useState<string>('');
   const [cardData, setCardData] = useState<MagicCard[]>([]);
-  const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
   /** Config State */
   const [playerCount, setPlayerCount] = useState<number>(8);
   const [packsPerPlayer, setPacksPerPlayer] = useState<number>(3);
   const [cardsPerPack, seCardsPerPack] = useState<number>(20);
-
   /** Other */
   const [errorLog, setErrorLog] = useState<string[]>([]);
-
-  const handleStepNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    localStorage.setItem('active-step', JSON.stringify(activeStep + 1));
-  };
-
-  const handleStepBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    localStorage.setItem('active-step', JSON.stringify(activeStep - 1));
-  };
-
-  const handleStepReset = () => {
-    setActiveStep(0);
-    localStorage.setItem('active-step', JSON.stringify(0));
-  };
-
-  const handleFetchLegendaryWithExistingData = () => {
-    handleStepNext();
-    handleFetchLegendaryAnalysis();
-  };
 
   useEffect(() => {
     const fetchCubeList = async () => {
@@ -80,21 +57,26 @@ export const CubeListForm: React.FC = () => {
         localStorage.setItem('active-step', '0');
       };
     };
-    const fetchAnalysis = async () => {
-      const activeStepFromLS = localStorage.getItem('active-step');
-      if (activeStepFromLS !== '2') return;
-
-      const storedData = localStorage.getItem('analysis');
-      if (storedData) {
-        setAnalysis(JSON.parse(storedData));
-      }
-    };
     fetchActiveStep();
     fetchCubeList();
     fetchCubeCobraID();
     fetchCardData();
-    fetchAnalysis();
   }, []);
+
+  const handleStepNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    localStorage.setItem('active-step', JSON.stringify(activeStep + 1));
+  };
+
+  const handleStepBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    localStorage.setItem('active-step', JSON.stringify(activeStep - 1));
+  };
+
+  const handleStepReset = () => {
+    setActiveStep(0);
+    localStorage.setItem('active-step', JSON.stringify(0));
+  };
 
   interface FormElements extends HTMLFormControlsCollection {
     cubeCobraInput: HTMLInputElement
@@ -140,7 +122,6 @@ export const CubeListForm: React.FC = () => {
   const fetchCardData = async () => {
     if (!cubeList.length) return;
     setLoading(true);
-    setAnalysis(initialAnalysisObject);
     /** todo: trycatch here */
     const collectionCards = await fetchCollection([
       ...cubeList
@@ -160,57 +141,8 @@ export const CubeListForm: React.FC = () => {
     setCardData(collectionCards.cards);
     localStorage.setItem('card-data', JSON.stringify(collectionCards.cards));
 
-    if (!collectionCards.error && !collectionCards.notFound?.length) {
-      handleFetchLegendaryAnalysis();
-    } else {
+    if (collectionCards.error || collectionCards.notFound?.length) {
       setErrorLog(errorLog => [...errorLog, 'Error fetching card data from Scryfall.']);
-    }
-  };
-
-  const handleFetchLegendaryAnalysis = () => {
-    const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
-    const planeswalkers = searchPlaneswalkerCommanders(cardData);
-    const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
-    const partnerWithPairings = searchPartnerWithPairings(cardData);
-    const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
-    const doctorCompanionPairings = searchDoctorCompanionPairings(cardData);
-    const backgroundPairings = searchBackgroundPairings(cardData);
-
-    setAnalysis((analysis) => {
-      return {
-        ...analysis,
-        legendaryCreatures: {
-          ...analysis.legendaryCreatures,
-          cardNames: legendaries,
-        },
-        planeswalkerCommanders: {
-          ...analysis.planeswalkerCommanders,
-          cardNames: planeswalkers,
-        },
-        partners: {
-          ...analysis.partners,
-          cardNames: uniquePartnerPairings
-        },
-        partnerWiths: {
-          ...analysis.partnerWiths,
-          cardNames: partnerWithPairings
-        },
-        friendsForever: {
-          ...analysis.friendsForever,
-          cardNames: friendsForeverPairings
-        },
-        backgroundPairings: {
-          ...analysis.backgroundPairings,
-          cardNames: backgroundPairings
-        },
-        doctorPartners: {
-          ...analysis.doctorPartners,
-          cardNames: doctorCompanionPairings
-        },
-      }
-    });
-    if (analysis !== initialAnalysisObject) {
-      localStorage.setItem('analysis', JSON.stringify(analysis));
     };
   };
 
@@ -285,7 +217,7 @@ export const CubeListForm: React.FC = () => {
               <Button
                 variant='outlined'
                 disabled={!cardData.length}
-                onClick={handleFetchLegendaryWithExistingData}
+                onClick={handleStepNext}
               >
                 Continue
               </Button>
@@ -304,37 +236,22 @@ export const CubeListForm: React.FC = () => {
               onPacksPerPlayerChange={setPacksPerPlayer}
               onCardsPerPackChange={seCardsPerPack}
             />
+            <h3>Additional rules configuration</h3>
             <Button variant='outlined' onClick={handleStepBack}>Back</Button>
-            <Button variant='outlined' disabled={!cardData.length} onClick={handleFetchLegendaryWithExistingData}>Continue</Button>
+            <Button variant='outlined' disabled={!cardData.length} onClick={handleStepNext}>Continue</Button>
           </StepContent>
         </Step>
         <Step key='legendary-analysis'>
           <StepLabel>{stepsConfig[3].label}</StepLabel>
           <StepContent>
             <AnalysisStep
-              analysis={analysis}
-              totalCubeCount={cardData.length}
+              cardData={cardData}
               cubeCobraID={cubeCobraID}
               playerCount={playerCount}
               packsPerPlayer={packsPerPlayer}
               cardsPerPack={cardsPerPack}
             />
-            {
-              cardData.length && activeStep == 3
-                ? (<>
-                  <Card >
-                    <CardContent>
-                      <h3>Actions</h3>
-                      <p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
-                      <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchLegendaryAnalysis} disabled={isLoading}>
-                        Retrigger analysis
-                      </Button>
-                      {isLoading ? (<CircularProgress />) : <></>}
-                    </CardContent>
-                  </Card>
-                </>)
-                : (<></>)
-            }
+
             <p>
               <Button variant='outlined' onClick={handleStepBack}>Back</Button>
             </p>
