@@ -9,14 +9,13 @@ type AnalysisProps = {
   analysis: Analysis,
   totalCubeCount: number,
   cubeCobraID: string,
+  playerCount: number,
+  packsPerPlayer: number,
+  cardsPerPack: number,
 };
 
 export const AnalysisStep: React.FC<AnalysisProps> = ({ ...props }) => {
-  const { analysis, totalCubeCount, cubeCobraID } = props;
-  /** Config State */
-  const [playerCount, setPlayerCount] = useState<number>(8);
-  const [packsPerPlayer, setPacksPerPlayer] = useState<number>(3);
-  const [cardsPerPack, seCardsPerPack] = useState<number>(20);
+  const { analysis, totalCubeCount, cubeCobraID, playerCount, packsPerPlayer, cardsPerPack } = props;
 
   return (
     <>
@@ -29,21 +28,6 @@ export const AnalysisStep: React.FC<AnalysisProps> = ({ ...props }) => {
       packs per player, and
       <Chip color='info' label={cardsPerPack} sx={{ margin: '5px' }} />
       cards per pack.
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMore />}
-        >Click to change draft configuration</AccordionSummary>
-        <AccordionDetails>
-          <DraftConfigControlPanel
-            playerCount={playerCount}
-            packsPerPlayer={packsPerPlayer}
-            cardsPerPack={cardsPerPack}
-            totalCubeCount={totalCubeCount}
-            onPlayerCountChange={setPlayerCount}
-            onPacksPerPlayerChange={setPacksPerPlayer}
-            onCardsPerPackChange={seCardsPerPack}
-          />
-        </AccordionDetails>
-      </Accordion>
       <h3>Your cube {cubeCobraID} contains:</h3>
       <List>
         {Object.entries(analysis).map((commander) => {
@@ -52,7 +36,7 @@ export const AnalysisStep: React.FC<AnalysisProps> = ({ ...props }) => {
           const percentageOfCubeFixedNotation = (data.cardNames.length / totalCubeCount * 100).toFixed(2);
           const draftPoolSize = playerCount * packsPerPlayer * cardsPerPack;
           const numberOfCardsOfTypeInDraftPool = Math.ceil(draftPoolSize * percentageOfCube / 100);
-          const partnerWithProbability = data.id == 'partnerWiths' ? probabilityBothInSubset(totalCubeCount, draftPoolSize).toFixed(2) : 0;
+          const partnerWithProbability = data.id == 'partnerWiths' ? (probabilityBothInSubset(totalCubeCount, draftPoolSize) * 100).toFixed(2) : 0;
           /** maybe use this for images in the future */
           // const firstCard = Array.isArray(data.cardNames[0]) ? data.cardNames[0][0] : data.cardNames[0];
           return (

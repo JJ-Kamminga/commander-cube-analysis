@@ -94,7 +94,7 @@ export const DraftConfigControlPanel: React.FC<DraftConfigControlProps> = ({ ...
                 paddingTop: '2px',
               }
             } />
-            cards. <b>Displayed statistics are hypothetical</b>, assuming a cube size increase of equal ratios.
+            cards. <b>Statistics will be hypothetical</b>, assuming a cube size increase of equal card ratios.
           </p>
         )
         : (<></>)

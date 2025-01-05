@@ -6,6 +6,9 @@ export const stepsConfig = [
     label: 'Fetch data from Scryfall',
   },
   {
+    label: 'How is your cube drafted?'
+  },
+  {
     label: 'Commander analysis'
   }
 ];

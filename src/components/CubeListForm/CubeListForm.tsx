@@ -15,6 +15,7 @@ import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
 import { Info } from '@mui/icons-material';
 import { getRandomId } from '@/utils/helpers';
 import { AnalysisStep } from '../Analysis/AnalysisStep';
+import { DraftConfigControlPanel } from '../DraftConfigControlPanel/DraftConfigControlPanel';
 
 export const CubeListForm: React.FC = () => {
   /** UI State */
@@ -25,6 +26,11 @@ export const CubeListForm: React.FC = () => {
   const [cubeCobraID, setCubeCobraID] = useState<string>('');
   const [cardData, setCardData] = useState<MagicCard[]>([]);
   const [analysis, setAnalysis] = useState<Analysis>(initialAnalysisObject);
+  /** Config State */
+  const [playerCount, setPlayerCount] = useState<number>(8);
+  const [packsPerPlayer, setPacksPerPlayer] = useState<number>(3);
+  const [cardsPerPack, seCardsPerPack] = useState<number>(20);
+
   /** Other */
   const [errorLog, setErrorLog] = useState<string[]>([]);
 
@@ -379,12 +385,46 @@ export const CubeListForm: React.FC = () => {
             </p>
           </StepContent>
         </Step >
-        <Step key='legendary-analysis'>
+        <Step key='draft-configuration'>
           <StepLabel>{stepsConfig[2].label}</StepLabel>
           <StepContent>
-            <AnalysisStep analysis={analysis} totalCubeCount={cardData.length} cubeCobraID={cubeCobraID} />
+            <DraftConfigControlPanel
+              playerCount={playerCount}
+              packsPerPlayer={packsPerPlayer}
+              cardsPerPack={cardsPerPack}
+              totalCubeCount={cardData.length}
+              onPlayerCountChange={setPlayerCount}
+              onPacksPerPlayerChange={setPacksPerPlayer}
+              onCardsPerPackChange={seCardsPerPack}
+            />
+            <Button
+              variant='outlined'
+              onClick={handleStepBack}
+            >
+              Back
+            </Button>
+            <Button
+              variant='outlined'
+              disabled={!cardData.length}
+              onClick={handleFetchLegendaryWithExistingData}
+            >
+              Continue
+            </Button>
+          </StepContent>
+        </Step>
+        <Step key='legendary-analysis'>
+          <StepLabel>{stepsConfig[3].label}</StepLabel>
+          <StepContent>
+            <AnalysisStep
+              analysis={analysis}
+              totalCubeCount={cardData.length}
+              cubeCobraID={cubeCobraID}
+              playerCount={playerCount}
+              packsPerPlayer={packsPerPlayer}
+              cardsPerPack={cardsPerPack}
+            />
             {
-              cardData.length && activeStep == 2
+              cardData.length && activeStep == 3
                 ? (<>
                   <Card >
                     <CardContent>
