@@ -1,12 +1,11 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Autocomplete, Button, Card, CardContent, CircularProgress, StepContent, TextField } from '@mui/material';
+import { Autocomplete, Button, CircularProgress, StepContent, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import { initialAnalysisObject } from '@/utils/analysis';
 import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';

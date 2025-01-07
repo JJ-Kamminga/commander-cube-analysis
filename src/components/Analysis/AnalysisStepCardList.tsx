@@ -8,6 +8,24 @@ type AnalysisStepCardListProps = {
 };
 
 export const AnalysisStepCardList: React.FC<AnalysisStepCardListProps> = ({ cardNames }) => {
+  return (
+    <>
+      {Array.isArray(cardNames[0]) ? (
+        <>
+          {cardNames.map((pairArray) => (
+            /** @ts-expect-error: we control the value and know it is not a string */
+            <>{pairArray.map((card: MagicCard) => card).join(' + ')}</>
+          ))}
+        </>
+      ) : (
+        <ol>{cardNames.map(cardName => <li key={cardName + getRandomId()}>{cardName}</li>)}</ol>
+      )
+      }
+    </>
+  )
+};
+
+export const AnalysisStepCardListDrawer: React.FC<AnalysisStepCardListProps> = ({ cardNames }) => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = (newOpenState: boolean) => () => {
@@ -16,7 +34,7 @@ export const AnalysisStepCardList: React.FC<AnalysisStepCardListProps> = ({ card
 
   return (
     <>
-      <Button onClick={toggleDrawer(true)}>See card names</Button>
+      <Button onClick={toggleDrawer(true)} variant="outlined" sx={{ margin: '2px' }}>See all card names</Button>
       <Drawer open={isDrawerOpen} onClose={toggleDrawer(false)} anchor='right'>
         <List >
           {cardNames.map((card, index) => {
@@ -25,17 +43,16 @@ export const AnalysisStepCardList: React.FC<AnalysisStepCardListProps> = ({ card
               : card
             const indexLabel = index < 9 ? `0${index + 1}` : index + 1
             return (
-              <>
-                <ListItem key={cardName + getRandomId()}>
+              <div key={cardName + getRandomId()}>
+                <ListItem>
                   <span style={{ marginRight: '5px' }}>{indexLabel}. </span> {cardName}
                 </ListItem>
                 <Divider variant="middle" aria-hidden={true} />
-              </>
+              </div>
             )
           })}
         </List>
-      </Drawer>
-
+      </Drawer >
     </>
   )
 };

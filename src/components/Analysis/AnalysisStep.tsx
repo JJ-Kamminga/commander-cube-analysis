@@ -1,11 +1,11 @@
-import { ExpandMore, Info } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, CardContent, Chip, Divider, List, ListItem, Typography } from "@mui/material";
-import { Analysis } from "@/utils/types";
-import { getRandomId, probabilityBothInSubset } from "@/utils/helpers";
+import { Info } from "@mui/icons-material";
+import { Button, Card, CardContent, Chip, Divider } from "@mui/material";
+import { probabilityBothInSubset } from "@/utils/helpers";
 import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { useState } from "react";
 import { analysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
-import { AnalysisStepCardList } from "./AnalysisStepCardList";
+import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
+import { AnalysisStepSubHeader } from "./AnalysisStepSubHeader";
 
 type AnalysisStepProps = {
   cardData: MagicCard[],
@@ -20,7 +20,6 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const totalCubeCount = cardData.length;
 
   /** State */
-  const [loaded, setLoaded] = useState<string[]>([]);
   const [hasAnalysisLoaded, setHasAnalysisLoaded] = useState<boolean>(false);
   const [legendaries, setLegendaries] = useState<string[]>([]);
   const [planeswalkers, setPlaneswalkers] = useState<string[]>([]);
@@ -40,18 +39,12 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     const backgroundPairings = searchBackgroundPairings(cardData);
 
     setLegendaries(legendaries);
-    setLoaded([...loaded, 'legendaries']);
-    // setPlaneswalkers(planeswalkers);
-    // setLoaded([...loaded, 'planeswalkers']);
-    // setUniquePartnerPairings(uniquePartnerPairings);
-    // setLoaded([...loaded, 'uniquePartnerPairings']);
-    // setPartnerWithPairings(partnerWithPairings);
-    // setLoaded([...loaded, 'partnerWithPairings']);
-    // setFriendsForeverPairings(friendsForeverPairings);
-    // setLoaded([...loaded, 'friendsForeverPairings']);
-    // setDoctorCompanionPairings(doctorCompanionPairings);
-    // setLoaded([...loaded, 'doctorCompanionPairings']);
-    // setBackgroundPairings(backgroundPairings);
+    setPlaneswalkers(planeswalkers);
+    setUniquePartnerPairings(uniquePartnerPairings);
+    setPartnerWithPairings(partnerWithPairings);
+    setFriendsForeverPairings(friendsForeverPairings);
+    setDoctorCompanionPairings(doctorCompanionPairings);
+    setBackgroundPairings(backgroundPairings);
 
     setHasAnalysisLoaded(true);
   };
@@ -77,7 +70,12 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
 
   const handleClearAnalysis = () => {
     setLegendaries([]);
-    setLoaded([]);
+    setPlaneswalkers([]);
+    setUniquePartnerPairings([]);
+    setPartnerWithPairings([]);
+    setFriendsForeverPairings([]);
+    setDoctorCompanionPairings([]);
+    setBackgroundPairings([]);
     setHasAnalysisLoaded(false);
   };
 
@@ -99,11 +97,13 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
         <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
       </div>
       <h3>Your cube {cubeCobraID} contains:</h3>
-      {loaded.includes('legendaries')
+      {legendaries.length > 0
         ? (
           <>
-            <h4>{analysisMetadata.legendaryCreatures.labelHeading} ({legendaries.length || '0'} cards)</h4>
-            <p>{analysisMetadata.legendaryCreatures.labelDescription}</p>
+            <AnalysisStepSubHeader
+              count={legendaries.length}
+              label={analysisMetadata.legendaryCreatures.labelHeading}
+              description={analysisMetadata.legendaryCreatures.labelDescription} />
             <p>
               <>
                 <Chip
@@ -113,11 +113,115 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
                 <Chip
                   color='primary'
                   sx={{ margin: '2px' }}
-                  label={`On average, ${numberOfLegendariesInDraftPool} will be opened in a ${draftPoolSize} card pool`} />
+                  label={`On average, ${numberOfLegendariesInDraftPool} will be opened in a ${draftPoolSize} card pool (${numberOfLegendariesInDraftPool / playerCount} per player)`} />
+
               </>
             </p>
-            <AnalysisStepCardList cardNames={legendaries} />
-            <Divider variant="middle" sx={{ marginBottom: '1rem' }} aria-hidden="true" />
+            <AnalysisStepCardListDrawer cardNames={legendaries} />
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+          </>
+        ) : (<></>)
+      }
+      {planeswalkers.length > 0
+        ? (
+          <>
+            <AnalysisStepSubHeader
+              count={planeswalkers.length}
+              label={analysisMetadata.planeswalkerCommanders.labelHeading}
+              description={analysisMetadata.planeswalkerCommanders.labelDescription} />
+            {planeswalkers.length > 5 ? (
+              <AnalysisStepCardListDrawer cardNames={planeswalkers} />
+            ) : (
+              <AnalysisStepCardList cardNames={planeswalkers} />
+            )}
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+          </>
+        ) : (<></>)
+      }
+      {uniquePartnerPairings.length > 0
+        ? (
+          <>
+            <AnalysisStepSubHeader
+              count={uniquePartnerPairings.length}
+              label={analysisMetadata.partners.labelHeading}
+              description={analysisMetadata.partners.labelDescription} />
+            {uniquePartnerPairings.length > 5 ? (
+              <AnalysisStepCardListDrawer cardNames={uniquePartnerPairings} />
+            ) : (
+              <AnalysisStepCardList cardNames={uniquePartnerPairings} />
+            )}
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+          </>
+        ) : (<></>)
+      }
+      {partnerWithPairings.length > 0
+        ? (
+          <>
+            <AnalysisStepSubHeader
+              count={partnerWithPairings.length}
+              label={analysisMetadata.partnerWiths.labelHeading}
+              description={analysisMetadata.partnerWiths.labelDescription} />
+            {partnerWithPairings.length > 5 ? (
+              <AnalysisStepCardListDrawer cardNames={partnerWithPairings} />
+            ) : (
+              <AnalysisStepCardList cardNames={partnerWithPairings} />
+            )}
+            <p>
+              <Chip
+                color='primary'
+                sx={{ margin: '2px' }}
+                label={partnerWithProbabilityLabel} />
+
+            </p>
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+          </>
+        ) : (<></>)
+      }
+      {friendsForeverPairings.length > 0
+        ? (
+          <>
+            <AnalysisStepSubHeader
+              count={friendsForeverPairings.length}
+              label={analysisMetadata.friendsForever.labelHeading}
+              description={analysisMetadata.friendsForever.labelDescription} />
+            {friendsForeverPairings.length > 5 ? (
+              <AnalysisStepCardListDrawer cardNames={friendsForeverPairings} />
+            ) : (
+              <AnalysisStepCardList cardNames={friendsForeverPairings} />
+            )}
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+          </>
+        ) : (<></>)
+      }
+      {doctorCompanionPairings.length > 0
+        ? (
+          <>
+            <AnalysisStepSubHeader
+              count={doctorCompanionPairings.length}
+              label={analysisMetadata.doctorPartners.labelHeading}
+              description={analysisMetadata.doctorPartners.labelDescription} />
+            {doctorCompanionPairings.length > 5 ? (
+              <AnalysisStepCardListDrawer cardNames={doctorCompanionPairings} />
+            ) : (
+              <AnalysisStepCardList cardNames={doctorCompanionPairings} />
+            )}
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+          </>
+        ) : (<></>)
+      }
+      {backgroundPairings.length > 0
+        ? (
+          <>
+            <AnalysisStepSubHeader
+              count={backgroundPairings.length}
+              label={analysisMetadata.backgroundPairings.labelHeading}
+              description={analysisMetadata.backgroundPairings.labelDescription} />
+            {backgroundPairings.length > 5 ? (
+              <AnalysisStepCardListDrawer cardNames={backgroundPairings} />
+            ) : (
+              <AnalysisStepCardList cardNames={backgroundPairings} />
+            )}
+            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
           </>
         ) : (<></>)
       }
