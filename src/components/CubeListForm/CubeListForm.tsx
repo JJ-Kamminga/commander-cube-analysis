@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Autocomplete, Button, CircularProgress, StepContent, TextField } from '@mui/material';
+import { Autocomplete, Button, CircularProgress, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,6 +12,7 @@ import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
 import { AnalysisStep } from '../Analysis/AnalysisStep';
 import { DraftConfigControlPanel } from '../DraftConfigControlPanel/DraftConfigControlPanel';
 import { FetchCardDataStep } from '../FetchCardDataStep/FetchCardDataStep';
+import { Close } from '@mui/icons-material';
 
 export const CubeListForm: React.FC = () => {
   /** UI State */
@@ -27,39 +28,43 @@ export const CubeListForm: React.FC = () => {
   const [cardsPerPack, seCardsPerPack] = useState<number>(20);
   /** Other */
   const [errorLog, setErrorLog] = useState<string[]>([]);
+  const [isSnackbarOpen, setSnackbarOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchCubeList = async () => {
+    const fetchCubeListFromLocalstorage = async () => {
       const storedData = localStorage.getItem('latest-list');
       if (storedData) {
         setCubeList(JSON.parse(storedData));
       }
     };
-    const fetchCubeCobraID = async () => {
+    const fetchCubeCobraIDFromLocalstorage = async () => {
       const storedData = localStorage.getItem('cube-cobra-id');
       if (storedData) {
         setCubeCobraID(JSON.parse(storedData));
       }
     }
-    const fetchCardData = async () => {
+    const fetchCardDataFromLocalstorage = async () => {
       const storedData = localStorage.getItem('card-data');
       if (storedData) {
         setCardData(JSON.parse(storedData));
       }
     };
-    const fetchActiveStep = async () => {
+    const fetchActiveStepFromLocalstorage = async () => {
       const storedData = localStorage.getItem('active-step');
       if (storedData) {
         setActiveStep(JSON.parse(storedData));
+        if (JSON.parse(storedData) > 1) {
+          setSnackbarOpen(true);
+        }
       } else {
         setActiveStep(0);
         localStorage.setItem('active-step', '0');
       };
     };
-    fetchActiveStep();
-    fetchCubeList();
-    fetchCubeCobraID();
-    fetchCardData();
+    fetchActiveStepFromLocalstorage();
+    fetchCubeListFromLocalstorage();
+    fetchCubeCobraIDFromLocalstorage();
+    fetchCardDataFromLocalstorage();
   }, []);
 
   const handleStepNext = () => {
@@ -76,6 +81,30 @@ export const CubeListForm: React.FC = () => {
     setActiveStep(0);
     localStorage.setItem('active-step', JSON.stringify(0));
   };
+
+  const handleSnackbarClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  };
+
+  const action = (
+    <>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleSnackbarClose}
+      >
+        <Close fontSize="small" />
+      </IconButton>
+    </>
+  );
 
   interface FormElements extends HTMLFormControlsCollection {
     cubeCobraInput: HTMLInputElement
@@ -236,6 +265,9 @@ export const CubeListForm: React.FC = () => {
               onCardsPerPackChange={seCardsPerPack}
             />
             <h3>Additional rules configuration</h3>
+            <p>
+
+            </p>
             <Button variant='outlined' onClick={handleStepBack}>Back</Button>
             <Button variant='outlined' disabled={!cardData.length} onClick={handleStepNext}>Continue</Button>
           </StepContent>
@@ -268,6 +300,13 @@ export const CubeListForm: React.FC = () => {
           </section>
         ) : <></>}
       </Stepper >
+      <Snackbar
+        open={isSnackbarOpen}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+        message="Page was refreshed, draft configuration has been reset."
+        action={action}
+      />
     </>
   )
 }
