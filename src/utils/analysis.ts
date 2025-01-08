@@ -8,6 +8,13 @@ export const searchByTypeLine = (cards: Card[], query: string) => {
     .map((card) => card.name);
 };
 
+export const searchPartners = (cards: Card[]) => {
+  return cards
+    .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))
+    .filter((card) => card.keywords.every((keyword) => keyword !== 'Partner with'))
+    .map((card) => card.name);
+};
+
 export const searchPlaneswalkerCommanders = (cards: Card[]) => {
   return cards
     .filter(

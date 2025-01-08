@@ -3,7 +3,7 @@ import { Button, Card, CardContent, Chip, Divider } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
 import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { useState } from "react";
-import { analysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
+import { analysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
 import { AnalysisStepSubHeader } from "./AnalysisStepSubHeader";
 
@@ -29,7 +29,10 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const [doctorCompanionPairings, setDoctorCompanionPairings] = useState<string[][]>([]);
   const [backgroundPairings, setBackgroundPairings] = useState<string[][]>([]);
 
+  const [partnerCreatures, setPartnerCreatures] = useState<string[]>([]);
+
   const handleFetchAllAnalysis = () => {
+    /** Commanders */
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
     const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
@@ -45,6 +48,11 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     setFriendsForeverPairings(friendsForeverPairings);
     setDoctorCompanionPairings(doctorCompanionPairings);
     setBackgroundPairings(backgroundPairings);
+
+    /** Others */
+    const partnerCreatures = searchPartners(cardData);
+
+    setPartnerCreatures(partnerCreatures);
 
     setHasAnalysisLoaded(true);
   };
@@ -63,6 +71,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   }
   const numberOfLegendariesInDraftPool = getNumberOfCardsOfTypeInDraftPool(legendariesPercentageOfCube, draftPoolSize);
 
+  const partnerCount = partnerCreatures.length;
   const partnerWithProbability = (probabilityBothInSubset(totalCubeCount, draftPoolSize) * 100).toFixed(2);
   const partnerWithProbabilityLabel = `${partnerWithProbability}% probability of both partners of any given pair being in a ${draftPoolSize} draft pool.`;
   /** maybe use this for images in the future */
@@ -114,8 +123,11 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
                   color='primary'
                   sx={{ margin: '2px' }}
                   label={`On average, ${numberOfLegendariesInDraftPool} will be opened in a ${draftPoolSize} card pool (${numberOfLegendariesInDraftPool / playerCount} per player)`} />
-
               </>
+              <Chip
+                color='primary'
+                sx={{ margin: '2px' }}
+                label={'Includes ' + partnerCount + ' creatures with the Partner keyword'} />
             </p>
             <AnalysisStepCardListDrawer cardNames={legendaries} />
             <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
@@ -150,6 +162,12 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
             ) : (
               <AnalysisStepCardList cardNames={uniquePartnerPairings} />
             )}
+            <p>
+              <Chip
+                color='primary'
+                sx={{ margin: '2px' }}
+                label={partnerCount + ' creatures with the Partner keyword'} />
+            </p>
             <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
           </>
         ) : (<></>)
