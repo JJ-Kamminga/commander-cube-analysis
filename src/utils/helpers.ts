@@ -146,20 +146,22 @@ export const probabilityBothInSubset = (n: number, k: number): number => {
     return 0; // Not possible to choose a subset of size k with 2 elements if k < 2 or k > n
   }
 
-  // Helper function to calculate n choose k (binomial coefficient)
-  const binomialCoefficient = (n: number, k: number): number => {
-    if (k > n) return 0;
-    if (k === 0 || k === n) return 1;
-    let result = 1;
+  // Helper function to calculate log of n choose k (binomial coefficient)
+  const logBinomialCoefficient = (n: number, k: number): number => {
+    if (k > n) return -Infinity;
+    if (k === 0 || k === n) return 0;
+    let logResult = 0;
     for (let i = 1; i <= k; i++) {
-      result = result * (n - i + 1) / i;
+      logResult += Math.log(n - i + 1) - Math.log(i);
     }
-    return result;
+    return logResult;
   };
 
-  // Calculate the probability
-  const totalWays = binomialCoefficient(n, k);
-  const favorableWays = binomialCoefficient(n - 2, k - 2);
+  // Calculate the probability using logarithms
+  const logTotalWays = logBinomialCoefficient(n, k);
+  const logFavorableWays = logBinomialCoefficient(n - 2, k - 2);
 
-  return favorableWays / totalWays;
+  console.log(`n: ${n}, k: ${k}, logTotalWays: ${logTotalWays}, logFavorableWays: ${logFavorableWays}`);
+
+  return Math.exp(logFavorableWays - logTotalWays);
 }
