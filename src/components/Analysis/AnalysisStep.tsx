@@ -3,9 +3,10 @@ import { Button, Card, CardContent, Chip, Divider } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
 import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { useState } from "react";
-import { analysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
+import { analysisMetadata, customAnalysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
 import { AnalysisStepSubHeader } from "./AnalysisStepSubHeader";
+import { searchCustomPartnerRule } from "@/utils/customAnalysis";
 
 type AnalysisStepProps = {
   cardData: MagicCard[],
@@ -13,10 +14,11 @@ type AnalysisStepProps = {
   playerCount: number,
   packsPerPlayer: number,
   cardsPerPack: number,
+  customRules: string[];
 };
 
 export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
-  const { cardData, cubeCobraID, playerCount, packsPerPlayer, cardsPerPack } = props;
+  const { cardData, cubeCobraID, playerCount, packsPerPlayer, cardsPerPack, customRules } = props;
   const totalCubeCount = cardData.length;
 
   /** State */
@@ -31,6 +33,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
 
   const [partnerCreatures, setPartnerCreatures] = useState<string[]>([]);
 
+  const [monocolouredLegendariesPartner, setMonocolouredLegendariesPartner] = useState<string[][]>([]);
   const handleFetchAllAnalysis = () => {
     /** Commanders */
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
@@ -40,7 +43,6 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
     const doctorCompanionPairings = searchDoctorCompanionPairings(cardData);
     const backgroundPairings = searchBackgroundPairings(cardData);
-
     setLegendaries(legendaries);
     setPlaneswalkers(planeswalkers);
     setUniquePartnerPairings(uniquePartnerPairings);
@@ -48,16 +50,16 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     setFriendsForeverPairings(friendsForeverPairings);
     setDoctorCompanionPairings(doctorCompanionPairings);
     setBackgroundPairings(backgroundPairings);
-
+    /** Custom commanders */
+    const monocolouredLegendariesPartner = searchCustomPartnerRule(cardData);
+    setMonocolouredLegendariesPartner(monocolouredLegendariesPartner);
     /** Others */
     const partnerCreatures = searchPartners(cardData);
-
     setPartnerCreatures(partnerCreatures);
 
     setHasAnalysisLoaded(true);
   };
 
-  /** under construction */
   const getPercentageOfCube = (cardNames: string[], totalCubeCount: number) => {
     return cardNames.length / totalCubeCount * 100;
   };
@@ -74,8 +76,6 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const partnerCount = partnerCreatures.length;
   const partnerWithProbability = (probabilityBothInSubset(totalCubeCount, draftPoolSize) * 100).toFixed(2);
   const partnerWithProbabilityLabel = `${partnerWithProbability}% probability of both partners of any given pair being in a ${draftPoolSize} draft pool.`;
-  /** maybe use this for images in the future */
-  // const firstCard = Array.isArray(data.cardNames[0]) ? data.cardNames[0][0] : data.cardNames[0];
 
   const handleClearAnalysis = () => {
     setLegendaries([]);
@@ -85,6 +85,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     setFriendsForeverPairings([]);
     setDoctorCompanionPairings([]);
     setBackgroundPairings([]);
+    setMonocolouredLegendariesPartner([]);
     setHasAnalysisLoaded(false);
   };
 
@@ -242,6 +243,24 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
             <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
           </>
         ) : (<></>)
+      }
+      {customRules.includes('allMonoCPartner') ? (
+        <>
+          <h3>Custom Rules Analysis</h3>
+          {monocolouredLegendariesPartner.length ? (
+            <>
+              <AnalysisStepSubHeader
+                count={monocolouredLegendariesPartner.length}
+                label={customAnalysisMetadata.monocolouredLegendariesHavePartner.labelHeading}
+                description={customAnalysisMetadata.monocolouredLegendariesHavePartner.labelDescription} />
+              <AnalysisStepCardListDrawer cardNames={monocolouredLegendariesPartner} />
+            </>
+          ) : <></>
+          }
+        </>
+      ) : (
+        <></>
+      )
       }
       {
         hasAnalysisLoaded

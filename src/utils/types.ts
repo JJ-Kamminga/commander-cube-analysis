@@ -14,3 +14,7 @@ export type Analysis = {
   doctorPartners: Commander,
   backgroundPairings: Commander,
 };
+
+export type CustomAnalysis = {
+  monocolouredLegendariesHavePartner: Commander;
+}

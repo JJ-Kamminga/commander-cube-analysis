@@ -1,5 +1,5 @@
 import { Card } from "./mtg-scripting-toolkit/scryfall/types";
-import { Analysis } from "./types";
+import { Analysis, CustomAnalysis } from "./types";
 import { getUniquePairs, getPairs } from "./helpers";
 
 export const searchByTypeLine = (cards: Card[], query: string) => {
@@ -145,3 +145,12 @@ export const analysisMetadata: Analysis = {
     labelDescription: 'Unique possible pairings of creatures with the Choose a Background ability and Backgrounds.',
   },
 };
+
+export const customAnalysisMetadata: CustomAnalysis = {
+  monocolouredLegendariesHavePartner: {
+    id: 'monocolouredLegendariesHavePartner',
+    type: 'pair',
+    labelHeading: 'Partner pairings if all monocoloured legendaries had partner',
+    labelDescription: 'Unique pairings between all partners, monocoloured legendaries combined.',
+  },
+}

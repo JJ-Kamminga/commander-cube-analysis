@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Autocomplete, Button, CircularProgress, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
+import { Autocomplete, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -18,6 +18,7 @@ export const CubeListForm: React.FC = () => {
   /** UI State */
   const [activeStep, setActiveStep] = useState<number>(0);
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [checked, setChecked] = useState(false);
   /** Data State */
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [cubeCobraID, setCubeCobraID] = useState<string>('');
@@ -26,6 +27,7 @@ export const CubeListForm: React.FC = () => {
   const [playerCount, setPlayerCount] = useState<number>(8);
   const [packsPerPlayer, setPacksPerPlayer] = useState<number>(3);
   const [cardsPerPack, seCardsPerPack] = useState<number>(20);
+  const [customRules, setCustomRules] = useState<string[]>([])
   /** Other */
   const [errorLog, setErrorLog] = useState<string[]>([]);
   const [isSnackbarOpen, setSnackbarOpen] = useState<boolean>(false);
@@ -80,6 +82,15 @@ export const CubeListForm: React.FC = () => {
   const handleStepReset = () => {
     setActiveStep(0);
     localStorage.setItem('active-step', JSON.stringify(0));
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setCustomRules(['allMonoCPartner'])
+    } else {
+      setCustomRules([])
+    }
+    setChecked(event.target.checked);
   };
 
   const handleSnackbarClose = (
@@ -266,7 +277,13 @@ export const CubeListForm: React.FC = () => {
             />
             <h3>Additional rules configuration</h3>
             <p>
-
+              <FormGroup>
+                <FormControlLabel control={<Checkbox
+                  checked={checked}
+                  onChange={handleCheckboxChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />} label="All monocoloured legendary creatures have Partner" />
+              </FormGroup>
             </p>
             <Button variant='outlined' onClick={handleStepBack}>Back</Button>
             <Button variant='outlined' disabled={!cardData.length} onClick={handleStepNext}>Continue</Button>
@@ -281,6 +298,7 @@ export const CubeListForm: React.FC = () => {
               playerCount={playerCount}
               packsPerPlayer={packsPerPlayer}
               cardsPerPack={cardsPerPack}
+              customRules={customRules}
             />
 
             <p>

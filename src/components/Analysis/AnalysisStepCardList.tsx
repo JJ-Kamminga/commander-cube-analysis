@@ -1,7 +1,7 @@
 import { getRandomId } from "@/utils/helpers";
 import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { Close } from "@mui/icons-material";
-import { Button, Container, Divider, Drawer, List, ListItem } from "@mui/material";
+import { Button, Chip, Container, Divider, Drawer, List, ListItem } from "@mui/material";
 import { useState } from "react";
 
 type AnalysisStepCardListProps = {
@@ -36,6 +36,7 @@ export const AnalysisStepCardListDrawer: React.FC<AnalysisStepCardListProps> = (
   return (
     <>
       <Button onClick={toggleDrawer(true)} variant="outlined" sx={{ margin: '2px' }}>See all card names</Button>
+      {cardNames.length > 1500 ? <Chip color="warning" sx={{ margin: '5px' }} label={`This will load ${cardNames.length} pairings, may take a few seconds`} /> : <></>}
       <Drawer open={isDrawerOpen} onClose={toggleDrawer(false)} anchor='right'>
         <Container>
           <Button sx={{ float: 'right', top: '10px' }} onClick={toggleDrawer(false)} aria-label="close drawer"><Close color="primary" /></Button>
