@@ -13,7 +13,7 @@ export const searchCustomPartnerRule = (cards: Card[]) => {
 
   /** Remove duplicates */
   const allPartnersWithCustom = [...new Set([
-    ...allLegendaries,
+    ...monocolouredLegendaries,
     ...allPartners
   ])]
 
