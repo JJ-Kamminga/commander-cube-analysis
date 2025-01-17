@@ -1,12 +1,13 @@
 import { Info } from "@mui/icons-material";
-import { Button, Card, CardContent, Chip, Divider } from "@mui/material";
+import { Button, Card, CardContent, Chip } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
 import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { useState } from "react";
 import { analysisMetadata, customAnalysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
-import { AnalysisStepSubHeader } from "./AnalysisStepSubHeader";
 import { searchAllPartnerRule, searchCustomPartnerRule } from "@/utils/customAnalysis";
+import { AnalysisCategory } from "./AnalysisCategory";
+import { AnalysisChip } from "./AnalysisChip";
 
 type AnalysisStepProps = {
   cardData: MagicCard[],
@@ -114,184 +115,128 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
       <h3>Your cube {cubeCobraID} contains:</h3>
       {legendaries.length > 0
         ? (
-          <>
-            <AnalysisStepSubHeader
-              count={legendaries.length}
-              label={analysisMetadata.legendaryCreatures.labelHeading}
-              description={analysisMetadata.legendaryCreatures.labelDescription} />
+          <AnalysisCategory cardData={legendaries} commander={analysisMetadata.legendaryCreatures} >
             <p>
-              <>
-                <Chip
-                  color='primary'
-                  sx={{ margin: '2px' }}
-                  label={legendariesPercentageOfCubeLabel + '% of cube'} />
-                <Chip
-                  color='primary'
-                  sx={{ margin: '2px' }}
-                  label={`On average, ${numberOfLegendariesInDraftPool} will be opened in a ${draftPoolSize} card pool (${numberOfLegendariesInDraftPool / playerCount} per player)`} />
-              </>
-              <Chip
-                color='primary'
-                sx={{ margin: '2px' }}
-                label={'Includes ' + partnerCount + ' creatures with the Partner keyword'} />
+              <AnalysisChip label={legendariesPercentageOfCubeLabel + '% of cube'} />
+              <AnalysisChip label={`On average, ${numberOfLegendariesInDraftPool} will be opened in a ${draftPoolSize} card pool (${numberOfLegendariesInDraftPool / playerCount} per player)`} />
+              <AnalysisChip label={'Includes ' + partnerCount + ' creatures with the Partner keyword'} />
             </p>
             <AnalysisStepCardListDrawer cardNames={legendaries} />
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-          </>
+          </AnalysisCategory>
         ) : (<></>)
       }
-      {planeswalkers.length > 0
-        ? (
+      {
+        planeswalkers.length > 0
+          ? (
+            <AnalysisCategory cardData={planeswalkers} commander={analysisMetadata.planeswalkerCommanders}>
+              {planeswalkers.length > 5 ? (
+                <AnalysisStepCardListDrawer cardNames={planeswalkers} />
+              ) : (
+                <AnalysisStepCardList cardNames={planeswalkers} />
+              )}
+            </AnalysisCategory>
+          ) : (<></>)
+      }
+      {
+        uniquePartnerPairings.length > 0
+          ? (
+            <AnalysisCategory cardData={uniquePartnerPairings} commander={analysisMetadata.partners}>
+              {uniquePartnerPairings.length > 5 ? (
+                <AnalysisStepCardListDrawer cardNames={uniquePartnerPairings} />
+              ) : (
+                <AnalysisStepCardList cardNames={uniquePartnerPairings} />
+              )}
+              <p>
+                <AnalysisChip label={partnerCount + ' creatures with the Partner keyword'} />
+              </p>
+            </AnalysisCategory>
+          ) : (<></>)
+      }
+      {
+        partnerWithPairings.length > 0
+          ? (
+            <AnalysisCategory cardData={partnerWithPairings} commander={analysisMetadata.partnerWiths}>
+              {partnerWithPairings.length > 5 ? (
+                <AnalysisStepCardListDrawer cardNames={partnerWithPairings} />
+              ) : (
+                <AnalysisStepCardList cardNames={partnerWithPairings} />
+              )}
+              <p>
+                <AnalysisChip label={partnerWithProbabilityLabel} />
+              </p>
+            </AnalysisCategory>
+          ) : (<></>)
+      }
+      {
+        friendsForeverPairings.length > 0
+          ? (
+            <AnalysisCategory cardData={friendsForeverPairings} commander={analysisMetadata.friendsForever}>
+              {friendsForeverPairings.length > 5 ? (
+                <AnalysisStepCardListDrawer cardNames={friendsForeverPairings} />
+              ) : (
+                <AnalysisStepCardList cardNames={friendsForeverPairings} />
+              )}
+            </AnalysisCategory>
+          ) : (<></>)
+      }
+      {
+        doctorCompanionPairings.length > 0
+          ? (
+            <AnalysisCategory cardData={doctorCompanionPairings} commander={analysisMetadata.doctorPartners}>
+              {doctorCompanionPairings.length > 5 ? (
+                <AnalysisStepCardListDrawer cardNames={doctorCompanionPairings} />
+              ) : (
+                <AnalysisStepCardList cardNames={doctorCompanionPairings} />
+              )}
+            </AnalysisCategory>
+          ) : (<></>)
+      }
+      {
+        backgroundPairings.length > 0
+          ? (
+            <AnalysisCategory cardData={backgroundPairings} commander={analysisMetadata.backgroundPairings}>
+              {backgroundPairings.length > 5 ? (
+                <AnalysisStepCardListDrawer cardNames={backgroundPairings} />
+              ) : (
+                <AnalysisStepCardList cardNames={backgroundPairings} />
+              )}
+            </AnalysisCategory>
+          ) : (<></>)
+      }
+      {
+        customRules.length && hasAnalysisLoaded ? (
           <>
-            <AnalysisStepSubHeader
-              count={planeswalkers.length}
-              label={analysisMetadata.planeswalkerCommanders.labelHeading}
-              description={analysisMetadata.planeswalkerCommanders.labelDescription} />
-            {planeswalkers.length > 5 ? (
-              <AnalysisStepCardListDrawer cardNames={planeswalkers} />
+            <h3>Custom Rules Analysis</h3>
+            {customRules.includes('monoLCPartner') ? (
+              <>
+                {monoLCPartner.length ? (
+                  <AnalysisCategory cardData={monoLCPartner} commander={customAnalysisMetadata.monoLCPartner}>
+                    <AnalysisStepCardListDrawer cardNames={monoLCPartner} />
+                  </AnalysisCategory>
+                ) : <></>
+                }
+              </>
             ) : (
-              <AnalysisStepCardList cardNames={planeswalkers} />
-            )}
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-          </>
-        ) : (<></>)
-      }
-      {uniquePartnerPairings.length > 0
-        ? (
-          <>
-            <AnalysisStepSubHeader
-              count={uniquePartnerPairings.length}
-              label={analysisMetadata.partners.labelHeading}
-              description={analysisMetadata.partners.labelDescription} />
-            {uniquePartnerPairings.length > 5 ? (
-              <AnalysisStepCardListDrawer cardNames={uniquePartnerPairings} />
+              <></>
+            )
+            }
+            {customRules.includes('allLCPartner') ? (
+              <>
+                {allLCPartner.length ? (
+                  <AnalysisCategory cardData={allLCPartner} commander={customAnalysisMetadata.allLCPartner}>
+                    <AnalysisStepCardListDrawer cardNames={allLCPartner} />
+                  </AnalysisCategory>
+                ) : <></>
+                }
+              </>
             ) : (
-              <AnalysisStepCardList cardNames={uniquePartnerPairings} />
-            )}
-            <p>
-              <Chip
-                color='primary'
-                sx={{ margin: '2px' }}
-                label={partnerCount + ' creatures with the Partner keyword'} />
-            </p>
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+              <></>
+            )
+            }
           </>
-        ) : (<></>)
-      }
-      {partnerWithPairings.length > 0
-        ? (
-          <>
-            <AnalysisStepSubHeader
-              count={partnerWithPairings.length}
-              label={analysisMetadata.partnerWiths.labelHeading}
-              description={analysisMetadata.partnerWiths.labelDescription} />
-            {partnerWithPairings.length > 5 ? (
-              <AnalysisStepCardListDrawer cardNames={partnerWithPairings} />
-            ) : (
-              <AnalysisStepCardList cardNames={partnerWithPairings} />
-            )}
-            <p>
-              <Chip
-                color='primary'
-                sx={{ margin: '2px' }}
-                label={partnerWithProbabilityLabel} />
-
-            </p>
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-          </>
-        ) : (<></>)
-      }
-      {friendsForeverPairings.length > 0
-        ? (
-          <>
-            <AnalysisStepSubHeader
-              count={friendsForeverPairings.length}
-              label={analysisMetadata.friendsForever.labelHeading}
-              description={analysisMetadata.friendsForever.labelDescription} />
-            {friendsForeverPairings.length > 5 ? (
-              <AnalysisStepCardListDrawer cardNames={friendsForeverPairings} />
-            ) : (
-              <AnalysisStepCardList cardNames={friendsForeverPairings} />
-            )}
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-          </>
-        ) : (<></>)
-      }
-      {doctorCompanionPairings.length > 0
-        ? (
-          <>
-            <AnalysisStepSubHeader
-              count={doctorCompanionPairings.length}
-              label={analysisMetadata.doctorPartners.labelHeading}
-              description={analysisMetadata.doctorPartners.labelDescription} />
-            {doctorCompanionPairings.length > 5 ? (
-              <AnalysisStepCardListDrawer cardNames={doctorCompanionPairings} />
-            ) : (
-              <AnalysisStepCardList cardNames={doctorCompanionPairings} />
-            )}
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-          </>
-        ) : (<></>)
-      }
-      {backgroundPairings.length > 0
-        ? (
-          <>
-            <AnalysisStepSubHeader
-              count={backgroundPairings.length}
-              label={analysisMetadata.backgroundPairings.labelHeading}
-              description={analysisMetadata.backgroundPairings.labelDescription} />
-            {backgroundPairings.length > 5 ? (
-              <AnalysisStepCardListDrawer cardNames={backgroundPairings} />
-            ) : (
-              <AnalysisStepCardList cardNames={backgroundPairings} />
-            )}
-            <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-          </>
-        ) : (<></>)
-      }
-      {customRules.length && hasAnalysisLoaded ? (
-        <>
-          <h3>Custom Rules Analysis</h3>
-          {customRules.includes('monoLCPartner') ? (
-            <>
-              {monoLCPartner.length ? (
-                <>
-                  <AnalysisStepSubHeader
-                    count={monoLCPartner.length}
-                    label={customAnalysisMetadata.monoLCPartner.labelHeading}
-                    description={customAnalysisMetadata.monoLCPartner.labelDescription} />
-                  <AnalysisStepCardListDrawer cardNames={monoLCPartner} />
-                  <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-                </>
-              ) : <></>
-              }
-            </>
-          ) : (
-            <></>
-          )
-          }
-          {customRules.includes('allLCPartner') ? (
-            <>
-              {allLCPartner.length ? (
-                <>
-                  <AnalysisStepSubHeader
-                    count={allLCPartner.length}
-                    label={customAnalysisMetadata.allLCPartner.labelHeading}
-                    description={customAnalysisMetadata.allLCPartner.labelDescription} />
-                  <AnalysisStepCardListDrawer cardNames={allLCPartner} />
-                  <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
-                </>
-              ) : <></>
-              }
-            </>
-          ) : (
-            <></>
-          )
-          }
-        </>
-      ) : (
-        <></>
-      )
+        ) : (
+          <></>
+        )
       }
       {
         hasAnalysisLoaded

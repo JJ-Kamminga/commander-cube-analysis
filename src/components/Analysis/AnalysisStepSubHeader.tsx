@@ -1,13 +1,13 @@
 import { Grid2 } from "@mui/material";
 
 type AnalysisStepSubHeaderProps = {
-  count: number,
+  totalCount: number,
   label: string,
   description: string,
 };
 
-export const AnalysisStepSubHeader: React.FC<AnalysisStepSubHeaderProps> = ({ count, label, description }) => {
-  const countLabel = count < 10 ? `00${count}` : count < 100 ? `0${count}` : count;
+export const AnalysisStepSubHeader: React.FC<AnalysisStepSubHeaderProps> = ({ totalCount, label, description }) => {
+  const countLabel = totalCount < 10 ? `00${totalCount}` : totalCount < 100 ? `0${totalCount}` : totalCount;
 
   return (
     <>
@@ -25,7 +25,7 @@ export const AnalysisStepSubHeader: React.FC<AnalysisStepSubHeaderProps> = ({ co
         </Grid2>
         <Grid2 size={{ xs: 8, sm: 11 }}>
           <h4 style={{ alignContent: 'center' }}>
-            {<span style={{ visibility: 'hidden' }}>{count}</span>}
+            {<span style={{ visibility: 'hidden' }}>{totalCount}</span>}
             {label}
           </h4>
         </Grid2>
