@@ -101,6 +101,14 @@ export const searchBackgroundPairings = (cards: Card[]) => {
     ));
 }
 
+export const getPercentageOfCube = (subsetLength: number, totalCubeCount: number) => {
+  return subsetLength / totalCubeCount * 100;
+};
+
+export const getNumberOfCardsOfTypeInDraftPool = (percentageOfCube: number, draftPoolSize: number) => {
+  return Math.ceil(draftPoolSize * percentageOfCube / 100);
+}
+
 export const analysisMetadata: Analysis = {
   legendaryCreatures: {
     id: 'legendaryCreatures',
