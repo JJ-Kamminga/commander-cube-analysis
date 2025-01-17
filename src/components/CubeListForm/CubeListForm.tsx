@@ -18,7 +18,10 @@ export const CubeListForm: React.FC = () => {
   /** UI State */
   const [activeStep, setActiveStep] = useState<number>(0);
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [checked, setChecked] = useState(false);
+  const [checkboxesChecked, setcheckboxesChecked] = useState({
+    monoLCPartner: false,
+    allLCPartner: false,
+  });
   /** Data State */
   const [cubeList, setCubeList] = useState<string[]>([]);
   const [cubeCobraID, setCubeCobraID] = useState<string>('');
@@ -86,12 +89,24 @@ export const CubeListForm: React.FC = () => {
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      setCustomRules(['allMonoCPartner'])
-    } else {
-      setCustomRules([])
-    }
-    setChecked(event.target.checked);
-  };
+      setCustomRules(customRules => [...new Set([...customRules, event.target.name])])
+    };
+    if (!event.target.checked) {
+      setCustomRules(customRules => customRules.filter(rule => rule !== event.target.name))
+    };
+    if (event.target.name === 'monoLCPartner') {
+      setcheckboxesChecked({
+        ...checkboxesChecked,
+        monoLCPartner: event.target.checked
+      })
+    };
+    if (event.target.name === 'allLCPartner') {
+      setcheckboxesChecked({
+        ...checkboxesChecked,
+        allLCPartner: event.target.checked
+      })
+    };
+  }
 
   const handleSnackbarClose = (
     event: React.SyntheticEvent | Event,
@@ -279,10 +294,17 @@ export const CubeListForm: React.FC = () => {
             <p>
               <FormGroup>
                 <FormControlLabel control={<Checkbox
-                  checked={checked}
+                  checked={checkboxesChecked.monoLCPartner}
+                  name="monoLCPartner"
                   onChange={handleCheckboxChange}
                   inputProps={{ 'aria-label': 'controlled' }}
                 />} label="All monocoloured legendary creatures have Partner" />
+                <FormControlLabel control={<Checkbox
+                  checked={checkboxesChecked.allLCPartner}
+                  name="allLCPartner"
+                  onChange={handleCheckboxChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />} label="All legendary creatures have Partner" />
               </FormGroup>
             </p>
             <Button variant='outlined' onClick={handleStepBack}>Back</Button>

@@ -147,10 +147,16 @@ export const analysisMetadata: Analysis = {
 };
 
 export const customAnalysisMetadata: CustomAnalysis = {
-  monocolouredLegendariesHavePartner: {
-    id: 'monocolouredLegendariesHavePartner',
+  monoLCPartner: {
+    id: 'monoLCPartner',
     type: 'pair',
-    labelHeading: 'Partner pairings if all monocoloured legendaries had partner',
+    labelHeading: 'Partner pairings if all monocoloured legendary creatures had partner',
     labelDescription: 'Unique pairings between all partners, monocoloured legendaries combined.',
   },
+  allLCPartner: {
+    id: 'allLCPartner',
+    type: 'pair',
+    labelHeading: 'Partner pairings if all legendary creatures had partner',
+    labelDescription: 'Unique pairings between all partners, legendary creatures combined.',
+  }
 }

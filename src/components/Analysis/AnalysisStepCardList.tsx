@@ -12,12 +12,12 @@ export const AnalysisStepCardList: React.FC<AnalysisStepCardListProps> = ({ card
   return (
     <>
       {Array.isArray(cardNames[0]) ? (
-        <>
+        <ol>
           {cardNames.map((pairArray) => (
             /** @ts-expect-error: we control the value and know it is not a string */
             <li key={[...pairArray]}>{pairArray.map((card: MagicCard) => card).join(' + ')}</li>
           ))}
-        </>
+        </ol>
       ) : (
         <ol>{cardNames.map(cardName => <li key={cardName + getRandomId()}>{cardName} </li>)}</ol>
       )

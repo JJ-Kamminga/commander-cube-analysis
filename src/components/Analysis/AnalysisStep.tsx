@@ -6,7 +6,7 @@ import { useState } from "react";
 import { analysisMetadata, customAnalysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
 import { AnalysisStepSubHeader } from "./AnalysisStepSubHeader";
-import { searchCustomPartnerRule } from "@/utils/customAnalysis";
+import { searchAllPartnerRule, searchCustomPartnerRule } from "@/utils/customAnalysis";
 
 type AnalysisStepProps = {
   cardData: MagicCard[],
@@ -33,7 +33,9 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
 
   const [partnerCreatures, setPartnerCreatures] = useState<string[]>([]);
 
-  const [monocolouredLegendariesPartner, setMonocolouredLegendariesPartner] = useState<string[][]>([]);
+  const [monoLCPartner, setmonoLCPartner] = useState<string[][]>([]);
+  const [allLCPartner, setallLCPartner] = useState<string[][]>([]);
+
   const handleFetchAllAnalysis = () => {
     /** Commanders */
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
@@ -51,8 +53,10 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     setDoctorCompanionPairings(doctorCompanionPairings);
     setBackgroundPairings(backgroundPairings);
     /** Custom commanders */
-    const monocolouredLegendariesPartner = searchCustomPartnerRule(cardData);
-    setMonocolouredLegendariesPartner(monocolouredLegendariesPartner);
+    const monoLCPartner = searchCustomPartnerRule(cardData, (card) => card.color_identity.length === 1);
+    const allLCPartner = searchAllPartnerRule(cardData);
+    setmonoLCPartner(monoLCPartner);
+    setallLCPartner(allLCPartner);
     /** Others */
     const partnerCreatures = searchPartners(cardData);
     setPartnerCreatures(partnerCreatures);
@@ -85,7 +89,8 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     setFriendsForeverPairings([]);
     setDoctorCompanionPairings([]);
     setBackgroundPairings([]);
-    setMonocolouredLegendariesPartner([]);
+    setmonoLCPartner([]);
+    setallLCPartner([]);
     setHasAnalysisLoaded(false);
   };
 
@@ -244,18 +249,44 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
           </>
         ) : (<></>)
       }
-      {customRules.includes('allMonoCPartner') ? (
+      {customRules.length && hasAnalysisLoaded ? (
         <>
           <h3>Custom Rules Analysis</h3>
-          {monocolouredLegendariesPartner.length ? (
+          {customRules.includes('monoLCPartner') ? (
             <>
-              <AnalysisStepSubHeader
-                count={monocolouredLegendariesPartner.length}
-                label={customAnalysisMetadata.monocolouredLegendariesHavePartner.labelHeading}
-                description={customAnalysisMetadata.monocolouredLegendariesHavePartner.labelDescription} />
-              <AnalysisStepCardListDrawer cardNames={monocolouredLegendariesPartner} />
+              {monoLCPartner.length ? (
+                <>
+                  <AnalysisStepSubHeader
+                    count={monoLCPartner.length}
+                    label={customAnalysisMetadata.monoLCPartner.labelHeading}
+                    description={customAnalysisMetadata.monoLCPartner.labelDescription} />
+                  <AnalysisStepCardListDrawer cardNames={monoLCPartner} />
+                  <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+                </>
+              ) : <></>
+              }
             </>
-          ) : <></>
+          ) : (
+            <></>
+          )
+          }
+          {customRules.includes('allLCPartner') ? (
+            <>
+              {allLCPartner.length ? (
+                <>
+                  <AnalysisStepSubHeader
+                    count={allLCPartner.length}
+                    label={customAnalysisMetadata.allLCPartner.labelHeading}
+                    description={customAnalysisMetadata.allLCPartner.labelDescription} />
+                  <AnalysisStepCardListDrawer cardNames={allLCPartner} />
+                  <Divider variant="middle" sx={{ margin: '1rem' }} aria-hidden="true" />
+                </>
+              ) : <></>
+              }
+            </>
+          ) : (
+            <></>
+          )
           }
         </>
       ) : (

@@ -161,7 +161,5 @@ export const probabilityBothInSubset = (n: number, k: number): number => {
   const logTotalWays = logBinomialCoefficient(n, k);
   const logFavorableWays = logBinomialCoefficient(n - 2, k - 2);
 
-  console.log(`n: ${n}, k: ${k}, logTotalWays: ${logTotalWays}, logFavorableWays: ${logFavorableWays}`);
-
   return Math.exp(logFavorableWays - logTotalWays);
 }

@@ -16,5 +16,6 @@ export type Analysis = {
 };
 
 export type CustomAnalysis = {
-  monocolouredLegendariesHavePartner: Commander;
+  monoLCPartner: Commander;
+  allLCPartner: Commander;
 }
