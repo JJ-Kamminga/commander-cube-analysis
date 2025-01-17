@@ -3,7 +3,7 @@ import { Button, Card, CardContent, Chip } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
 import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { useState } from "react";
-import { analysisMetadata, customAnalysisMetadata, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
+import { analysisMetadata, customAnalysisMetadata, getNumberOfCardsOfTypeInDraftPool, getPercentageOfCube, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
 import { searchAllPartnerRule, searchCustomPartnerRule } from "@/utils/customAnalysis";
 import { AnalysisCategory } from "./AnalysisCategory";
@@ -68,6 +68,9 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const draftPoolSize = playerCount * packsPerPlayer * cardsPerPack;
 
   const partnerCount = partnerCreatures.length;
+  const partnersPercentageOfCube = getPercentageOfCube(partnerCount, totalCubeCount);
+  const partnersInDraftPool = getNumberOfCardsOfTypeInDraftPool(partnersPercentageOfCube, draftPoolSize);
+
   const partnerWithProbability = (probabilityBothInSubset(totalCubeCount, draftPoolSize) * 100).toFixed(2);
   const partnerWithProbabilityLabel = `${partnerWithProbability}% probability of both partners of any given pair being in a ${draftPoolSize} draft pool.`;
 
@@ -132,7 +135,8 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
                 <AnalysisStepCardList cardNames={uniquePartnerPairings} />
               )}
               <p>
-                <AnalysisChip label={partnerCount + ' creatures with the Partner keyword'} />
+                <AnalysisChip label={partnerCount + ' creatures with Partner in Cube'} />
+                <AnalysisChip label={partnersInDraftPool + ' creatures with Partner in draft pool of ' + draftPoolSize} />
               </p>
             </AnalysisCategory>
           ) : (<></>)
