@@ -1,4 +1,4 @@
-export type Commander = {
+export type CommanderMetadata = {
   id: string,
   type: 'card' | 'pair';
   labelHeading: string,
@@ -6,16 +6,16 @@ export type Commander = {
 }
 
 export type Analysis = {
-  legendaryCreatures: Commander,
-  planeswalkerCommanders: Commander,
-  partners: Commander,
-  partnerWiths: Commander,
-  friendsForever: Commander,
-  doctorPartners: Commander,
-  backgroundPairings: Commander,
+  legendaryCreatures: CommanderMetadata,
+  planeswalkerCommanders: CommanderMetadata,
+  partners: CommanderMetadata,
+  partnerWiths: CommanderMetadata,
+  friendsForever: CommanderMetadata,
+  doctorPartners: CommanderMetadata,
+  backgroundPairings: CommanderMetadata,
 };
 
 export type CustomAnalysis = {
-  monoLCPartner: Commander;
-  allLCPartner: Commander;
+  monoLCPartner: CommanderMetadata;
+  allLCPartner: CommanderMetadata;
 }
