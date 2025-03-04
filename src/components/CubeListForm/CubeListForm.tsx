@@ -210,6 +210,12 @@ export const CubeListForm: React.FC = () => {
     localStorage.setItem('cube-cobra-id', JSON.stringify(newID));
   };
 
+  const draftConfig = {
+    playerCount: playerCount,
+    packsPerPlayer: packsPerPlayer,
+    cardsPerPack: cardsPerPack,
+  }
+
   return (
     <>
       <h2>Commander analysis</h2>
@@ -317,9 +323,7 @@ export const CubeListForm: React.FC = () => {
             <AnalysisStep
               cardData={cardData}
               cubeCobraID={cubeCobraID}
-              playerCount={playerCount}
-              packsPerPlayer={packsPerPlayer}
-              cardsPerPack={cardsPerPack}
+              draftConfig={draftConfig}
               customRules={customRules}
             />
 

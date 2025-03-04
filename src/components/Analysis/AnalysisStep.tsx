@@ -8,18 +8,25 @@ import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStep
 import { searchAllPartnerRule, searchCustomPartnerRule } from "@/utils/customAnalysis";
 import { AnalysisCategory } from "./AnalysisCategory";
 import { AnalysisChip } from "./AnalysisChip";
+import { PlaneswalkerCommanderAnalysis } from "./Planeswalkers";
+
+export type DraftConfig = {
+  playerCount: number,
+  packsPerPlayer: number,
+  cardsPerPack: number,
+}
 
 type AnalysisStepProps = {
   cardData: MagicCard[],
   cubeCobraID: string,
-  playerCount: number,
-  packsPerPlayer: number,
-  cardsPerPack: number,
+  draftConfig: DraftConfig,
   customRules: string[];
 };
 
 export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
-  const { cardData, cubeCobraID, playerCount, packsPerPlayer, cardsPerPack, customRules } = props;
+  const { cardData, cubeCobraID, draftConfig, customRules } = props;
+  const { playerCount, packsPerPlayer, cardsPerPack } = draftConfig;
+
   const totalCubeCount = cardData.length;
 
   /** State */
@@ -41,6 +48,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     /** Commanders */
     const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
+
     const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
     const partnerWithPairings = searchPartnerWithPairings(cardData);
     const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
@@ -70,6 +78,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const partnerCount = partnerCreatures.length;
   const partnersPercentageOfCube = getPercentageOfCube(partnerCount, totalCubeCount);
   const partnersInDraftPool = getNumberOfCardsOfTypeInDraftPool(partnersPercentageOfCube, draftPoolSize);
+  const partnersPerPlayer = partnersInDraftPool / playerCount;
 
   const partnerWithProbability = (probabilityBothInSubset(totalCubeCount, draftPoolSize) * 100).toFixed(2);
   const partnerWithProbabilityLabel = `${partnerWithProbability}% probability of both partners of any given pair being in a ${draftPoolSize} draft pool.`;
@@ -107,28 +116,17 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
       <h3>Your cube {cubeCobraID} contains:</h3>
       {legendaries.length > 0
         ? (
-          <AnalysisCategory categoryType="card" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={legendaries} commander={analysisMetadata.legendaryCreatures} >
+          <AnalysisCategory categoryType="card" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={legendaries} commander={analysisMetadata.legendaryCreatures} >
             <p><AnalysisChip label={'Includes ' + partnerCount + ' creatures with the Partner keyword'} /></p>
             <AnalysisStepCardListDrawer cardNames={legendaries} />
           </AnalysisCategory>
         ) : (<></>)
       }
-      {
-        planeswalkers.length > 0
-          ? (
-            <AnalysisCategory categoryType="card" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={planeswalkers} commander={analysisMetadata.planeswalkerCommanders}>
-              {planeswalkers.length > 5 ? (
-                <AnalysisStepCardListDrawer cardNames={planeswalkers} />
-              ) : (
-                <AnalysisStepCardList cardNames={planeswalkers} />
-              )}
-            </AnalysisCategory>
-          ) : (<></>)
-      }
+      {planeswalkers.length > 0 && <PlaneswalkerCommanderAnalysis totalCubeSize={totalCubeCount} draftConfig={draftConfig} cardNames={planeswalkers} />}
       {
         uniquePartnerPairings.length > 0
           ? (
-            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={uniquePartnerPairings} commander={analysisMetadata.partners}>
+            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={uniquePartnerPairings} commander={analysisMetadata.partners}>
               {uniquePartnerPairings.length > 5 ? (
                 <AnalysisStepCardListDrawer cardNames={uniquePartnerPairings} />
               ) : (
@@ -136,7 +134,8 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
               )}
               <p>
                 <AnalysisChip label={partnerCount + ' creatures with Partner in Cube'} />
-                <AnalysisChip label={partnersInDraftPool + ' creatures with Partner in draft pool of ' + draftPoolSize} />
+                <AnalysisChip color={'secondary'} label={`${partnersInDraftPool} creatures in a draft pool of ${draftPoolSize}`} />
+                <AnalysisChip color={'secondary'} label={`${partnersPerPlayer} per player`} />
               </p>
             </AnalysisCategory>
           ) : (<></>)
@@ -144,7 +143,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
       {
         partnerWithPairings.length > 0
           ? (
-            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={partnerWithPairings} commander={analysisMetadata.partnerWiths}>
+            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={partnerWithPairings} commander={analysisMetadata.partnerWiths}>
               {partnerWithPairings.length > 5 ? (
                 <AnalysisStepCardListDrawer cardNames={partnerWithPairings} />
               ) : (
@@ -159,7 +158,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
       {
         friendsForeverPairings.length > 0
           ? (
-            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={friendsForeverPairings} commander={analysisMetadata.friendsForever}>
+            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={friendsForeverPairings} commander={analysisMetadata.friendsForever}>
               {friendsForeverPairings.length > 5 ? (
                 <AnalysisStepCardListDrawer cardNames={friendsForeverPairings} />
               ) : (
@@ -171,7 +170,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
       {
         doctorCompanionPairings.length > 0
           ? (
-            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={doctorCompanionPairings} commander={analysisMetadata.doctorPartners}>
+            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={doctorCompanionPairings} commander={analysisMetadata.doctorPartners}>
               {doctorCompanionPairings.length > 5 ? (
                 <AnalysisStepCardListDrawer cardNames={doctorCompanionPairings} />
               ) : (
@@ -183,7 +182,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
       {
         backgroundPairings.length > 0
           ? (
-            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={backgroundPairings} commander={analysisMetadata.backgroundPairings}>
+            <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={backgroundPairings} commander={analysisMetadata.backgroundPairings}>
               {backgroundPairings.length > 5 ? (
                 <AnalysisStepCardListDrawer cardNames={backgroundPairings} />
               ) : (
@@ -199,7 +198,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
             {customRules.includes('monoLCPartner') ? (
               <>
                 {monoLCPartner.length ? (
-                  <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={monoLCPartner} commander={customAnalysisMetadata.monoLCPartner}>
+                  <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={monoLCPartner} commander={customAnalysisMetadata.monoLCPartner}>
                     <AnalysisStepCardListDrawer cardNames={monoLCPartner} />
                   </AnalysisCategory>
                 ) : <></>
@@ -212,7 +211,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
             {customRules.includes('allLCPartner') ? (
               <>
                 {allLCPartner.length ? (
-                  <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftPoolSize={draftPoolSize} cardNames={allLCPartner} commander={customAnalysisMetadata.allLCPartner}>
+                  <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={allLCPartner} commander={customAnalysisMetadata.allLCPartner}>
                     <AnalysisStepCardListDrawer cardNames={allLCPartner} />
                   </AnalysisCategory>
                 ) : <></>
