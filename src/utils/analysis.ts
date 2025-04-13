@@ -8,6 +8,12 @@ export const searchByTypeLine = (cards: Card[], query: string) => {
     .map((card) => card.name);
 };
 
+export const searchColorIdentitiesByTypeLine = (cards: Card[], query: string) => {
+  return cards
+    .filter((card) => card.type_line.includes(query))
+    .map((card) => card.color_identity.join(""));
+};
+
 export const searchPartners = (cards: Card[]) => {
   return cards
     .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))

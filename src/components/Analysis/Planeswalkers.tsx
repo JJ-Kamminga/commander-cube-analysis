@@ -1,7 +1,7 @@
 import { analysisMetadata } from "@/utils/analysis";
 import { AnalysisCategory } from "./AnalysisCategory"
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
-import { DraftConfig } from "./AnalysisStep";
+import { DraftConfig } from "./TypeAnalysisStep";
 
 type PlaneswalkerCommanderAnalysisProps = {
   totalCubeSize: number;

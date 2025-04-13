@@ -9,10 +9,11 @@ import StepLabel from '@mui/material/StepLabel';
 import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
-import { AnalysisStep } from '../Analysis/AnalysisStep';
+import { AnalysisStep } from '../Analysis/TypeAnalysisStep';
 import { DraftConfigControlPanel } from '../DraftConfigControlPanel/DraftConfigControlPanel';
 import { FetchCardDataStep } from '../FetchCardDataStep/FetchCardDataStep';
 import { Close } from '@mui/icons-material';
+import { ColourAnalysisStep } from '../Analysis/ColourAnalysisStep';
 
 export const CubeListForm: React.FC = () => {
   /** UI State */
@@ -326,9 +327,31 @@ export const CubeListForm: React.FC = () => {
               draftConfig={draftConfig}
               customRules={customRules}
             />
-
             <p>
               <Button variant='outlined' onClick={handleStepBack}>Back</Button>
+              <Button
+                variant='outlined'
+                disabled={!cardData.length}
+                onClick={handleStepNext}
+              >
+                Continue
+              </Button>
+            </p>
+          </StepContent>
+        </Step>
+        <Step key='colour-analysis'>
+          <StepLabel>{stepsConfig[4].label}</StepLabel>
+          <StepContent>
+            <ColourAnalysisStep
+              cardData={cardData}
+              cubeCobraID={cubeCobraID}
+              draftConfig={draftConfig}
+              customRules={customRules}
+            >
+            </ColourAnalysisStep>
+            <p>
+              <Button variant='outlined' onClick={handleStepBack}>Back</Button>
+
             </p>
           </StepContent>
         </Step>
