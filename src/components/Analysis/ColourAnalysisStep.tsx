@@ -1,6 +1,12 @@
-import { searchColorIdentitiesByTypeLine } from "@/utils/analysis";
+import { compareColourIdentities, searchColorIdentitiesByTypeLine } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
 import { BarChart } from "@mui/x-charts";
+
+/** color sorting */
+
+// Define WUBRG order
+
+/** end color sorting */
 
 export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   /** todo: check whether all are needed */
@@ -8,6 +14,8 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
   const { playerCount, packsPerPlayer, cardsPerPack } = draftConfig;
 
   const legendaries = searchColorIdentitiesByTypeLine(cardData, 'Legendary Creature');
+  console.log(legendaries)
+  const sortedLegendaries = legendaries.map(legendaryCI => legendaryCI.join("")).sort(compareColourIdentities)//.map(legendaryCI => legendaryCI.split(''))
 
   function countExactStrings(arr: string[]): Record<string, number> {
     const result: Record<string, number> = {};
@@ -17,11 +25,10 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
     return result;
   }
 
-  const data = countExactStrings(legendaries);
+
+  const data = countExactStrings(sortedLegendaries);
   const xAxisData = Object.keys(data);
   const series = [{ data: Object.values(data).concat() }]
-  console.log(xAxisData)
-  console.log(series);
 
   return (
     <>
