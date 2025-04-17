@@ -1,4 +1,4 @@
-import { compareColourIdentities, searchColorIdentitiesByTypeLine } from "@/utils/analysis";
+import { analyseColourIdentities, searchColorIdentitiesByTypeLine, sortColourIdentities } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
 import { BarChart } from "@mui/x-charts";
 
@@ -28,15 +28,14 @@ const ciNicknameDictionary: { [key: string]: string } = {
   "WRG": "Naya",
   "UBG": "Sultai",
   "URG": "Temur",
-  "WBRG": "Dune",
-  "UBRG": "Glint",
-  "WURG": "Ink",
-  "WUBG": "Witch",
-  "WUBR": "Yore",
+  "WBRG": "4C Blueless",
+  "UBRG": "4C Whiteless",
+  "WURG": "4C Blackless",
+  "WUBG": "4C Redless",
+  "WUBR": "4C Greenless",
   "WUBRG": "WUBRG",
   "C": "Colourless"
 };
-
 
 export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   /** todo: check whether all are needed */
@@ -44,16 +43,10 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
   const { playerCount, packsPerPlayer, cardsPerPack } = draftConfig;
 
   const legendaryColourIdentities = searchColorIdentitiesByTypeLine(cardData, 'Legendary Creature');
-  const sortedLegendaryColourIdentities = legendaryColourIdentities.map(legendaryCI => legendaryCI.join("")).sort(compareColourIdentities);
-  const analyseLegendaryColourIdentities = (colourIdentities: string[]) => {
-    const resultObj: Record<string, number> = {};
-    for (const ci of colourIdentities) {
-      resultObj[ci] = (resultObj[ci] || 0) + 1;
-    }
-    return resultObj;
-  };
+  const sortedLegendaryColourIdentities = sortColourIdentities(legendaryColourIdentities);;
 
-  const data = analyseLegendaryColourIdentities(sortedLegendaryColourIdentities);
+  /** Chart data */
+  const data = analyseColourIdentities(sortedLegendaryColourIdentities);
   const xAxisData = Object.keys(data).map((key => {
     return key
   }));

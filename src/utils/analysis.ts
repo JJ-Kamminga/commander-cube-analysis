@@ -8,7 +8,7 @@ export const searchByTypeLine = (cards: Card[], query: string) => {
     .map((card) => card.name);
 };
 
-export const compareColourIdentities = (a: string, b: string) => {
+const compareColourIdentities = (a: string, b: string) => {
   const colourOrderStrings = [
     'W', 'U', 'B', 'R', 'G',
     'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
@@ -18,11 +18,24 @@ export const compareColourIdentities = (a: string, b: string) => {
     'C',
   ];
 
-
   const orderOfA = colourOrderStrings.indexOf(a);
   const orderOfB = colourOrderStrings.indexOf(b);
   return orderOfA - orderOfB
 }
+
+export const sortColourIdentities = (cis: string[][]) => {
+  /** Possible improvement: make comparefn a param */
+  return cis.map(ci => ci.join("")).sort(compareColourIdentities)
+};
+
+export const analyseColourIdentities = (colourIdentities: string[]) => {
+  const resultObj: Record<string, number> = {};
+  for (const ci of colourIdentities) {
+    resultObj[ci] = (resultObj[ci] || 0) + 1;
+  }
+  return resultObj;
+};
+
 
 export const searchColorIdentitiesByTypeLine = (cards: Card[], query: string) => {
   return cards
