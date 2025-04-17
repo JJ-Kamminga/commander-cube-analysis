@@ -1,4 +1,4 @@
-import { analyseColourIdentities, searchColorIdentitiesByTypeLine, sortColourIdentities } from "@/utils/analysis";
+import { analyseColourIdentities, compareColourIdentities, searchByTypeLine, searchColorIdentitiesByTypeLine, sortColourIdentities } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
 import { BarChart } from "@mui/x-charts";
 
@@ -42,10 +42,16 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
   const { cardData, cubeCobraID, draftConfig, customRules } = props;
   const { playerCount, packsPerPlayer, cardsPerPack } = draftConfig;
 
-  const legendaryColourIdentities = searchColorIdentitiesByTypeLine(cardData, 'Legendary Creature');
-  const sortedLegendaryColourIdentities = sortColourIdentities(legendaryColourIdentities);;
+  const legendaryColourIdentities = searchByTypeLine(
+    cardData,
+    'Legendary Creature',
+    /** this sorts individual CI identifiers */
+    (card) => card.color_identity.sort(compareColourIdentities)
+  );
+  /** this sorts the list of CI identifiers */
+  const sortedLegendaryColourIdentities = sortColourIdentities(legendaryColourIdentities as string[][]);
 
-  /** Chart data */
+  /** Convert it to chart data */
   const data = analyseColourIdentities(sortedLegendaryColourIdentities);
   const xAxisData = Object.keys(data).map((key => {
     return key

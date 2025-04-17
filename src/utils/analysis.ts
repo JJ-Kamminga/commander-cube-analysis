@@ -2,13 +2,20 @@ import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis, CustomAnalysis } from "./types";
 import { getUniquePairs, getPairs } from "./helpers";
 
-export const searchByTypeLine = (cards: Card[], query: string) => {
+export const searchByTypeLine = (
+  cards: Card[],
+  query: string,
+  mapFn?: (card: Card) => string | string[]
+) => {
+  const filterByName = (card: Card) => card.name;
+  const map = mapFn || filterByName;
+
   return cards
     .filter((card) => card.type_line.includes(query))
-    .map((card) => card.name);
+    .map(map);
 };
 
-const compareColourIdentities = (a: string, b: string) => {
+export const compareColourIdentities = (a: string, b: string) => {
   const colourOrderStrings = [
     'W', 'U', 'B', 'R', 'G',
     'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
@@ -21,7 +28,7 @@ const compareColourIdentities = (a: string, b: string) => {
   const orderOfA = colourOrderStrings.indexOf(a);
   const orderOfB = colourOrderStrings.indexOf(b);
   return orderOfA - orderOfB
-}
+};
 
 export const sortColourIdentities = (cis: string[][]) => {
   /** Possible improvement: make comparefn a param */
@@ -34,13 +41,6 @@ export const analyseColourIdentities = (colourIdentities: string[]) => {
     resultObj[ci] = (resultObj[ci] || 0) + 1;
   }
   return resultObj;
-};
-
-
-export const searchColorIdentitiesByTypeLine = (cards: Card[], query: string) => {
-  return cards
-    .filter((card) => card.type_line.includes(query))
-    .map((card) => card.color_identity.sort(compareColourIdentities));
 };
 
 export const searchPartners = (cards: Card[]) => {
