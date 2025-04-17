@@ -4,7 +4,7 @@ import { CommanderMetadata } from "@/utils/types";
 import { Avatar, Divider, useMediaQuery } from "@mui/material";
 import { ReactNode } from "react";
 import { AnalysisChip } from "./AnalysisChip";
-import { DraftConfig } from "./AnalysisStep";
+import { DraftConfig } from "./types";
 
 type AnalysisCategoryProps = {
   cardNames: string[] | string[][];

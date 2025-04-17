@@ -8,6 +8,28 @@ export const searchByTypeLine = (cards: Card[], query: string) => {
     .map((card) => card.name);
 };
 
+export const compareColourIdentities = (a: string, b: string) => {
+  const colourOrderStrings = [
+    'W', 'U', 'B', 'R', 'G',
+    'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
+    'WUB', 'UBR', 'BRG', 'WRG', 'WUG', 'WBG', 'WUR', 'UBG', 'WBR', 'URG',
+    'WUBR', 'UBRG', 'WBRG', 'WURG', 'WUBG',
+    'WUBRG',
+    'C',
+  ];
+
+
+  const orderOfA = colourOrderStrings.indexOf(a);
+  const orderOfB = colourOrderStrings.indexOf(b);
+  return orderOfA - orderOfB
+}
+
+export const searchColorIdentitiesByTypeLine = (cards: Card[], query: string) => {
+  return cards
+    .filter((card) => card.type_line.includes(query))
+    .map((card) => card.color_identity.sort(compareColourIdentities));
+};
+
 export const searchPartners = (cards: Card[]) => {
   return cards
     .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))

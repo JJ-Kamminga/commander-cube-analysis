@@ -1,7 +1,6 @@
 import { Info } from "@mui/icons-material";
 import { Button, Card, CardContent, Chip } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
-import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { useState } from "react";
 import { analysisMetadata, customAnalysisMetadata, getNumberOfCardsOfTypeInDraftPool, getPercentageOfCube, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
@@ -10,19 +9,7 @@ import { AnalysisCategory } from "./AnalysisCategory";
 import { AnalysisChip } from "./AnalysisChip";
 import { PlaneswalkerCommanderAnalysis } from "./Planeswalkers";
 import { getArtCropUrl } from "@/utils/getArtCropUrl";
-
-export type DraftConfig = {
-  playerCount: number,
-  packsPerPlayer: number,
-  cardsPerPack: number,
-}
-
-type AnalysisStepProps = {
-  cardData: MagicCard[],
-  cubeCobraID: string,
-  draftConfig: DraftConfig,
-  customRules: string[];
-};
+import { AnalysisStepProps } from "./types";
 
 export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const { cardData, cubeCobraID, draftConfig, customRules } = props;
@@ -107,8 +94,8 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
 
   return (
     <>
-      <div id="analysis-heading">
-        <h3>Analysis</h3>
+      <div id="type-analysis-heading">
+        <h3>Type Analysis</h3>
         <p>
           <Info />Analysis is done based on a draft configuration of
           <Chip color='info' label={playerCount} sx={{ margin: '5px' }
