@@ -1,6 +1,7 @@
-import { analyseColourIdentities, compareColourIdentities, searchByTypeLine, searchColorIdentitiesByTypeLine, sortColourIdentities } from "@/utils/analysis";
+import { analyseColourIdentities, compareColourIdentities, searchByTypeLine, searchColorIdentitiesByTypeLine, searchPartners, searchPlaneswalkerCommanders, sortColourIdentities } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
 import { BarChart, BarItem } from "@mui/x-charts";
+import { Card } from "@/utils/mtg-scripting-toolkit/scryfall";
 
 const ciNicknameDictionary: { [key: string]: string } = {
   "W": "White",
@@ -37,33 +38,54 @@ const ciNicknameDictionary: { [key: string]: string } = {
   "C": "Colourless"
 };
 
+/** this sorts individual CI identifiers */
+const filterByColourIndentity = (card: Card) => card.color_identity.sort(compareColourIdentities)
+
 export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   /** todo: check whether all are needed */
   const { cardData, cubeCobraID, draftConfig, customRules } = props;
   const { playerCount, packsPerPlayer, cardsPerPack } = draftConfig;
 
+  /** Legendary creatures */
   const legendaryColourIdentities = searchByTypeLine(
     cardData,
     'Legendary Creature',
-    /** this sorts individual CI identifiers */
-    (card) => card.color_identity.sort(compareColourIdentities)
+    filterByColourIndentity
   );
-  /** this sorts the list of CI identifiers */
   const sortedLegendaryColourIdentities = sortColourIdentities(legendaryColourIdentities as string[][]);
+  const chartdataLegendaries = analyseColourIdentities(sortedLegendaryColourIdentities);
+  const xAxisDataLegendaries = Object.keys(chartdataLegendaries).map((key => `${key}`));
 
-  /** Convert it to chart data */
-  const data = analyseColourIdentities(sortedLegendaryColourIdentities);
-  const xAxisData = Object.keys(data).map((key => `${key}`));
+  /** Partners */
+  // const partnerColourIdentities = searchPartners(
+  //   cardData,
+  //   filterByColourIdentity
+  // )
+
+  /** Planeswalker commanders */
+  const pWCommanderColourIdentities = searchPlaneswalkerCommanders(
+    cardData,
+    filterByColourIndentity
+  );
+  const sortedPWCommanderColourIndentities = sortColourIdentities(pWCommanderColourIdentities as string[][])
+  const chartdataPWCommanders = analyseColourIdentities(sortedPWCommanderColourIndentities);
+  const xAxisDataPlaneswalkerCommanders = Object.keys(chartdataPWCommanders).map((key => key));
+
+  const generateBarLabel = (item: BarItem) => {
+    const ci = Object.keys(chartdataLegendaries)[item.dataIndex]?.toString();
+    return `${ciNicknameDictionary[ci]}`;
+  }
+
   const series = [
     {
       label: 'Legendary creatures',
-      data: Object.values(data).concat(),
-    }
+      data: Object.values(chartdataLegendaries).concat(),
+    },
+    {
+      label: 'PW',
+      data: Object.values(chartdataPWCommanders).concat(),
+    },
   ];
-  const generateBarLabel = (item: BarItem) => {
-    const ci = Object.keys(data)[item.dataIndex]?.toString();
-    return `${ciNicknameDictionary[ci]}`;
-  }
 
   return (
     <>
@@ -78,7 +100,10 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
         </p>
         <p>
           <BarChart
-            xAxis={[{ scaleType: 'band', data: xAxisData }]}
+            xAxis={[
+              { scaleType: 'band', data: xAxisDataLegendaries },
+              // { scaleType: 'band', data: xAxisDataPlaneswalkerCommanders }
+            ]}
             series={series}
             width={1000}
             height={800}

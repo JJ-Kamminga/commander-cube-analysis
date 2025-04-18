@@ -2,18 +2,16 @@ import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis, CustomAnalysis } from "./types";
 import { getUniquePairs, getPairs } from "./helpers";
 
+const filterByName = (card: Card) => card.name;
+
 export const searchByTypeLine = (
   cards: Card[],
   query: string,
-  mapFn?: (card: Card) => string | string[]
-) => {
-  const filterByName = (card: Card) => card.name;
-  const map = mapFn || filterByName;
-
-  return cards
-    .filter((card) => card.type_line.includes(query))
-    .map(map);
-};
+  mapFn: (card: Card) => string | string[] = filterByName
+) => cards
+  .filter((card) => card.type_line.includes(query))
+  .map(mapFn);
+;
 
 export const compareColourIdentities = (a: string, b: string) => {
   const colourOrderStrings = [
@@ -43,20 +41,24 @@ export const analyseColourIdentities = (colourIdentities: string[]) => {
   return resultObj;
 };
 
-export const searchPartners = (cards: Card[]) => {
-  return cards
-    .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))
-    .filter((card) => card.keywords.every((keyword) => keyword !== 'Partner with'))
-    .map((card) => card.name);
-};
+export const searchPartners = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => cards
+  .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))
+  .filter((card) => card.keywords.every((keyword) => keyword !== 'Partner with'))
+  .map(mapFn);
+;
 
-export const searchPlaneswalkerCommanders = (cards: Card[]) => {
-  return cards
-    .filter(
-      (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
-    )
-    .map((card) => card.name);
-};
+export const searchPlaneswalkerCommanders = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => cards
+  .filter(
+    (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
+  )
+  .map(mapFn);
+;
 
 export const searchUniquePartnerPairings = (cards: Card[]) => {
   const partners = cards.filter((card) =>
