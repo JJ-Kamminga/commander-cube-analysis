@@ -1,6 +1,6 @@
 import { analyseColourIdentities, compareColourIdentities, searchByTypeLine, searchColorIdentitiesByTypeLine, sortColourIdentities } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
-import { BarChart } from "@mui/x-charts";
+import { BarChart, BarItem } from "@mui/x-charts";
 
 const ciNicknameDictionary: { [key: string]: string } = {
   "W": "White",
@@ -53,15 +53,17 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
 
   /** Convert it to chart data */
   const data = analyseColourIdentities(sortedLegendaryColourIdentities);
-  const xAxisData = Object.keys(data).map((key => {
-    return key
-  }));
+  const xAxisData = Object.keys(data).map((key => `${key}`));
   const series = [
     {
       label: 'Legendary creatures',
       data: Object.values(data).concat(),
     }
-  ]
+  ];
+  const generateBarLabel = (item: BarItem) => {
+    const ci = Object.keys(data)[item.dataIndex]?.toString();
+    return `${ciNicknameDictionary[ci]}`;
+  }
 
   return (
     <>
@@ -76,15 +78,11 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
         </p>
         <p>
           <BarChart
-            yAxis={[{ scaleType: 'band', data: xAxisData }]}
+            xAxis={[{ scaleType: 'band', data: xAxisData }]}
             series={series}
             width={1000}
             height={800}
-            barLabel={(item) => {
-              const ci = Object.keys(data)[item.dataIndex]?.toString();
-              return `${item.value} ${ci} (${ciNicknameDictionary[ci]})`;
-            }}
-            layout="horizontal"
+            barLabel={generateBarLabel}
           />
         </p>
         {/* <p>
