@@ -1,6 +1,6 @@
 import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis, CustomAnalysis } from "./types";
-import { getUniquePairs, getPairs } from "./helpers";
+import { getUniquePairs, getPairs, colourOrderStrings } from "./helpers";
 
 const filterByName = (card: Card) => card.name;
 
@@ -12,15 +12,6 @@ export const searchByTypeLine = (
   .filter((card) => card.type_line.includes(query))
   .map(mapFn);
 ;
-
-export const colourOrderStrings = [
-  'W', 'U', 'B', 'R', 'G',
-  'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
-  'WUB', 'UBR', 'BRG', 'WRG', 'WUG', 'WBG', 'WUR', 'UBG', 'WBR', 'URG',
-  'WUBR', 'UBRG', 'WBRG', 'WURG', 'WUBG',
-  'WUBRG',
-  'C',
-];
 
 export const compareColourIdentities = (a: string, b: string) => {
   const orderOfA = colourOrderStrings.indexOf(a);

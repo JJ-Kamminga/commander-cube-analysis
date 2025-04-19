@@ -349,10 +349,7 @@ export const CubeListForm: React.FC = () => {
               customRules={customRules}
             >
             </ColourAnalysisStep>
-            <p>
-              <Button variant='outlined' onClick={handleStepBack}>Back</Button>
-
-            </p>
+            <p><Button variant='outlined' onClick={handleStepBack}>Back</Button></p>
           </StepContent>
         </Step>
         {errorLog.length > 0 ? (

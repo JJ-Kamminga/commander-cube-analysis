@@ -1,3 +1,12 @@
+export const colourOrderStrings = [
+  'W', 'U', 'B', 'R', 'G',
+  'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
+  'WUB', 'UBR', 'BRG', 'WRG', 'WUG', 'WBG', 'WUR', 'UBG', 'WBR', 'URG',
+  'WUBR', 'UBRG', 'WBRG', 'WURG', 'WUBG',
+  'WUBRG',
+  'C',
+];
+
 export const ciNicknameDictionary: { [key: string]: string } = {
   "W": "White",
   "U": "Blue",

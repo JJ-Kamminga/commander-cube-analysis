@@ -3,7 +3,7 @@ import { AnalysisStepProps } from "./types";
 import { BarChart, BarChartProps, BarItem } from "@mui/x-charts";
 import { Card } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { Button, Chip, Container, Typography } from "@mui/material";
-import { ciNicknameDictionary } from "@/utils/helpers";
+import { ciNicknameDictionary, colourOrderStrings } from "@/utils/helpers";
 import { useState } from "react";
 
 /** this sorts individual CI identifiers */
@@ -21,6 +21,8 @@ const chartifyForColourChart = (
   const colourIdentities = searchFn(cardData, filterByColourIndentity);
   const sortedColourIdentities = sortColourIdentities(colourIdentities as string[][])
   const analysis = analyseColourIdentities(sortedColourIdentities)
+
+  console.log(seriesLabel, sortedColourIdentities);
 
   return {
     label: seriesLabel,
@@ -103,10 +105,8 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
     };
   };
 
-  const xAxisData = Object.values(ciNicknameDictionary);
-  const generateBarLabel = (item: BarItem) => {
-    return item.value?.toString();
-  };
+  const xAxisData = colourOrderStrings.map(ci => ciNicknameDictionary[ci]);
+  const generateBarLabel = (item: BarItem) => item.value?.toString();
 
   return (
     <>
