@@ -1,3 +1,38 @@
+export const ciNicknameDictionary: { [key: string]: string } = {
+  "W": "White",
+  "U": "Blue",
+  "B": "Black",
+  "R": "Red",
+  "G": "Green",
+  "WU": "Azorius",
+  "WR": "Boros",
+  "UB": "Dimir",
+  "BG": "Golgari",
+  "RG": "Gruul",
+  "UR": "Izzet",
+  "WB": "Orzhov",
+  "BR": "Rakdos",
+  "WG": "Selesnya",
+  "UG": "Simic",
+  "WBG": "Abzan",
+  "WUG": "Bant",
+  "WUB": "Esper",
+  "UBR": "Grixis",
+  "WUR": "Jeskai",
+  "BRG": "Jund",
+  "WBR": "Mardu",
+  "WRG": "Naya",
+  "UBG": "Sultai",
+  "URG": "Temur",
+  "WBRG": "4C Blueless",
+  "UBRG": "4C Whiteless",
+  "WURG": "4C Blackless",
+  "WUBG": "4C Redless",
+  "WUBR": "4C Greenless",
+  "WUBRG": "Five colour",
+  "C": "Colourless"
+};
+
 export const getRandomId = () => {
   return Math.random().toString(36).substring(2);
 }

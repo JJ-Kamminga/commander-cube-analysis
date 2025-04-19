@@ -1,121 +1,142 @@
-import { analyseColourIdentities, compareColourIdentities, searchByTypeLine, searchColorIdentitiesByTypeLine, searchPartners, searchPlaneswalkerCommanders, sortColourIdentities } from "@/utils/analysis";
+import { analyseColourIdentities, compareColourIdentities, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings, sortColourIdentities } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
-import { BarChart, BarItem } from "@mui/x-charts";
+import { BarChart, BarChartProps, BarItem } from "@mui/x-charts";
 import { Card } from "@/utils/mtg-scripting-toolkit/scryfall";
-
-const ciNicknameDictionary: { [key: string]: string } = {
-  "W": "White",
-  "U": "Blue",
-  "B": "Black",
-  "R": "Red",
-  "G": "Green",
-  "WU": "Azorius",
-  "WR": "Boros",
-  "UB": "Dimir",
-  "BG": "Golgari",
-  "RG": "Gruul",
-  "UR": "Izzet",
-  "WB": "Orzhov",
-  "BR": "Rakdos",
-  "WG": "Selesnya",
-  "UG": "Simic",
-  "WBG": "Abzan",
-  "WUG": "Bant",
-  "WUB": "Esper",
-  "UBR": "Grixis",
-  "WUR": "Jeskai",
-  "BRG": "Jund",
-  "WBR": "Mardu",
-  "WRG": "Naya",
-  "UBG": "Sultai",
-  "URG": "Temur",
-  "WBRG": "4C Blueless",
-  "UBRG": "4C Whiteless",
-  "WURG": "4C Blackless",
-  "WUBG": "4C Redless",
-  "WUBR": "4C Greenless",
-  "WUBRG": "WUBRG",
-  "C": "Colourless"
-};
+import { Button, Chip, Container, Typography } from "@mui/material";
+import { ciNicknameDictionary } from "@/utils/helpers";
+import { useState } from "react";
 
 /** this sorts individual CI identifiers */
-const filterByColourIndentity = (card: Card) => card.color_identity.sort(compareColourIdentities)
+const filterByColourIndentity = (card: Card) => card.color_identity.sort(compareColourIdentities);
+
+const chartifyForColourChart = (
+  cardData: Card[],
+  seriesLabel: string,
+  searchFn: (
+    cards: Card[],
+    mapFn: (card: Card) => string | string[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => any
+) => {
+  const colourIdentities = searchFn(cardData, filterByColourIndentity);
+  const sortedColourIdentities = sortColourIdentities(colourIdentities as string[][])
+  const analysis = analyseColourIdentities(sortedColourIdentities)
+
+  return {
+    label: seriesLabel,
+    data: Object.values(analysis).concat(),
+  }
+};
+
+const seriesDataExists = (series: BarChartProps["series"], label: string) => {
+  return series.find(seriesData => seriesData.label === label)
+};
 
 export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   /** todo: check whether all are needed */
-  const { cardData, cubeCobraID, draftConfig, customRules } = props;
-  const { playerCount, packsPerPlayer, cardsPerPack } = draftConfig;
+  const { cardData, cubeCobraID } = props;
 
-  /** Legendary creatures */
-  const legendaryColourIdentities = searchByTypeLine(
-    cardData,
-    'Legendary Creature',
-    filterByColourIndentity
-  );
-  const sortedLegendaryColourIdentities = sortColourIdentities(legendaryColourIdentities as string[][]);
-  const chartdataLegendaries = analyseColourIdentities(sortedLegendaryColourIdentities);
-  const xAxisDataLegendaries = Object.keys(chartdataLegendaries).map((key => `${key}`));
+  const [series, setSeries] = useState<BarChartProps["series"]>([])
 
-  /** Partners */
-  // const partnerColourIdentities = searchPartners(
-  //   cardData,
-  //   filterByColourIdentity
-  // )
-
-  /** Planeswalker commanders */
-  const pWCommanderColourIdentities = searchPlaneswalkerCommanders(
-    cardData,
-    filterByColourIndentity
-  );
-  const sortedPWCommanderColourIndentities = sortColourIdentities(pWCommanderColourIdentities as string[][])
-  const chartdataPWCommanders = analyseColourIdentities(sortedPWCommanderColourIndentities);
-  const xAxisDataPlaneswalkerCommanders = Object.keys(chartdataPWCommanders).map((key => key));
-
-  const generateBarLabel = (item: BarItem) => {
-    const ci = Object.keys(chartdataLegendaries)[item.dataIndex]?.toString();
-    return `${ciNicknameDictionary[ci]}`;
-  }
-
-  const series = [
-    {
+  const handleFetchAllAnalysis = () => {
+    /** Legendary creatures */
+    const legendaryColourIdentities = searchByTypeLine(
+      cardData,
+      'Legendary Creature',
+      filterByColourIndentity
+    );
+    const sortedLegendaryColourIdentities = sortColourIdentities(legendaryColourIdentities as string[][]);
+    const chartdataLegendaries = {
       label: 'Legendary creatures',
-      data: Object.values(chartdataLegendaries).concat(),
-    },
-    {
-      label: 'PW',
-      data: Object.values(chartdataPWCommanders).concat(),
-    },
-  ];
+      data: Object.values(analyseColourIdentities(sortedLegendaryColourIdentities)).concat(),
+    }
+
+    /** Other commander types */
+    const chartdataPWCommanders = chartifyForColourChart(cardData, 'Planeswalker commanders', searchPlaneswalkerCommanders)
+    const chartdataUniquePartnerPairings = chartifyForColourChart(cardData, 'Unique partner pairings', searchUniquePartnerPairings);
+    const chartdataUniqueFriendsForeverPairings = chartifyForColourChart(cardData, 'Unique Friends Forever pairings', searchUniqueFriendsForeverPairings);
+    const chartdataPartnerWithPairings = chartifyForColourChart(cardData, 'Partner With pairings', searchPartnerWithPairings);
+    const chartdataDoctorCompanionPairings = chartifyForColourChart(cardData, 'Doctor\'s companion pairings', searchDoctorCompanionPairings);
+    const chartdataBackgroundPairings = chartifyForColourChart(cardData, 'Background pairings', searchBackgroundPairings);
+
+    if (Object.keys(chartdataLegendaries.data).length && !seriesDataExists(series, chartdataLegendaries.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataLegendaries
+      ]);
+    };
+    if (Object.keys(chartdataPWCommanders.data).length && !seriesDataExists(series, chartdataPWCommanders.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataPWCommanders
+      ]);
+    };
+    if (Object.keys(chartdataUniquePartnerPairings.data).length && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataUniquePartnerPairings
+      ]);
+    };
+    if (Object.keys(chartdataUniqueFriendsForeverPairings.data).length && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataUniqueFriendsForeverPairings
+      ]);
+    };
+    if (Object.keys(chartdataPartnerWithPairings.data).length && !seriesDataExists(series, chartdataPartnerWithPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataPartnerWithPairings
+      ]);
+    };
+    if (Object.keys(chartdataDoctorCompanionPairings.data).length && !seriesDataExists(series, chartdataDoctorCompanionPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataDoctorCompanionPairings
+      ]);
+    };
+    if (Object.keys(chartdataBackgroundPairings.data).length && !seriesDataExists(series, chartdataBackgroundPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataBackgroundPairings
+      ]);
+    };
+  };
+
+  const xAxisData = Object.values(ciNicknameDictionary);
+  const generateBarLabel = (item: BarItem) => {
+    return item.value?.toString();
+  };
 
   return (
     <>
       <div id="colour-analysis-heading">
         <h3>Colour analysis</h3>
-        <p>descr</p>
       </div>
-      <div>
-        <h3>Legendary creatures</h3>
-        <p>
-          Your cube contains the following distribution of colour identities for legendary creatures
-        </p>
-        <p>
+      <Button variant="outlined" onClick={handleFetchAllAnalysis}>Go</Button>
+      <p>
+        Your cube {cubeCobraID} contains the following distribution of colour identities.
+      </p>
+      <p>
+        <Container sx={{ overflowY: 'scroll' }}>
           <BarChart
-            xAxis={[
-              { scaleType: 'band', data: xAxisDataLegendaries },
-              // { scaleType: 'band', data: xAxisDataPlaneswalkerCommanders }
-            ]}
+            xAxis={[{
+              scaleType: 'band',
+              data: xAxisData,
+              tickPlacement: 'start',
+              tickLabelPlacement: 'tick'
+            }]}
             series={series}
-            width={1000}
+            width={3000}
             height={800}
             barLabel={generateBarLabel}
+            grid={{ horizontal: true }}
           />
-        </p>
-        {/* <p>
-          Stuff that would be nice:
-          - number of partner pairings per colour identity
-          - etc. etc.
-        </p> */}
-      </div>
+        </Container>
+        <Typography padding={5}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
+          Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
+        </Typography>
+      </p>
     </>
   )
 };

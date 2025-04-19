@@ -13,16 +13,16 @@ export const searchByTypeLine = (
   .map(mapFn);
 ;
 
-export const compareColourIdentities = (a: string, b: string) => {
-  const colourOrderStrings = [
-    'W', 'U', 'B', 'R', 'G',
-    'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
-    'WUB', 'UBR', 'BRG', 'WRG', 'WUG', 'WBG', 'WUR', 'UBG', 'WBR', 'URG',
-    'WUBR', 'UBRG', 'WBRG', 'WURG', 'WUBG',
-    'WUBRG',
-    'C',
-  ];
+export const colourOrderStrings = [
+  'W', 'U', 'B', 'R', 'G',
+  'WU', 'UB', 'BR', 'RG', 'WG', 'WB', 'UR', 'BG', 'WR', 'UG',
+  'WUB', 'UBR', 'BRG', 'WRG', 'WUG', 'WBG', 'WUR', 'UBG', 'WBR', 'URG',
+  'WUBR', 'UBRG', 'WBRG', 'WURG', 'WUBG',
+  'WUBRG',
+  'C',
+];
 
+export const compareColourIdentities = (a: string, b: string) => {
   const orderOfA = colourOrderStrings.indexOf(a);
   const orderOfB = colourOrderStrings.indexOf(b);
   return orderOfA - orderOfB
@@ -60,7 +60,10 @@ export const searchPlaneswalkerCommanders = (
   .map(mapFn);
 ;
 
-export const searchUniquePartnerPairings = (cards: Card[]) => {
+export const searchUniquePartnerPairings = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => {
   const partners = cards.filter((card) =>
     card.type_line.includes('Legendary') &&
     card.oracle_text?.includes('Partner') &&
@@ -68,22 +71,28 @@ export const searchUniquePartnerPairings = (cards: Card[]) => {
   );
   return getUniquePairs(partners)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(mapFn)
     ));
   ;
 };
 
-export const searchUniqueFriendsForeverPairings = (cards: Card[]) => {
+export const searchUniqueFriendsForeverPairings = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => {
   const friendsForever = cards.filter((card) =>
     card.keywords?.find((keyword) => keyword == 'Friends forever')
   );
   return getUniquePairs(friendsForever)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(mapFn)
     ));
 }
 
-export const searchPartnerWithPairings = (cards: Card[]) => {
+export const searchPartnerWithPairings = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => {
   const partnerWiths = cards.filter((card) =>
     card.keywords?.find((keyword) => keyword == 'Partner with')
   );
@@ -104,11 +113,14 @@ export const searchPartnerWithPairings = (cards: Card[]) => {
   });
   return partnerWithPairings
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(mapFn)
     ));
 };
 
-export const searchDoctorCompanionPairings = (cards: Card[]) => {
+export const searchDoctorCompanionPairings = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => {
   const doctors = cards.filter((card) =>
     card.type_line.includes('Legendary') &&
     card.type_line.includes('Time Lord Doctor')
@@ -120,11 +132,14 @@ export const searchDoctorCompanionPairings = (cards: Card[]) => {
   );
   return getPairs(doctors, companions)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name))
+      pairArray.map(mapFn))
     );
 };
 
-export const searchBackgroundPairings = (cards: Card[]) => {
+export const searchBackgroundPairings = (
+  cards: Card[],
+  mapFn: (card: Card) => string | string[] = filterByName,
+) => {
   const creatures = cards.filter((card) =>
     card.oracle_text?.includes('Choose a Background')
   );
@@ -134,7 +149,7 @@ export const searchBackgroundPairings = (cards: Card[]) => {
   );
   return getPairs(creatures, backgrounds)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(mapFn)
     ));
 }
 
