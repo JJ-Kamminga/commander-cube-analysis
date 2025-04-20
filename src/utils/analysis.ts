@@ -1,6 +1,6 @@
 import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis, CustomAnalysis } from "./types";
-import { getUniquePairs, getPairs, colourOrderStrings } from "./helpers";
+import { getUniquePairs, getPairs } from "./helpers";
 
 const filterByName = (card: Card) => card.name;
 
@@ -13,45 +13,6 @@ const searchByTypeLine = (
 ;
 
 export const searchLegendaryCreatures = (cards: Card[]) => searchByTypeLine(cards, /Legendary.*Creature/);
-
-export const compareColourIdentities = (a: string, b: string) => {
-  const orderOfA = colourOrderStrings.indexOf(a);
-  const orderOfB = colourOrderStrings.indexOf(b);
-  return orderOfA - orderOfB
-};
-
-export const sortColourIdentities = (cis: string[][]) => {
-  return cis.map(ci => ci.join("")).sort(compareColourIdentities)
-};
-
-// export const compareColourIdentities = (a: Color[], b: Color[]): number => {
-//   const aStr = a.join("");
-//   const bStr = b.join("");
-//   const orderOfA = colourOrderStrings.indexOf(aStr);
-//   const orderOfB = colourOrderStrings.indexOf(bStr);
-//   return orderOfA - orderOfB;
-// };
-
-// export const sortColourIdentities = (cis: Color[][]): Color[][] => {
-//   return cis.slice().sort(compareColourIdentities);
-// };
-
-export const analyseColourIdentities = (colourIdentities: string[]) => {
-  const resultObj: Record<string, number> = {};
-  for (const ci of colourIdentities) {
-    resultObj[ci] = (resultObj[ci] || 0) + 1;
-  }
-  return resultObj;
-};
-
-// export const analyseColourIdentities = (colourIdentities: Color[][]): Record<string, number> => {
-//   const resultObj: Record<string, number> = {};
-//   for (const ci of colourIdentities) {
-//     const key = ci.join(""); // Convert Color[] to string key
-//     resultObj[key] = (resultObj[key] || 0) + 1;
-//   }
-//   return resultObj;
-// };
 
 export const searchPartners = (cards: Card[]) => cards
   .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))

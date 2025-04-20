@@ -1,78 +1,26 @@
-import { analyseColourIdentities, compareColourIdentities, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchLegendaryCreatures, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings, sortColourIdentities } from "@/utils/analysis";
+import { searchBackgroundPairings, searchDoctorCompanionPairings, searchLegendaryCreatures, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
 import { BarChart, BarChartProps, BarItem } from "@mui/x-charts";
 import { Card } from "@/utils/mtg-scripting-toolkit/scryfall";
 import { Button, Chip, Container, Typography } from "@mui/material";
-import { ciNicknameDictionary, colourOrderStrings } from "@/utils/helpers";
 import { useState } from "react";
+import { analyseColourIdentities, ciNicknameDictionary, colourOrderStrings, queryColourIdentities, queryPairingColourIdentities, sortColourIdentities } from "@/utils/colours";
 
-const mergeColourArrays = (arr1: string[], arr2: string[]) => {
-  const mergedArray = arr1.concat(arr2);
-  return mergedArray.filter(
-    (element: string, index: number) => {
-      return mergedArray.indexOf(element) === index;
-    }
-  )
-};
 
-/** this sorts individual CI identifiers */
-const filterByColourIndentity = (card: Card) => {
-  const ci: string[] = [
-    ...card.color_identity
-  ];
-
-  return ci.sort(compareColourIdentities).join("");
+const chartifyPairings = (
+  cardData: Card[],
+  seriesLabel: string,
+  searchFn: (cards: Card[]) => string[][]
+) => {
+  const uniqueNames = searchFn(cardData);
+  const uniqueColourIdentities = queryPairingColourIdentities(cardData, uniqueNames).filter(item => item !== undefined);
+  const sortedUniqueColourIdentities = sortColourIdentities(uniqueColourIdentities);
+  const analysedSortedUniqueColourIdentities = analyseColourIdentities(sortedUniqueColourIdentities);
+  return {
+    label: seriesLabel,
+    data: colourOrderStrings.map((ci) => analysedSortedUniqueColourIdentities[ci] || 0)
+  };
 }
-
-// const chartifyForColourChart = (
-//   cardData: Card[],
-//   seriesLabel: string,
-//   searchFn: (
-//     cards: Card[],
-//     mapFn: (card: Card) => string
-//   ) => string[]
-// ) => {
-
-//   const colourIdentities = searchFn(cardData, filterByColourIndentity);
-//   const splitColourIdentities = colourIdentities.map(ci => ci.split(""));
-//   const mergedColourIdentities = splitColourIdentities.map(ci => {
-//     return mergeColourArrays(ci[0], ci[1]);
-//   }
-//   )
-//   // const mergedColourIdentities = colourIdentities
-//   // colourIdentities[0].concat(colourIdentities[1])
-//   // const filteredMergedColourIdentities = mergedColourIdentities.filter(
-//   //   (element: string, index: number) => {
-//   //     return mergedColourIdentities.indexOf(element) === index;
-//   //   }
-//   // );
-//   const sortedColourIdentities = sortColourIdentities(mergedColourIdentities)
-//   const analysis = analyseColourIdentities(sortedColourIdentities)
-
-//   return {
-//     label: seriesLabel,
-//     data: Object.values(analysis),
-//   }
-// };
-
-const queryColourIdentities = (cardData: Card[], query: string[]) => {
-  return query.map((cardName) => {
-    const colourIdentity = cardData.find((card) => cardName === card.name)?.color_identity as string[];
-    return colourIdentity?.sort(compareColourIdentities).length
-      ? colourIdentity
-      : ['C']
-  })
-};
-
-const queryPairingColourIdentities = (cardData: Card[], query: string[][]) => {
-  return query.map((cardNameArr) => {
-    const colourIdentities = cardNameArr.map((cardName) => cardData.find((card) => cardName === card.name)?.color_identity as string[]);
-    const mergedColourIdentities = mergeColourArrays(colourIdentities[0], colourIdentities[1]);
-    return mergedColourIdentities?.sort(compareColourIdentities).length
-      ? mergedColourIdentities
-      : ['C']
-  })
-};
 
 const seriesDataExists = (series: BarChartProps["series"], label: string) => {
   return series.find(seriesData => seriesData.label === label)
@@ -108,19 +56,11 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
 
     /** Commander pairings */
     /** Unique partner pairings */
-    const uniquePartnerPairingNames = searchUniquePartnerPairings(cardData);
-    const uniquePartnerPairingColourIdentities = queryPairingColourIdentities(cardData, uniquePartnerPairingNames).filter(item => item !== undefined);
-    const sortedUniquePartnerPairingColourIdentities = sortColourIdentities(uniquePartnerPairingColourIdentities);
-    const analysedSortedUniquePartnerPairingColourIdentities = analyseColourIdentities(sortedUniquePartnerPairingColourIdentities);
-    const chartdataUniquePartnerPairings = {
-      label: 'Unique partner pairings',
-      data: colourOrderStrings.map((ci) => analysedSortedUniquePartnerPairingColourIdentities[ci] || 0)
-    };
-
-    // const chartdataUniqueFriendsForeverPairings = chartifyForColourChart(cardData, 'Unique Friends Forever pairings', searchUniqueFriendsForeverPairings);
-    // const chartdataPartnerWithPairings = chartifyForColourChart(cardData, 'Partner With pairings', searchPartnerWithPairings);
-    // const chartdataDoctorCompanionPairings = chartifyForColourChart(cardData, 'Doctor\'s companion pairings', searchDoctorCompanionPairings);
-    // const chartdataBackgroundPairings = chartifyForColourChart(cardData, 'Background pairings', searchBackgroundPairings);
+    const chartdataUniquePartnerPairings = chartifyPairings(cardData, 'Unique Partner Pairings', searchUniquePartnerPairings);
+    const chartdataUniqueFriendsForeverPairings = chartifyPairings(cardData, 'Unique Friends Forever pairings', searchUniqueFriendsForeverPairings);
+    const chartdataPartnerWithPairings = chartifyPairings(cardData, 'Partner With pairings', searchPartnerWithPairings);
+    const chartdataDoctorCompanionPairings = chartifyPairings(cardData, 'Doctor\'s companion pairings', searchDoctorCompanionPairings);
+    const chartdataBackgroundPairings = chartifyPairings(cardData, 'Background pairings', searchBackgroundPairings);
 
     if (Object.keys(chartdataLegendaries.data).length && !seriesDataExists(series, chartdataLegendaries.label)) {
       setSeries(series => [
@@ -140,30 +80,30 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
         chartdataUniquePartnerPairings
       ]);
     };
-    // if (Object.keys(chartdataUniqueFriendsForeverPairings.data).length && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
-    //   setSeries(series => [
-    //     ...series,
-    //     chartdataUniqueFriendsForeverPairings
-    //   ]);
-    // };
-    // if (Object.keys(chartdataPartnerWithPairings.data).length && !seriesDataExists(series, chartdataPartnerWithPairings.label)) {
-    //   setSeries(series => [
-    //     ...series,
-    //     chartdataPartnerWithPairings
-    //   ]);
-    // };
-    // if (Object.keys(chartdataDoctorCompanionPairings.data).length && !seriesDataExists(series, chartdataDoctorCompanionPairings.label)) {
-    //   setSeries(series => [
-    //     ...series,
-    //     chartdataDoctorCompanionPairings
-    //   ]);
-    // };
-    // if (Object.keys(chartdataBackgroundPairings.data).length && !seriesDataExists(series, chartdataBackgroundPairings.label)) {
-    //   setSeries(series => [
-    //     ...series,
-    //     chartdataBackgroundPairings
-    //   ]);
-    // };
+    if (Object.keys(chartdataUniqueFriendsForeverPairings.data).length && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataUniqueFriendsForeverPairings
+      ]);
+    };
+    if (Object.keys(chartdataPartnerWithPairings.data).length && !seriesDataExists(series, chartdataPartnerWithPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataPartnerWithPairings
+      ]);
+    };
+    if (Object.keys(chartdataDoctorCompanionPairings.data).length && !seriesDataExists(series, chartdataDoctorCompanionPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataDoctorCompanionPairings
+      ]);
+    };
+    if (Object.keys(chartdataBackgroundPairings.data).length && !seriesDataExists(series, chartdataBackgroundPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataBackgroundPairings
+      ]);
+    };
   };
 
   const generateBarLabel = (item: BarItem) => item.value?.toString();
