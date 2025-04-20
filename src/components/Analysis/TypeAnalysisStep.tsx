@@ -1,5 +1,5 @@
 import { Info } from "@mui/icons-material";
-import { Button, Card, CardContent, Chip } from "@mui/material";
+import { Button, Card, CardContent, Chip, Typography } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
 import { useState } from "react";
 import { analysisMetadata, customAnalysisMetadata, getNumberOfCardsOfTypeInDraftPool, getPercentageOfCube, searchBackgroundPairings, searchDoctorCompanionPairings, searchLegendaryCreatures, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
@@ -108,6 +108,9 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
         </p>
         <Button variant="outlined" onClick={handleFetchAllAnalysis}>Go</Button>
         <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
+        <Typography padding={5}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
+          Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
+        </Typography>
       </div>
       <h3>Your cube {cubeCobraID} contains:</h3>
       {legendaries.length > 0

@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Autocomplete, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
+import { Autocomplete, Button, Checkbox, Chip, CircularProgress, FormControlLabel, FormGroup, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -312,6 +312,21 @@ export const CubeListForm: React.FC = () => {
                   onChange={handleCheckboxChange}
                   inputProps={{ 'aria-label': 'controlled' }}
                 />} label="All legendary creatures have Partner" />
+                <Chip label='Currently the following custom rules are not yet implemented. Let me know if you want them!' />
+                <FormControlLabel control={<Checkbox
+                  // checked={checkboxesChecked.freePrismaticPiper}
+                  name="freePrismaticPiper"
+                  // onChange={handleCheckboxChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  disabled={true}
+                />} label="Each player has access to The Prismatic Piper (a Partner for a colour of choice)" />
+                <FormControlLabel control={<Checkbox
+                  // checked={checkboxesChecked.freePrismaticPiper}
+                  name="freeFacelessOne"
+                  // onChange={handleCheckboxChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  disabled={true}
+                />} label="Each player has access to Faceless One (a Background partner for a colour of choice)" />
               </FormGroup>
             </p>
             <Button variant='outlined' onClick={handleStepBack}>Back</Button>

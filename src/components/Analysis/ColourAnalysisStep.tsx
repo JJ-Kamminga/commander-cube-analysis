@@ -133,7 +133,9 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
             grid={{ horizontal: true }}
           />
         </Container>
-        <Typography padding={5}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
+        <Typography padding={3}><Chip color="warning" label='Please note!' /> Custom rules have not yet been implemented for colour analysis, and so are not counted in these statistics.
+        </Typography>
+        <Typography padding={3}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
           Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
         </Typography>
       </p>
