@@ -2,7 +2,7 @@ import { Info } from "@mui/icons-material";
 import { Button, Card, CardContent, Chip } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
 import { useState } from "react";
-import { analysisMetadata, customAnalysisMetadata, getNumberOfCardsOfTypeInDraftPool, getPercentageOfCube, searchBackgroundPairings, searchByTypeLine, searchDoctorCompanionPairings, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
+import { analysisMetadata, customAnalysisMetadata, getNumberOfCardsOfTypeInDraftPool, getPercentageOfCube, searchBackgroundPairings, searchDoctorCompanionPairings, searchLegendaryCreatures, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
 import { searchAllPartnerRule, searchCustomPartnerRule } from "@/utils/customAnalysis";
 import { AnalysisCategory } from "./AnalysisCategory";
@@ -34,7 +34,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
 
   const handleFetchAllAnalysis = () => {
     /** Commanders */
-    const legendaries = searchByTypeLine(cardData, 'Legendary Creature');
+    const legendaries = searchLegendaryCreatures(cardData);
     const planeswalkers = searchPlaneswalkerCommanders(cardData);
 
     const uniquePartnerPairings = searchUniquePartnerPairings(cardData);
