@@ -6,7 +6,10 @@ import { Button, Chip, Container, Typography } from "@mui/material";
 import { useState } from "react";
 import { analyseColourIdentities, ciNicknameDictionary, colourOrderStrings, queryColourIdentities, queryPairingColourIdentities, sortColourIdentities } from "@/utils/colours";
 
-
+const generateBarLabel = (item: BarItem) => item.value?.toString();
+const seriesDataExists = (series: BarChartProps["series"], label: string) => {
+  return series.find(seriesData => seriesData.label === label)
+};
 const chartifyPairings = (
   cardData: Card[],
   seriesLabel: string,
@@ -21,10 +24,6 @@ const chartifyPairings = (
     data: colourOrderStrings.map((ci) => analysedSortedUniqueColourIdentities[ci] || 0)
   };
 }
-
-const seriesDataExists = (series: BarChartProps["series"], label: string) => {
-  return series.find(seriesData => seriesData.label === label)
-};
 
 export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const { cardData, cubeCobraID } = props;
@@ -105,8 +104,6 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
       ]);
     };
   };
-
-  const generateBarLabel = (item: BarItem) => item.value?.toString();
 
   return (
     <>

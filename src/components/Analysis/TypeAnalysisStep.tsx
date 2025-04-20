@@ -42,13 +42,13 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     const friendsForeverPairings = searchUniqueFriendsForeverPairings(cardData);
     const doctorCompanionPairings = searchDoctorCompanionPairings(cardData);
     const backgroundPairings = searchBackgroundPairings(cardData);
-    setLegendaries(legendaries as string[]);
-    setPlaneswalkers(planeswalkers as string[]);
-    setUniquePartnerPairings(uniquePartnerPairings as string[][]);
-    setPartnerWithPairings(partnerWithPairings as string[][]);
-    setFriendsForeverPairings(friendsForeverPairings as string[][]);
-    setDoctorCompanionPairings(doctorCompanionPairings as string[][]);
-    setBackgroundPairings(backgroundPairings as string[][]);
+    setLegendaries(legendaries);
+    setPlaneswalkers(planeswalkers);
+    setUniquePartnerPairings(uniquePartnerPairings);
+    setPartnerWithPairings(partnerWithPairings);
+    setFriendsForeverPairings(friendsForeverPairings);
+    setDoctorCompanionPairings(doctorCompanionPairings);
+    setBackgroundPairings(backgroundPairings);
     /** Custom commanders */
     const monoLCPartner = searchCustomPartnerRule(cardData, (card) => card.color_identity.length === 1);
     const allLCPartner = searchAllPartnerRule(cardData);
@@ -56,7 +56,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
     setallLCPartner(allLCPartner);
     /** Others */
     const partnerCreatures = searchPartners(cardData);
-    setPartnerCreatures(partnerCreatures as string[]);
+    setPartnerCreatures(partnerCreatures);
 
     setHasAnalysisLoaded(true);
   };
