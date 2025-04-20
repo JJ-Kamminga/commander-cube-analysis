@@ -62,7 +62,17 @@ const queryColourIdentities = (cardData: Card[], query: string[]) => {
       ? colourIdentity
       : ['C']
   })
-}
+};
+
+const queryPairingColourIdentities = (cardData: Card[], query: string[][]) => {
+  return query.map((cardNameArr) => {
+    const colourIdentities = cardNameArr.map((cardName) => cardData.find((card) => cardName === card.name)?.color_identity as string[]);
+    const mergedColourIdentities = mergeColourArrays(colourIdentities[0], colourIdentities[1]);
+    return mergedColourIdentities?.sort(compareColourIdentities).length
+      ? mergedColourIdentities
+      : ['C']
+  })
+};
 
 const seriesDataExists = (series: BarChartProps["series"], label: string) => {
   return series.find(seriesData => seriesData.label === label)
@@ -90,14 +100,23 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
     const legendaryPWNames = searchPlaneswalkerCommanders(cardData);
     const pwCommanderColourIdentities = queryColourIdentities(cardData, legendaryPWNames).filter(item => item !== undefined);
     const sortedPWCommanderColourIdentities = sortColourIdentities(pwCommanderColourIdentities);
-    const analysedsortedPWCommanderColourIdentities = analyseColourIdentities(sortedPWCommanderColourIdentities);
+    const analysedSortedPWCommanderColourIdentities = analyseColourIdentities(sortedPWCommanderColourIdentities);
     const chartdataPWCommanders = {
       label: 'Planeswalker Commanders',
-      data: colourOrderStrings.map((ci) => analysedsortedPWCommanderColourIdentities[ci] || 0)
+      data: colourOrderStrings.map((ci) => analysedSortedPWCommanderColourIdentities[ci] || 0)
     };
 
     /** Commander pairings */
-    // const chartdataUniquePartnerPairings = chartifyForColourChart(cardData, 'Unique partner pairings', searchUniquePartnerPairings);
+    /** Unique partner pairings */
+    const uniquePartnerPairingNames = searchUniquePartnerPairings(cardData);
+    const uniquePartnerPairingColourIdentities = queryPairingColourIdentities(cardData, uniquePartnerPairingNames).filter(item => item !== undefined);
+    const sortedUniquePartnerPairingColourIdentities = sortColourIdentities(uniquePartnerPairingColourIdentities);
+    const analysedSortedUniquePartnerPairingColourIdentities = analyseColourIdentities(sortedUniquePartnerPairingColourIdentities);
+    const chartdataUniquePartnerPairings = {
+      label: 'Unique partner pairings',
+      data: colourOrderStrings.map((ci) => analysedSortedUniquePartnerPairingColourIdentities[ci] || 0)
+    };
+
     // const chartdataUniqueFriendsForeverPairings = chartifyForColourChart(cardData, 'Unique Friends Forever pairings', searchUniqueFriendsForeverPairings);
     // const chartdataPartnerWithPairings = chartifyForColourChart(cardData, 'Partner With pairings', searchPartnerWithPairings);
     // const chartdataDoctorCompanionPairings = chartifyForColourChart(cardData, 'Doctor\'s companion pairings', searchDoctorCompanionPairings);
@@ -115,12 +134,12 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
         chartdataPWCommanders
       ]);
     };
-    // if (Object.keys(chartdataUniquePartnerPairings.data).length && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
-    //   setSeries(series => [
-    //     ...series,
-    //     chartdataUniquePartnerPairings
-    //   ]);
-    // };
+    if (Object.keys(chartdataUniquePartnerPairings.data).length && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataUniquePartnerPairings
+      ]);
+    };
     // if (Object.keys(chartdataUniqueFriendsForeverPairings.data).length && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
     //   setSeries(series => [
     //     ...series,
