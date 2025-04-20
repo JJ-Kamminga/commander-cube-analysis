@@ -82,17 +82,19 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
     const analysedsortedLegendaryColourIdentities = analyseColourIdentities(sortedLegendaryColourIdentities);
     const chartdataLegendaries = {
       label: 'Legendary creatures',
-      data: colourOrderStrings.map((ci) => {
-        return analysedsortedLegendaryColourIdentities[ci] || 0
-      })
+      data: colourOrderStrings.map((ci) => analysedsortedLegendaryColourIdentities[ci] || 0)
+
     };
 
-    // const pwCommanderColourIdentities = searchPlaneswalkerCommanders(cardData, filterByColourIndentity);
-    // const sortedPWColourIdentities = sortColourIdentities(pwCommanderColourIdentities as string[][]);
-    // const chartdataPWCommanders = {
-    //   label: 'Planeswalker commanders',
-    //   data: Object.values(analyseColourIdentities(sortedPWColourIdentities)),//.concat(),
-    // };
+    /** Planeswalker Commanders */
+    const legendaryPWNames = searchPlaneswalkerCommanders(cardData);
+    const pwCommanderColourIdentities = queryColourIdentities(cardData, legendaryPWNames).filter(item => item !== undefined);
+    const sortedPWCommanderColourIdentities = sortColourIdentities(pwCommanderColourIdentities);
+    const analysedsortedPWCommanderColourIdentities = analyseColourIdentities(sortedPWCommanderColourIdentities);
+    const chartdataPWCommanders = {
+      label: 'Planeswalker Commanders',
+      data: colourOrderStrings.map((ci) => analysedsortedPWCommanderColourIdentities[ci] || 0)
+    };
 
     /** Commander pairings */
     // const chartdataUniquePartnerPairings = chartifyForColourChart(cardData, 'Unique partner pairings', searchUniquePartnerPairings);
@@ -107,12 +109,12 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
         chartdataLegendaries
       ]);
     };
-    // if (Object.keys(chartdataPWCommanders.data).length && !seriesDataExists(series, chartdataPWCommanders.label)) {
-    //   setSeries(series => [
-    //     ...series,
-    //     chartdataPWCommanders
-    //   ]);
-    // };
+    if (Object.keys(chartdataPWCommanders.data).length && !seriesDataExists(series, chartdataPWCommanders.label)) {
+      setSeries(series => [
+        ...series,
+        chartdataPWCommanders
+      ]);
+    };
     // if (Object.keys(chartdataUniquePartnerPairings.data).length && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
     //   setSeries(series => [
     //     ...series,
