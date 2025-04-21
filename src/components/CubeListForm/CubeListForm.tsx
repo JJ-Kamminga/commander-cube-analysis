@@ -1,7 +1,7 @@
 'use client';
 
 import { fetchCollection } from '@/utils/mtg-scripting-toolkit/scryfall/fetchCollection';
-import { Autocomplete, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
+import { Autocomplete, Button, Checkbox, Chip, CircularProgress, FormControlLabel, FormGroup, IconButton, Snackbar, SnackbarCloseReason, StepContent, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -9,10 +9,11 @@ import StepLabel from '@mui/material/StepLabel';
 import { autocompleteOptions, stepsConfig } from './config';
 import { fetchCubeList } from '@/utils/mtg-scripting-toolkit/cube-cobra';
 import { Card as MagicCard } from '@/utils/mtg-scripting-toolkit/scryfall';
-import { AnalysisStep } from '../Analysis/AnalysisStep';
+import { AnalysisStep } from '../Analysis/TypeAnalysisStep';
 import { DraftConfigControlPanel } from '../DraftConfigControlPanel/DraftConfigControlPanel';
 import { FetchCardDataStep } from '../FetchCardDataStep/FetchCardDataStep';
 import { Close } from '@mui/icons-material';
+import { ColourAnalysisStep } from '../Analysis/ColourAnalysisStep';
 
 export const CubeListForm: React.FC = () => {
   /** UI State */
@@ -311,6 +312,21 @@ export const CubeListForm: React.FC = () => {
                   onChange={handleCheckboxChange}
                   inputProps={{ 'aria-label': 'controlled' }}
                 />} label="All legendary creatures have Partner" />
+                <Chip label='Currently the following custom rules are not yet implemented. Let me know if you want them!' />
+                <FormControlLabel control={<Checkbox
+                  // checked={checkboxesChecked.freePrismaticPiper}
+                  name="freePrismaticPiper"
+                  // onChange={handleCheckboxChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  disabled={true}
+                />} label="Each player has access to The Prismatic Piper (a Partner for a colour of choice)" />
+                <FormControlLabel control={<Checkbox
+                  // checked={checkboxesChecked.freePrismaticPiper}
+                  name="freeFacelessOne"
+                  // onChange={handleCheckboxChange}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  disabled={true}
+                />} label="Each player has access to Faceless One (a Background partner for a colour of choice)" />
               </FormGroup>
             </p>
             <Button variant='outlined' onClick={handleStepBack}>Back</Button>
@@ -326,10 +342,29 @@ export const CubeListForm: React.FC = () => {
               draftConfig={draftConfig}
               customRules={customRules}
             />
-
             <p>
               <Button variant='outlined' onClick={handleStepBack}>Back</Button>
+              <Button
+                variant='outlined'
+                disabled={!cardData.length}
+                onClick={handleStepNext}
+              >
+                Continue
+              </Button>
             </p>
+          </StepContent>
+        </Step>
+        <Step key='colour-analysis'>
+          <StepLabel>{stepsConfig[4].label}</StepLabel>
+          <StepContent>
+            <ColourAnalysisStep
+              cardData={cardData}
+              cubeCobraID={cubeCobraID}
+              draftConfig={draftConfig}
+              customRules={customRules}
+            >
+            </ColourAnalysisStep>
+            <p><Button variant='outlined' onClick={handleStepBack}>Back</Button></p>
           </StepContent>
         </Step>
         {errorLog.length > 0 ? (

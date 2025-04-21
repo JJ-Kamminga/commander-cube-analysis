@@ -2,26 +2,30 @@ import { Card } from "./mtg-scripting-toolkit/scryfall/types";
 import { Analysis, CustomAnalysis } from "./types";
 import { getUniquePairs, getPairs } from "./helpers";
 
-export const searchByTypeLine = (cards: Card[], query: string) => {
-  return cards
-    .filter((card) => card.type_line.includes(query))
-    .map((card) => card.name);
-};
+const filterByName = (card: Card) => card.name;
 
-export const searchPartners = (cards: Card[]) => {
-  return cards
-    .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))
-    .filter((card) => card.keywords.every((keyword) => keyword !== 'Partner with'))
-    .map((card) => card.name);
-};
+const searchByTypeLine = (
+  cards: Card[],
+  query: string | RegExp,
+) => cards
+  .filter((card) => card.type_line.match(query))
+  .map(filterByName);
+;
 
-export const searchPlaneswalkerCommanders = (cards: Card[]) => {
-  return cards
-    .filter(
-      (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
-    )
-    .map((card) => card.name);
-};
+export const searchLegendaryCreatures = (cards: Card[]) => searchByTypeLine(cards, /Legendary.*Creature/);
+
+export const searchPartners = (cards: Card[]) => cards
+  .filter((card) => card.keywords.find((keyword) => keyword === 'Partner'))
+  .filter((card) => card.keywords.every((keyword) => keyword !== 'Partner with'))
+  .map(filterByName);
+;
+
+export const searchPlaneswalkerCommanders = (cards: Card[]) => cards
+  .filter(
+    (card) => card.type_line.includes('Planeswalker') && card.oracle_text?.includes('can be your commander')
+  )
+  .map(filterByName);
+;
 
 export const searchUniquePartnerPairings = (cards: Card[]) => {
   const partners = cards.filter((card) =>
@@ -31,7 +35,7 @@ export const searchUniquePartnerPairings = (cards: Card[]) => {
   );
   return getUniquePairs(partners)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(filterByName)
     ));
   ;
 };
@@ -42,7 +46,7 @@ export const searchUniqueFriendsForeverPairings = (cards: Card[]) => {
   );
   return getUniquePairs(friendsForever)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(filterByName)
     ));
 }
 
@@ -67,7 +71,7 @@ export const searchPartnerWithPairings = (cards: Card[]) => {
   });
   return partnerWithPairings
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(filterByName)
     ));
 };
 
@@ -83,7 +87,7 @@ export const searchDoctorCompanionPairings = (cards: Card[]) => {
   );
   return getPairs(doctors, companions)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name))
+      pairArray.map(filterByName))
     );
 };
 
@@ -97,7 +101,7 @@ export const searchBackgroundPairings = (cards: Card[]) => {
   );
   return getPairs(creatures, backgrounds)
     .map(((pairArray) =>
-      pairArray.map((card) => card.name)
+      pairArray.map(filterByName)
     ));
 }
 
@@ -167,4 +171,4 @@ export const customAnalysisMetadata: CustomAnalysis = {
     labelHeading: 'Partner pairings if all legendary creatures had partner',
     labelDescription: 'Unique pairings between all partners, legendary creatures combined.',
   }
-}
+};
