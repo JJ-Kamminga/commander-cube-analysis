@@ -1,7 +1,7 @@
 import { Info } from "@mui/icons-material";
-import { Button, Card, CardContent, Chip, Typography } from "@mui/material";
+import { Button, Card, CardContent, Chip, CircularProgress, Typography } from "@mui/material";
 import { probabilityBothInSubset } from "@/utils/helpers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { analysisMetadata, customAnalysisMetadata, getNumberOfCardsOfTypeInDraftPool, getPercentageOfCube, searchBackgroundPairings, searchDoctorCompanionPairings, searchLegendaryCreatures, searchPartners, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepCardList, AnalysisStepCardListDrawer } from "./AnalysisStepCardList";
 import { searchAllPartnerRule, searchCustomPartnerRule } from "@/utils/customAnalysis";
@@ -31,6 +31,12 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
 
   const [monoLCPartner, setmonoLCPartner] = useState<string[][]>([]);
   const [allLCPartner, setallLCPartner] = useState<string[][]>([]);
+
+  useEffect(() => {
+    if (!hasAnalysisLoaded) {
+      setTimeout(handleFetchAllAnalysis, 2000)
+    }
+  });
 
   const handleFetchAllAnalysis = () => {
     /** Commanders */
@@ -106,124 +112,129 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
           <Chip color='info' label={cardsPerPack} sx={{ margin: '5px' }} />
           cards per pack.
         </p>
-        <Button variant="outlined" onClick={handleFetchAllAnalysis}>Go</Button>
-        <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
-        <Typography padding={5}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
-          Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
-        </Typography>
       </div>
-      <h3>Your cube {cubeCobraID} contains:</h3>
-      {legendaries.length > 0
-        ? (
-          <AnalysisCategory artCropUrl={legendariesArtCropUrl} categoryType="card" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={legendaries} commander={analysisMetadata.legendaryCreatures} >
-            <p><AnalysisChip label={'Includes ' + partnerCount + ' creatures with the Partner keyword'} /></p>
-            <AnalysisStepCardListDrawer cardNames={legendaries} />
-          </AnalysisCategory>
-        ) : (<></>)
-      }
-      {planeswalkers.length > 0 && <PlaneswalkerCommanderAnalysis artCropUrl={planeswalkersArtCropUrl} totalCubeSize={totalCubeCount} draftConfig={draftConfig} cardNames={planeswalkers} />}
-      {
-        uniquePartnerPairings.length > 0
-          ? (
-            <AnalysisCategory artCropUrl={uniquePartnerPairingsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={uniquePartnerPairings} commander={analysisMetadata.partners}>
-              {uniquePartnerPairings.length > 5 ? (
-                <AnalysisStepCardListDrawer cardNames={uniquePartnerPairings} />
-              ) : (
-                <AnalysisStepCardList cardNames={uniquePartnerPairings} />
-              )}
-              <p>
-                <AnalysisChip label={partnerCount + ' creatures with Partner in Cube'} />
-                <AnalysisChip color={'secondary'} label={`${partnersInDraftPool} creatures in a draft pool of ${draftPoolSize}`} />
-                <AnalysisChip color={'secondary'} label={`${partnersPerPlayer} per player`} />
-              </p>
-            </AnalysisCategory>
-          ) : (<></>)
-      }
-      {
-        partnerWithPairings.length > 0
-          ? (
-            <AnalysisCategory artCropUrl={partnerWithsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={partnerWithPairings} commander={analysisMetadata.partnerWiths}>
-              {partnerWithPairings.length > 5 ? (
-                <AnalysisStepCardListDrawer cardNames={partnerWithPairings} />
-              ) : (
-                <AnalysisStepCardList cardNames={partnerWithPairings} />
-              )}
-              <p>
-                <AnalysisChip label={partnerWithProbabilityLabel} />
-              </p>
-            </AnalysisCategory>
-          ) : (<></>)
-      }
-      {
-        friendsForeverPairings.length > 0
-          ? (
-            <AnalysisCategory artCropUrl={friendsForeverArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={friendsForeverPairings} commander={analysisMetadata.friendsForever}>
-              {friendsForeverPairings.length > 5 ? (
-                <AnalysisStepCardListDrawer cardNames={friendsForeverPairings} />
-              ) : (
-                <AnalysisStepCardList cardNames={friendsForeverPairings} />
-              )}
-            </AnalysisCategory>
-          ) : (<></>)
-      }
-      {
-        doctorCompanionPairings.length > 0
-          ? (
-            <AnalysisCategory artCropUrl={doctorCompanionPairingsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={doctorCompanionPairings} commander={analysisMetadata.doctorPartners}>
-              {doctorCompanionPairings.length > 5 ? (
-                <AnalysisStepCardListDrawer cardNames={doctorCompanionPairings} />
-              ) : (
-                <AnalysisStepCardList cardNames={doctorCompanionPairings} />
-              )}
-            </AnalysisCategory>
-          ) : (<></>)
-      }
-      {
-        backgroundPairings.length > 0
-          ? (
-            <AnalysisCategory artCropUrl={backgroundPairingsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={backgroundPairings} commander={analysisMetadata.backgroundPairings}>
-              {backgroundPairings.length > 5 ? (
-                <AnalysisStepCardListDrawer cardNames={backgroundPairings} />
-              ) : (
-                <AnalysisStepCardList cardNames={backgroundPairings} />
-              )}
-            </AnalysisCategory>
-          ) : (<></>)
-      }
-      {
-        customRules.length && hasAnalysisLoaded ? (
-          <>
-            <h3>Custom Rules Analysis</h3>
-            {customRules.includes('monoLCPartner') ? (
+      {hasAnalysisLoaded ? (
+        <>
+          <Typography padding={5}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
+            Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
+          </Typography>
+          <h3>Your cube {cubeCobraID} contains:</h3>
+          {legendaries.length > 0
+            ? (
+              <AnalysisCategory artCropUrl={legendariesArtCropUrl} categoryType="card" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={legendaries} commander={analysisMetadata.legendaryCreatures} >
+                <p><AnalysisChip label={'Includes ' + partnerCount + ' creatures with the Partner keyword'} /></p>
+                <AnalysisStepCardListDrawer cardNames={legendaries} />
+              </AnalysisCategory>
+            ) : (<></>)
+          }
+          {planeswalkers.length > 0 && <PlaneswalkerCommanderAnalysis artCropUrl={planeswalkersArtCropUrl} totalCubeSize={totalCubeCount} draftConfig={draftConfig} cardNames={planeswalkers} />}
+          {
+            uniquePartnerPairings.length > 0
+              ? (
+                <AnalysisCategory artCropUrl={uniquePartnerPairingsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={uniquePartnerPairings} commander={analysisMetadata.partners}>
+                  {uniquePartnerPairings.length > 5 ? (
+                    <AnalysisStepCardListDrawer cardNames={uniquePartnerPairings} />
+                  ) : (
+                    <AnalysisStepCardList cardNames={uniquePartnerPairings} />
+                  )}
+                  <p>
+                    <AnalysisChip label={partnerCount + ' creatures with Partner in Cube'} />
+                    <AnalysisChip color={'secondary'} label={`${partnersInDraftPool} creatures in a draft pool of ${draftPoolSize}`} />
+                    <AnalysisChip color={'secondary'} label={`${partnersPerPlayer} per player`} />
+                  </p>
+                </AnalysisCategory>
+              ) : (<></>)
+          }
+          {
+            partnerWithPairings.length > 0
+              ? (
+                <AnalysisCategory artCropUrl={partnerWithsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={partnerWithPairings} commander={analysisMetadata.partnerWiths}>
+                  {partnerWithPairings.length > 5 ? (
+                    <AnalysisStepCardListDrawer cardNames={partnerWithPairings} />
+                  ) : (
+                    <AnalysisStepCardList cardNames={partnerWithPairings} />
+                  )}
+                  <p>
+                    <AnalysisChip label={partnerWithProbabilityLabel} />
+                  </p>
+                </AnalysisCategory>
+              ) : (<></>)
+          }
+          {
+            friendsForeverPairings.length > 0
+              ? (
+                <AnalysisCategory artCropUrl={friendsForeverArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={friendsForeverPairings} commander={analysisMetadata.friendsForever}>
+                  {friendsForeverPairings.length > 5 ? (
+                    <AnalysisStepCardListDrawer cardNames={friendsForeverPairings} />
+                  ) : (
+                    <AnalysisStepCardList cardNames={friendsForeverPairings} />
+                  )}
+                </AnalysisCategory>
+              ) : (<></>)
+          }
+          {
+            doctorCompanionPairings.length > 0
+              ? (
+                <AnalysisCategory artCropUrl={doctorCompanionPairingsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={doctorCompanionPairings} commander={analysisMetadata.doctorPartners}>
+                  {doctorCompanionPairings.length > 5 ? (
+                    <AnalysisStepCardListDrawer cardNames={doctorCompanionPairings} />
+                  ) : (
+                    <AnalysisStepCardList cardNames={doctorCompanionPairings} />
+                  )}
+                </AnalysisCategory>
+              ) : (<></>)
+          }
+          {
+            backgroundPairings.length > 0
+              ? (
+                <AnalysisCategory artCropUrl={backgroundPairingsArtCropUrl} categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={backgroundPairings} commander={analysisMetadata.backgroundPairings}>
+                  {backgroundPairings.length > 5 ? (
+                    <AnalysisStepCardListDrawer cardNames={backgroundPairings} />
+                  ) : (
+                    <AnalysisStepCardList cardNames={backgroundPairings} />
+                  )}
+                </AnalysisCategory>
+              ) : (<></>)
+          }
+          {
+            customRules.length && hasAnalysisLoaded ? (
               <>
-                {monoLCPartner.length ? (
-                  <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={monoLCPartner} commander={customAnalysisMetadata.monoLCPartner}>
-                    <AnalysisStepCardListDrawer cardNames={monoLCPartner} />
-                  </AnalysisCategory>
-                ) : <></>
+                <h3>Custom Rules Analysis</h3>
+                {customRules.includes('monoLCPartner') ? (
+                  <>
+                    {monoLCPartner.length ? (
+                      <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={monoLCPartner} commander={customAnalysisMetadata.monoLCPartner}>
+                        <AnalysisStepCardListDrawer cardNames={monoLCPartner} />
+                      </AnalysisCategory>
+                    ) : <></>
+                    }
+                  </>
+                ) : (
+                  <></>
+                )
+                }
+                {customRules.includes('allLCPartner') ? (
+                  <>
+                    {allLCPartner.length ? (
+                      <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={allLCPartner} commander={customAnalysisMetadata.allLCPartner}>
+                        <AnalysisStepCardListDrawer cardNames={allLCPartner} />
+                      </AnalysisCategory>
+                    ) : <></>
+                    }
+                  </>
+                ) : (
+                  <></>
+                )
                 }
               </>
             ) : (
               <></>
             )
-            }
-            {customRules.includes('allLCPartner') ? (
-              <>
-                {allLCPartner.length ? (
-                  <AnalysisCategory categoryType="pairing" totalCubeCount={totalCubeCount} draftConfig={draftConfig} cardNames={allLCPartner} commander={customAnalysisMetadata.allLCPartner}>
-                    <AnalysisStepCardListDrawer cardNames={allLCPartner} />
-                  </AnalysisCategory>
-                ) : <></>
-                }
-              </>
-            ) : (
-              <></>
-            )
-            }
-          </>
-        ) : (
-          <></>
-        )
+
+          }
+        </>
+      )
+        : <CircularProgress />
       }
       {
         hasAnalysisLoaded
@@ -231,6 +242,8 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
             <Card >
               <CardContent>
                 <h3>Actions</h3>
+                <p>Click here to clear your analysis.</p>
+                <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
                 <p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
                 <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchAllAnalysis}>
                   Retrigger analysis

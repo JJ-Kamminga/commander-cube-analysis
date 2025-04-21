@@ -1,9 +1,9 @@
 import { searchBackgroundPairings, searchDoctorCompanionPairings, searchLegendaryCreatures, searchPartnerWithPairings, searchPlaneswalkerCommanders, searchUniqueFriendsForeverPairings, searchUniquePartnerPairings } from "@/utils/analysis";
 import { AnalysisStepProps } from "./types";
 import { BarChart, BarChartProps, BarItem } from "@mui/x-charts";
-import { Card } from "@/utils/mtg-scripting-toolkit/scryfall";
-import { Button, Chip, Container, Typography } from "@mui/material";
-import { useState } from "react";
+import { Card as MagicCard } from "@/utils/mtg-scripting-toolkit/scryfall";
+import { Button, Card, CardContent, Chip, CircularProgress, Container, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { analyseColourIdentities, ciNicknameDictionary, colourOrderStrings, queryColourIdentities, queryPairingColourIdentities, sortColourIdentities } from "@/utils/colours";
 
 const generateBarLabel = (item: BarItem) => item.value?.toString();
@@ -11,9 +11,9 @@ const seriesDataExists = (series: BarChartProps["series"], label: string) => {
   return series.find(seriesData => seriesData.label === label)
 };
 const chartifyPairings = (
-  cardData: Card[],
+  cardData: MagicCard[],
   seriesLabel: string,
-  searchFn: (cards: Card[]) => string[][]
+  searchFn: (cards: MagicCard[]) => string[][]
 ) => {
   const uniqueNames = searchFn(cardData);
   const uniqueColourIdentities = queryPairingColourIdentities(cardData, uniqueNames).filter(item => item !== undefined);
@@ -27,8 +27,15 @@ const chartifyPairings = (
 
 export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
   const { cardData, cubeCobraID } = props;
+
   const [series, setSeries] = useState<BarChartProps["series"]>([])
+  const [hasAnalysisLoaded, setHasAnalysisLoaded] = useState<boolean>(false);
+
   const xAxisData = colourOrderStrings.map(ci => ciNicknameDictionary[ci]);
+
+  const handleClearAnalysis = () => {
+    setSeries([])
+  };
 
   const handleFetchAllAnalysis = () => {
     /** Legendary creatures */
@@ -103,39 +110,65 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
         chartdataBackgroundPairings
       ]);
     };
+    setHasAnalysisLoaded(true);
   };
+
+  useEffect(() => {
+    if (!hasAnalysisLoaded) {
+      setTimeout(handleFetchAllAnalysis, 2000)
+    }
+  });
 
   return (
     <>
       <div id="colour-analysis-heading">
         <h3>Colour analysis</h3>
       </div>
-      <Button variant="outlined" onClick={handleFetchAllAnalysis}>Go</Button>
       <p>
         Your cube {cubeCobraID} contains the following distribution of colour identities.
       </p>
       <p>
-        <Container sx={{ overflowY: 'scroll' }}>
-          <BarChart
-            xAxis={[{
-              scaleType: 'band',
-              data: xAxisData,
-              tickPlacement: 'start',
-              tickLabelPlacement: 'tick'
-            }]}
-            series={series}
-            width={3000}
-            height={800}
-            barLabel={generateBarLabel}
-            grid={{ horizontal: true }}
-          />
-        </Container>
-        <Typography padding={3}><Chip color="warning" label='Please note!' /> Custom rules have not yet been implemented for colour analysis, and so are not counted in these statistics.
-        </Typography>
-        <Typography padding={3}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
-          Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
-        </Typography>
-      </p>
+        {hasAnalysisLoaded
+          ?
+          <Container sx={{ overflowY: 'scroll' }}>
+            <BarChart
+              xAxis={[{
+                scaleType: 'band',
+                data: xAxisData,
+                tickPlacement: 'start',
+                tickLabelPlacement: 'tick'
+              }]}
+              series={series}
+              width={3000}
+              height={800}
+              barLabel={generateBarLabel}
+              grid={{ horizontal: true }}
+            />
+          </Container>
+          : <CircularProgress />
+        }
+        {hasAnalysisLoaded &&
+          <>
+            <Typography padding={3}><Chip color="warning" label='Please note!' /> Custom rules have not yet been implemented for colour analysis, and so are not counted in these statistics.
+            </Typography>
+            <Typography padding={3}><Chip color="warning" label='Please note!' /><b> There may be overlap between categories</b>:
+              Legendary creatures or Planeswalker that are part of a pair (Partner, Background, etc.) are counted individually too.
+            </Typography>
+            <Card>
+              <CardContent>
+
+                <h3>Actions</h3>
+                <p>Click here to clear your analysis.</p>
+                <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
+                <p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
+                <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchAllAnalysis}>
+                  Retrigger analysis
+                </Button>
+              </CardContent>
+            </Card>
+          </>
+        }
+      </p >
     </>
   )
 };
