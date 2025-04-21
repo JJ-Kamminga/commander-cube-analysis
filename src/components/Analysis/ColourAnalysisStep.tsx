@@ -10,6 +10,8 @@ const generateBarLabel = (item: BarItem) => item.value?.toString();
 const seriesDataExists = (series: BarChartProps["series"], label: string) => {
   return series.find(seriesData => seriesData.label === label)
 };
+const seriesHasData = (series: number[]) => series.some(value => value !== 0);
+
 const chartifyPairings = (
   cardData: MagicCard[],
   seriesLabel: string,
@@ -38,6 +40,9 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
   };
 
   const handleFetchAllAnalysis = () => {
+    setHasAnalysisLoaded(false);
+    handleClearAnalysis();
+
     /** Legendary creatures */
     /** Maybe: pass this from earlier step instead of re-querying */
     const legendaryCreatureNames = searchLegendaryCreatures(cardData);
@@ -68,43 +73,45 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
     const chartdataDoctorCompanionPairings = chartifyPairings(cardData, 'Doctor\'s companion pairings', searchDoctorCompanionPairings);
     const chartdataBackgroundPairings = chartifyPairings(cardData, 'Background pairings', searchBackgroundPairings);
 
-    if (Object.keys(chartdataLegendaries.data).length && !seriesDataExists(series, chartdataLegendaries.label)) {
+    console.log('has data', seriesHasData(chartdataLegendaries.data));
+
+    if (seriesHasData(chartdataLegendaries.data) && !seriesDataExists(series, chartdataLegendaries.label)) {
       setSeries(series => [
         ...series,
         chartdataLegendaries
       ]);
     };
-    if (Object.keys(chartdataPWCommanders.data).length && !seriesDataExists(series, chartdataPWCommanders.label)) {
+    if (seriesHasData(chartdataPWCommanders.data) && !seriesDataExists(series, chartdataPWCommanders.label)) {
       setSeries(series => [
         ...series,
         chartdataPWCommanders
       ]);
     };
-    if (Object.keys(chartdataUniquePartnerPairings.data).length && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
+    if (seriesHasData(chartdataUniquePartnerPairings.data) && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataUniquePartnerPairings
       ]);
     };
-    if (Object.keys(chartdataUniqueFriendsForeverPairings.data).length && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
+    if (seriesHasData(chartdataUniqueFriendsForeverPairings.data) && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataUniqueFriendsForeverPairings
       ]);
     };
-    if (Object.keys(chartdataPartnerWithPairings.data).length && !seriesDataExists(series, chartdataPartnerWithPairings.label)) {
+    if (seriesHasData(chartdataPartnerWithPairings.data) && !seriesDataExists(series, chartdataPartnerWithPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataPartnerWithPairings
       ]);
     };
-    if (Object.keys(chartdataDoctorCompanionPairings.data).length && !seriesDataExists(series, chartdataDoctorCompanionPairings.label)) {
+    if (seriesHasData(chartdataDoctorCompanionPairings.data) && !seriesDataExists(series, chartdataDoctorCompanionPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataDoctorCompanionPairings
       ]);
     };
-    if (Object.keys(chartdataBackgroundPairings.data).length && !seriesDataExists(series, chartdataBackgroundPairings.label)) {
+    if (seriesHasData(chartdataBackgroundPairings.data) && !seriesDataExists(series, chartdataBackgroundPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataBackgroundPairings
@@ -160,7 +167,7 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
                 <h3>Actions</h3>
                 <p>Click here to clear your analysis.</p>
                 <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
-                <p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
+                <p>Analysis is done on your device, and results may be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
                 <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchAllAnalysis}>
                   Retrigger analysis
                 </Button>

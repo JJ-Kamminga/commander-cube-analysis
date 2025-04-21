@@ -244,7 +244,7 @@ export const AnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) => {
                 <h3>Actions</h3>
                 <p>Click here to clear your analysis.</p>
                 <Button variant="outlined" onClick={handleClearAnalysis}>Clear</Button>
-                <p>Analysis is done on your device, and results will be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
+                <p>Analysis is done on your device, and results may be lost on page reload. Click here to retrigger the analysis with previously submitted cube.</p>
                 <Button sx={{ margin: '2' }} variant='outlined' onClick={handleFetchAllAnalysis}>
                   Retrigger analysis
                 </Button>
