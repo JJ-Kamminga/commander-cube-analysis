@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { analyseColourIdentities, ciNicknameDictionary, colourOrderStrings, queryColourIdentities, queryPairingColourIdentities, sortColourIdentities } from "@/utils/colours";
 
 const generateBarLabel = (item: BarItem) => item.value?.toString();
-const seriesDataExists = (series: BarChartProps["series"], label: string) => {
+const seriesDataInState = (series: BarChartProps["series"], label: string) => {
   return series.find(seriesData => seriesData.label === label)
 };
 const seriesHasData = (series: number[]) => series.some(value => value !== 0);
@@ -66,52 +66,49 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
     };
 
     /** Commander pairings */
-    /** Unique partner pairings */
     const chartdataUniquePartnerPairings = chartifyPairings(cardData, 'Unique Partner Pairings', searchUniquePartnerPairings);
     const chartdataUniqueFriendsForeverPairings = chartifyPairings(cardData, 'Unique Friends Forever pairings', searchUniqueFriendsForeverPairings);
     const chartdataPartnerWithPairings = chartifyPairings(cardData, 'Partner With pairings', searchPartnerWithPairings);
     const chartdataDoctorCompanionPairings = chartifyPairings(cardData, 'Doctor\'s companion pairings', searchDoctorCompanionPairings);
     const chartdataBackgroundPairings = chartifyPairings(cardData, 'Background pairings', searchBackgroundPairings);
 
-    console.log('has data', seriesHasData(chartdataLegendaries.data));
-
-    if (seriesHasData(chartdataLegendaries.data) && !seriesDataExists(series, chartdataLegendaries.label)) {
+    if (seriesHasData(chartdataLegendaries.data) && !seriesDataInState(series, chartdataLegendaries.label)) {
       setSeries(series => [
         ...series,
         chartdataLegendaries
       ]);
     };
-    if (seriesHasData(chartdataPWCommanders.data) && !seriesDataExists(series, chartdataPWCommanders.label)) {
+    if (seriesHasData(chartdataPWCommanders.data) && !seriesDataInState(series, chartdataPWCommanders.label)) {
       setSeries(series => [
         ...series,
         chartdataPWCommanders
       ]);
     };
-    if (seriesHasData(chartdataUniquePartnerPairings.data) && !seriesDataExists(series, chartdataUniquePartnerPairings.label)) {
+    if (seriesHasData(chartdataUniquePartnerPairings.data) && !seriesDataInState(series, chartdataUniquePartnerPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataUniquePartnerPairings
       ]);
     };
-    if (seriesHasData(chartdataUniqueFriendsForeverPairings.data) && !seriesDataExists(series, chartdataUniqueFriendsForeverPairings.label)) {
+    if (seriesHasData(chartdataUniqueFriendsForeverPairings.data) && !seriesDataInState(series, chartdataUniqueFriendsForeverPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataUniqueFriendsForeverPairings
       ]);
     };
-    if (seriesHasData(chartdataPartnerWithPairings.data) && !seriesDataExists(series, chartdataPartnerWithPairings.label)) {
+    if (seriesHasData(chartdataPartnerWithPairings.data) && !seriesDataInState(series, chartdataPartnerWithPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataPartnerWithPairings
       ]);
     };
-    if (seriesHasData(chartdataDoctorCompanionPairings.data) && !seriesDataExists(series, chartdataDoctorCompanionPairings.label)) {
+    if (seriesHasData(chartdataDoctorCompanionPairings.data) && !seriesDataInState(series, chartdataDoctorCompanionPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataDoctorCompanionPairings
       ]);
     };
-    if (seriesHasData(chartdataBackgroundPairings.data) && !seriesDataExists(series, chartdataBackgroundPairings.label)) {
+    if (seriesHasData(chartdataBackgroundPairings.data) && !seriesDataInState(series, chartdataBackgroundPairings.label)) {
       setSeries(series => [
         ...series,
         chartdataBackgroundPairings
