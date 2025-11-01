@@ -47,7 +47,7 @@ function App() {
                   position: 'absolute',
                   top: '50',
                 }
-              } > Commander Cube Analysis</h1>
+              } > Commander Cube Toolkit</h1>
             </Grid2>
           </Grid2>
         </Container>

@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Commander Cube Analysis is a Next.js web application that helps Commander Cube designers analyze their cubes. It fetches cube data from Cube Cobra and card details from Scryfall, then analyzes commander options and color identities for draft configurations.
+Commander Cube Toolkit is a Next.js web application that helps Commander Cube designers analyze their cubes. It fetches cube data from Cube Cobra and card details from Scryfall, then analyzes commander options and color identities for draft configurations.
 
-Live site: https://commander-cube-analysis.vercel.app/
+Live site: https://commander-cube-toolkit.vercel.app/
 
 ## Commands
 
 ### Development
+
 ```bash
 npm run dev          # Start development server with Turbopack
 npm run build        # Build for production
@@ -49,6 +50,7 @@ State is persisted to localStorage to survive page refreshes.
 An embedded toolkit (credit: ahmattox) for interacting with MTG APIs:
 
 - **Scryfall integration** (`scryfall/`):
+
   - `fetchCollection()`: Fetches card data from Scryfall API
   - Type definitions for Scryfall card objects
 
@@ -109,6 +111,7 @@ Functions for analyzing and displaying color identities:
 ### Styling
 
 Uses Material-UI (MUI) v6 with:
+
 - Emotion for CSS-in-JS
 - Theme with dark mode support
 - Roboto font family
