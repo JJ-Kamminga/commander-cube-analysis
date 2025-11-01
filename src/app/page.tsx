@@ -6,7 +6,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import { CubeListForm } from "@/components/CubeListForm/CubeListForm";
-import { Avatar, Container, createTheme, Grid2, CssBaseline, ThemeProvider, useColorScheme } from "@mui/material";
+import { Avatar, Container, createTheme, Grid2, CssBaseline, ThemeProvider, useColorScheme, Link } from "@mui/material";
 
 import Box from '@mui/material/Box';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -14,7 +14,6 @@ import Radio from '@mui/material/Radio';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import Link from 'next/link';
 import { GitHub } from '@mui/icons-material';
 
 const theme = createTheme({
@@ -95,20 +94,29 @@ function App() {
           <h3>Image credits</h3>
           <ul>
             <li>Jesper Ejsing, Deep Analysis (published by Wizards of the Coast)</li>
-            <li><a target="_blank" href="https://icons8.com/icon/6665/cube">Cube</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></li>
+            <li><Link href="https://icons8.com/icon/6665/cube" target="_blank" rel="noopener noreferrer">Cube</Link> icon by <Link href="https://icons8.com" target="_blank" rel="noopener noreferrer">Icons8</Link></li>
           </ul>
           <h3>Site credits</h3>
           <ul>
-            <li>Created with <Link href="https://nextjs.org/">Next.js</Link> by <Link href='https://github.com/JJ-Kamminga'>Jakob Jan Kamminga
-            </Link></li>
-            <li>Cube data supplied by
-              <Link href='https://cubecobra.com/'> Cube Cobra</Link>
-            </li>
-            <li>Magic Card data is supplied by <Link href='https://scryfall.com/'>Scryfall</Link> and copyrighted by Wizards of the Coast</li>
-            <li>My work was made much easier with <b>ahmattox</b>&apos;s <Link href="https://github.com/ahmattox/mtg-scripting-toolkit">MTG Scripting Toolkit</Link></li>
+            <li>Created with <Link href="https://nextjs.org/" target="_blank" rel="noopener noreferrer">Next.js</Link> by <Link href='https://github.com/JJ-Kamminga' target="_blank" rel="noopener noreferrer">Jakob Jan Kamminga</Link></li>
+            <li>Cube data supplied by <Link href='https://cubecobra.com/' target="_blank" rel="noopener noreferrer">Cube Cobra</Link></li>
+            <li>Magic Card data is supplied by <Link href='https://scryfall.com/' target="_blank" rel="noopener noreferrer">Scryfall</Link> and copyrighted by Wizards of the Coast</li>
+            <li>My work was made much easier with <b>ahmattox</b>&apos;s <Link href="https://github.com/ahmattox/mtg-scripting-toolkit" target="_blank" rel="noopener noreferrer">MTG Scripting Toolkit</Link></li>
           </ul>
           <h3>Links</h3>
-          <Link href="https://github.com/JJ-Kamminga/commander-cube-analysis">
+          <Link
+            href="https://github.com/JJ-Kamminga/commander-cube-analysis"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              color: 'primary.main',
+              '&:hover': {
+                color: 'primary.dark',
+              }
+            }}
+          >
             <GitHub />
           </Link>
         </Container>
