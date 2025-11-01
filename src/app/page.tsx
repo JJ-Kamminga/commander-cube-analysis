@@ -2,7 +2,7 @@
 
 import { Container, Typography, Button, Box } from "@mui/material";
 import Link from "next/link";
-import { Analytics } from '@mui/icons-material';
+import { Analytics, DesignServices } from '@mui/icons-material';
 
 export default function HomePage() {
   return (
@@ -23,10 +23,20 @@ export default function HomePage() {
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          Analyze your Commander Cube from Cube Cobra and get detailed insights about commander options, color identities, and draft configurations.
+          This site contains tools & utilities to help Commander cube designers build and understand their cubes.
         </Typography>
 
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <Button
+            component={Link}
+            href="/design"
+            variant="contained"
+            size="large"
+            startIcon={<DesignServices />}
+            sx={{ px: 4, py: 1.5 }}
+          >
+            Commander Cube design tool
+          </Button>
           <Button
             component={Link}
             href="/analyze"
@@ -35,22 +45,8 @@ export default function HomePage() {
             startIcon={<Analytics />}
             sx={{ px: 4, py: 1.5 }}
           >
-            Analyze Your Cube
+            Commander Cube analysis tool
           </Button>
-        </Box>
-
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="body1">
-            This tool helps you:
-          </Typography>
-          <Typography variant="body2" component="div" color="text.secondary">
-            <ul style={{ textAlign: 'left', maxWidth: '500px', margin: '0 auto' }}>
-              <li>Fetch cube data from Cube Cobra</li>
-              <li>Analyze commander options by type (legendary creatures, partners, planeswalkers, etc.)</li>
-              <li>Examine color identity distribution</li>
-              <li>Configure draft settings and see probability calculations</li>
-            </ul>
-          </Typography>
         </Box>
       </Box>
     </Container>
