@@ -1,10 +1,8 @@
-import type { Metadata } from "next";
+import { Providers } from "@/components/Providers/Providers";
+import { Nav } from "@/components/Nav/Nav";
+import { Footer } from "@/components/Footer/Footer";
 
-export const metadata: Metadata = {
-  title: "Commander Cube Toolkit",
-  description: "Get Commander Cube taylored analysis",
-  // viewport: "initial-scale=1, width=device-width" todo: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
-};
+export { metadata } from "./metadata";
 
 export default function RootLayout({
   children,
@@ -14,7 +12,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <Providers>
+          <main>
+            <Nav />
+            {children}
+            <Footer />
+          </main>
+        </Providers>
       </body>
     </html>
   );

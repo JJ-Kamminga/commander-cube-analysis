@@ -219,7 +219,6 @@ export const CubeListForm: React.FC = () => {
 
   return (
     <>
-      <h2>Commander analysis</h2>
       {activeStep !== 0 && (
         <Button variant='outlined' onClick={handleStepReset} sx={{ mt: 1, mr: 1 }}>
           Back to step 1
