@@ -1,10 +1,19 @@
-import type { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Commander Cube Toolkit",
-  description: "Get Commander Cube taylored analysis",
-  // viewport: "initial-scale=1, width=device-width" todo: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
-};
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { Nav } from "@/components/Nav/Nav";
+import { Footer } from "@/components/Footer/Footer";
+
+const theme = createTheme({
+  colorSchemes: {
+    dark: true,
+  },
+});
 
 export default function RootLayout({
   children,
@@ -14,7 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <ThemeProvider theme={theme}>
+          <CssBaseline>
+            <main>
+              <Nav />
+              {children}
+              <Footer />
+            </main>
+          </CssBaseline>
+        </ThemeProvider>
       </body>
     </html>
   );
