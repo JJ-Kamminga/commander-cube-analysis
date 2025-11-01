@@ -16,7 +16,7 @@ export default function DesignPage() {
           gap: 3,
         }}
       >
-        <Typography variant="h2" component="h1" gutterBottom>
+        <Typography variant="h2" component="h1">
           Design Your Cube
         </Typography>
 

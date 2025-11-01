@@ -18,20 +18,16 @@ export function Nav() {
     <Container component='nav' sx={{ padding: 5 }}>
       <Grid2 container spacing={2} alignItems="center">
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Link href="/" style={{ cursor: 'pointer', textDecoration: 'none' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Avatar
-                src="/ddh-65-deep-analysis.jpg"
-                alt="Illustration of Deep Analysis by Jesper Ejsing"
-                sx={{ width: 100, height: 100 }}
-              />
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                <Typography variant="h5" component="h1" sx={{ margin: 0 }}>
-                  Commander Cube Toolkit
-                </Typography>
-              </Box>
-            </Box>
-          </Link>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Avatar
+              src="/ddh-65-deep-analysis.jpg"
+              alt="Illustration of Deep Analysis by Jesper Ejsing"
+              sx={{ width: 100, height: 100 }}
+            />
+            <Typography variant="h5" component="h1" sx={{ margin: 0 }}>
+              Commander Cube Toolkit
+            </Typography>
+          </Box>
         </Grid2>
         <Grid2 size={{ xs: 12, md: 8 }}>
           <Box
