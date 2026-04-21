@@ -134,7 +134,7 @@ export const ColourAnalysisStep: React.FC<AnalysisStepProps> = ({ ...props }) =>
       <p>
         {hasAnalysisLoaded
           ?
-          <Container sx={{ overflowY: 'scroll' }}>
+          <Container sx={{ overflowX: 'auto' }} maxWidth={false}>
             <BarChart
               xAxis={[{
                 scaleType: 'band',
