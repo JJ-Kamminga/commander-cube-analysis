@@ -110,7 +110,7 @@ export const CubeListForm: React.FC = () => {
   }
 
   const handleSnackbarClose = (
-    event: React.SyntheticEvent | Event,
+    _event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason,
   ) => {
     if (reason === 'clickaway') {
@@ -126,7 +126,7 @@ export const CubeListForm: React.FC = () => {
         size="small"
         aria-label="close"
         color="inherit"
-        onClick={handleSnackbarClose}
+        onClick={() => setSnackbarOpen(false)}
       >
         <Close fontSize="small" />
       </IconButton>
@@ -136,11 +136,8 @@ export const CubeListForm: React.FC = () => {
   interface FormElements extends HTMLFormControlsCollection {
     cubeCobraInput: HTMLInputElement
   }
-  interface CubeCobraFormElement extends HTMLFormElement {
-    readonly elements: FormElements
-  }
 
-  const handleCubeCobraSubmit = async (event: React.FormEvent<CubeCobraFormElement>) => {
+  const handleCubeCobraSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setCubeCobraID('');
@@ -149,7 +146,7 @@ export const CubeListForm: React.FC = () => {
     setCardData([]);
     localStorage.removeItem('card-data');
 
-    const cubeID = event.currentTarget.elements["cubeCobraInput"].value;
+    const cubeID = (event.currentTarget.elements as unknown as FormElements)["cubeCobraInput"].value;
 
     if (typeof cubeID !== 'string' || cubeID.length > 50 || cubeID.length === 0) {
       setErrorLog(errorLog => [...errorLog, 'Cube ID length error']);
@@ -303,27 +300,27 @@ export const CubeListForm: React.FC = () => {
                   checked={checkboxesChecked.monoLCPartner}
                   name="monoLCPartner"
                   onChange={handleCheckboxChange}
-                  inputProps={{ 'aria-label': 'controlled' }}
+                  slotProps={{ input: { 'aria-label': 'controlled' } }}
                 />} label="All monocoloured legendary creatures have Partner" />
                 <FormControlLabel control={<Checkbox
                   checked={checkboxesChecked.allLCPartner}
                   name="allLCPartner"
                   onChange={handleCheckboxChange}
-                  inputProps={{ 'aria-label': 'controlled' }}
+                  slotProps={{ input: { 'aria-label': 'controlled' } }}
                 />} label="All legendary creatures have Partner" />
                 <Chip label='Currently the following custom rules are not yet implemented. Let me know if you want them!' />
                 <FormControlLabel control={<Checkbox
                   // checked={checkboxesChecked.freePrismaticPiper}
                   name="freePrismaticPiper"
                   // onChange={handleCheckboxChange}
-                  inputProps={{ 'aria-label': 'controlled' }}
+                  slotProps={{ input: { 'aria-label': 'controlled' } }}
                   disabled={true}
                 />} label="Each player has access to The Prismatic Piper (a Partner for a colour of choice)" />
                 <FormControlLabel control={<Checkbox
                   // checked={checkboxesChecked.freePrismaticPiper}
                   name="freeFacelessOne"
                   // onChange={handleCheckboxChange}
-                  inputProps={{ 'aria-label': 'controlled' }}
+                  slotProps={{ input: { 'aria-label': 'controlled' } }}
                   disabled={true}
                 />} label="Each player has access to Faceless One (a Background partner for a colour of choice)" />
               </FormGroup>
