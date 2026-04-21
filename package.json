@@ -4,7 +4,7 @@
   "private": false,
   "license": "MIT",
   "engines": {
-    "node": ">=25"
+    "node": ">=24 <25"
   },
   "packageManager": "pnpm@10.19.0",
   "scripts": {
