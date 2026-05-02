@@ -1,28 +1,41 @@
-'use client';
+"use client";
 
-import { Container, Typography, Box } from "@mui/material";
+import { useState } from "react";
+import { Box, Container, Tab, Tabs, Typography } from "@mui/material";
+import { GoalsTab } from "./GoalsTab";
+import { DraftingCommandersTab } from "./DraftingCommandersTab";
+import { DraftAndDeckbuildingTab } from "./DraftAndDeckbuildingTab";
+import { CardChoicesTab } from "./CardChoicesTab";
+
+const tabs = [
+  "Goals",
+  "Drafting commanders",
+  "Draft and deckbuilding",
+  "Card choices",
+];
 
 export default function DesignPage() {
-  return (
-    <Container maxWidth="md">
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '50vh',
-          textAlign: 'center',
-          gap: 3,
-        }}
-      >
-        <Typography variant="h2" component="h1">
-          Design Your Cube
-        </Typography>
+  const [activeTab, setActiveTab] = useState(0);
 
-        <Typography variant="body1" color="text.secondary">
-          This page is under construction.
-        </Typography>
+  return (
+    <Container>
+      <Typography variant="h2">Commander Cube Design</Typography>
+      <Typography variant="body1">
+        Some tabs are still work in progress, please check back later!
+      </Typography>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}>
+          {tabs.map((label) => (
+            <Tab key={label} label={label} />
+          ))}
+        </Tabs>
+      </Box>
+
+      <Box sx={{ py: 3 }}>
+        {activeTab === 0 && <GoalsTab />}
+        {activeTab === 1 && <DraftingCommandersTab />}
+        {activeTab === 2 && <DraftAndDeckbuildingTab />}
+        {activeTab === 3 && <CardChoicesTab />}
       </Box>
     </Container>
   );
