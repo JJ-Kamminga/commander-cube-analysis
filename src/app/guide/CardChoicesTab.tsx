@@ -14,14 +14,14 @@ export function CardChoicesTab() {
       <Typography variant="h3" gutterBottom>
         Card choices
       </Typography>
-      <Typography variant="body1" color="text.secondary" gutterBottom>
-        Card choices will vary greatly depending on your gameplay goals. However,
-        whatever those goals are, you will need to adjust for the decreased
-        consistency of decks that cube produces. Unfocused decks don&apos;t
-        proactively attack their opponents, and games will go long. This is the
-        case for high powered commander cubes somewhat, but especially for lower
-        powered ones. This section discusses a number of techniques to speed up
-        games.
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        Card choices will vary greatly depending on your gameplay goals.
+        However, whatever those goals are, you will need to adjust for the
+        decreased consistency of decks that cube produces. Unfocused decks
+        don&apos;t proactively attack their opponents, and games will go long.
+        This is the case for high powered commander cubes somewhat, but
+        especially for lower powered ones. This section discusses a number of
+        techniques to speed up games.
       </Typography>
 
       <Accordion defaultExpanded>
@@ -29,7 +29,7 @@ export function CardChoicesTab() {
           <Typography variant="h6">Goad</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             One of the brilliant mechanics of Commander-focused design — this
             multiplayer mechanic forces players to attack, keeping the game
             moving and preventing turtling.
@@ -56,17 +56,18 @@ export function CardChoicesTab() {
           <Typography variant="h6">Cards that hit each opponent</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             In real games of Commander, the choice of which opponent to hit with
             your Blood Artist trigger is more often than not a dice roll, or a
             leftover feud from last game. If we&apos;re unlucky, our opponent
             ponders the decision for 10 seconds. As a cube curator, you have the
             capacity to remove that decision paralysis.
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
-            Don&apos;t run <CardName name="Blood Artist" /> — run <CardName name="Zulaport Cutthroat" />. Not only does
-            it speed up the game by dealing damage to each opponent, it also
-            removes decision paralysis entirely, saving seconds on every trigger.
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Don&apos;t run <CardName name="Blood Artist" /> — run{" "}
+            <CardName name="Zulaport Cutthroat" />. Not only does it speed up
+            the game by dealing damage to each opponent, it also removes
+            decision paralysis entirely, saving seconds on every trigger.
           </Typography>
         </AccordionDetails>
       </Accordion>
@@ -76,7 +77,7 @@ export function CardChoicesTab() {
           <Typography variant="h6">Boardwipes</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Add them sparingly. Boardwipes are an important tool in Commander,
             but they are very powerful — often the greatest sources of card
             advantage in the game. Players who realize this and end up with a
@@ -92,7 +93,8 @@ export function CardChoicesTab() {
               <CardName name="Hour of Revelation" /> (heavy white mana cost)
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
-              <CardName name="Supreme Verdict" /> (requires specifically two colours)
+              <CardName name="Supreme Verdict" /> (requires specifically two
+              colours)
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -109,7 +111,7 @@ export function CardChoicesTab() {
               Counterspells
             </Typography>
           </Box>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Boardwipes that are good in Commander don&apos;t necessarily produce
             good play patterns in Commander cube games.
           </Typography>
@@ -121,18 +123,18 @@ export function CardChoicesTab() {
           <Typography variant="h6">Banned cards</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Generally, my recommendation is to let what&apos;s banned stay
             banned. Many banned cards earned their status for reasons related to
             play patterns rather than raw power level, and almost every banned
             card has a &quot;fixed&quot; version nowadays. Let the mistakes of
             the past stay in the past.
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             This applies especially to Conspiracies. These cards are not only
-            very powerful, but play against the singleton nature of Commander. If
-            you have considered all these factors and decided degeneracy is what
-            you&apos;re up for — by all means. This is cube after all!
+            very powerful, but play against the singleton nature of Commander.
+            If you have considered all these factors and decided degeneracy is
+            what you&apos;re up for — by all means. This is cube after all!
           </Typography>
         </AccordionDetails>
       </Accordion>

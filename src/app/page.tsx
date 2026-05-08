@@ -22,7 +22,7 @@ export default function HomePage() {
           What&apos;s this?
         </Typography>
 
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" color="text.primary">
           This site contains tools & utilities to help Commander cube designers
           build and understand their cubes.
         </Typography>

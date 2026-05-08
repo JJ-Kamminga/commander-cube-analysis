@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Tooltip } from "@mui/material";
 import { apiURL } from "@/utils/mtg-scripting-toolkit/scryfall/config";
+import Image from "next/image";
 
 const artCache = new Map<string, Promise<string | null>>();
 
@@ -32,10 +33,11 @@ export function CardName({ name }: { name: string }) {
     <Tooltip
       title={
         artUrl ? (
-          <img
+          <Image
             src={artUrl}
             width={280}
-            alt={name}
+            height={390}
+            alt={`Card scan of ${name}`}
             style={{ display: "block" }}
           />
         ) : (
