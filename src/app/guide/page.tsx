@@ -14,15 +14,12 @@ const tabs = [
   "Card choices",
 ];
 
-export default function DesignPage() {
+export default function GuidePage() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
     <Container>
-      <Typography variant="h2">Commander Cube Design</Typography>
-      <Typography variant="body1">
-        Some tabs are still work in progress, please check back later!
-      </Typography>
+      <Typography variant="h2">Commander Cube Design Guide</Typography>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)}>
           {tabs.map((label) => (
