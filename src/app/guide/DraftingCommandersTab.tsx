@@ -17,24 +17,26 @@ export function DraftingCommandersTab() {
         How will your commanders be drafted?
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
-        Unlike the matter of deck size, pack size or color identity rules, this
-        question will have an answer more tied to your personal preference. And
-        once you have that answer, the other questions will be more easily
-        answered.
+        Before we discuss deck size, pack size and count, or even colour
+        identity rules, let&apos;s start with a question more defining for a
+        commander cube: how will your commanders be drafted? This will make the
+        other questions much easier to answer too.
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         Drafting commanders is the major complicating factor compared to
         non-commander cube. To have each drafter be presented with sufficient
         Commander options, your cube list will need a very high percentage of
-        legal Commanders. At best, this means you now have a Legendaries or
-        Historic theme in your cube (and you happen to like that). But at worst,
-        your cube list now contains a high number of cards that at most one
-        drafter could want — and will be last picks most of the time.
+        legal Commanders. Simply adding lots of legendary creatures to your cube{" "}
+        <i>could</i> be the answer for some, but it&apos;s hardly a generic
+        solution.
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         Cube curators have come up with a variety of ways to solve this problem.
         We will discuss the most prominent ones, in increasing steps of rules
         modification.
+      </Typography>
+      <Typography variant="body1" color="text.secondary" gutterBottom>
+        You can click option headers to expand or hide them.
       </Typography>
 
       <Accordion defaultExpanded>
@@ -110,7 +112,7 @@ export function DraftingCommandersTab() {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Option 2: Commander packs</Typography>
         </AccordionSummary>
@@ -154,7 +156,7 @@ export function DraftingCommandersTab() {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Option 3: Rules modifications</Typography>
         </AccordionSummary>
@@ -217,7 +219,7 @@ export function DraftingCommandersTab() {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Bonus option: seeding packs</Typography>
         </AccordionSummary>
