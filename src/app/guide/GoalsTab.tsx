@@ -10,17 +10,18 @@ export function GoalsTab() {
       <Typography variant="body1" color="text.primary" gutterBottom>
         What do you want your players to experience? Elder Dragon Highlander,
         like the good old days? High powered, CEDH like gameplay? Or perhaps
-        just capture that era when Commander was supported, but Wizards&apos;
-        <i>Year of Commander</i> hadn&apos;t messed everything up yet? Do you
-        miss <CardName name="Hullbreacher" />?
+        just capture that era when Commander was supported, but Wizards&apos;{" "}
+        <i>Year of Commander</i> hadn&apos;t messed it up yet? Do you miss{" "}
+        <CardName name="Hullbreacher" />?
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         This is the most important question, as it will decide some of the key
         cards of your environment. The inclusion of modern power outliers will
-        dictate what the powerful decks look like. The inclusion of fast mana
-        (yes, that includes <CardName name="Sol Ring" />) will dictate the pace
-        of games, and risks swingyness. Reversely, if you want{" "}
-        <CardName name="Vaevictis Asmadi" /> to be a meaningful card - you know
+        dictate what the powerful decks look like. And the powerful decks
+        dictate what other decks are viable. The inclusion of fast mana (yes,
+        that includes <CardName name="Sol Ring" />) will dictate the pace, and
+        risks swingy games. Or to put it another way, if you want{" "}
+        <CardName name="Vaevictis Asmadi" /> to be a meaningful card - know that
         many of those new cards will take the spotlight away from it.
       </Typography>
     </>
