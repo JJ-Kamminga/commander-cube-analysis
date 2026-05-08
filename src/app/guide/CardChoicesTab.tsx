@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { CardName } from "@/components/CardName/CardName";
 
 export function CardChoicesTab() {
   return (
@@ -38,13 +39,13 @@ export function CardChoicesTab() {
           </Typography>
           <Box component="ul" sx={{ mt: 0, mb: 0, color: "text.secondary" }}>
             <Typography component="li" variant="body2" color="text.secondary">
-              Bloodthirsty Blade
+              <CardName name="Bloodthirsty Blade" />
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
-              Disrupt Decorum
+              <CardName name="Disrupt Decorum" />
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
-              Kardur, Doomscourge
+              <CardName name="Kardur, Doomscourge" />
             </Typography>
           </Box>
         </AccordionDetails>
@@ -63,7 +64,7 @@ export function CardChoicesTab() {
             capacity to remove that decision paralysis.
           </Typography>
           <Typography variant="body1" color="text.secondary" gutterBottom>
-            Don&apos;t run Blood Artist — run Zulaport Cutthroat. Not only does
+            Don&apos;t run <CardName name="Blood Artist" /> — run <CardName name="Zulaport Cutthroat" />. Not only does
             it speed up the game by dealing damage to each opponent, it also
             removes decision paralysis entirely, saving seconds on every trigger.
           </Typography>
@@ -88,10 +89,10 @@ export function CardChoicesTab() {
           </Typography>
           <Box component="ul" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
             <Typography component="li" variant="body2" color="text.secondary">
-              Hour of Revelation (heavy white mana cost)
+              <CardName name="Hour of Revelation" /> (heavy white mana cost)
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
-              Supreme Verdict (requires specifically two colours)
+              <CardName name="Supreme Verdict" /> (requires specifically two colours)
             </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -99,10 +100,10 @@ export function CardChoicesTab() {
           </Typography>
           <Box component="ul" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
             <Typography component="li" variant="body2" color="text.secondary">
-              Selfless Spirit
+              <CardName name="Selfless Spirit" />
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
-              Heroic Intervention
+              <CardName name="Heroic Intervention" />
             </Typography>
             <Typography component="li" variant="body2" color="text.secondary">
               Counterspells
