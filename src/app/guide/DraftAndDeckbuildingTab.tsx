@@ -18,7 +18,7 @@ export function DraftAndDeckbuildingTab() {
       <Typography variant="h3" gutterBottom>
         Draft and deckbuilding
       </Typography>
-      <Typography variant="body1" color="text.secondary" gutterBottom>
+      <Typography variant="body1" color="text.primary" gutterBottom>
         The knobs you can turn:
       </Typography>
       <Box component="ol" sx={{ mt: 0, mb: 3, color: "text.secondary" }}>
@@ -38,7 +38,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6">Draft format</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             The following factors should be considered for the draft format:
           </Typography>
           <Box component="ol" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
@@ -49,7 +49,7 @@ export function DraftAndDeckbuildingTab() {
               Amount of cards seen thrice
             </Typography>
           </Box>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Factor 1 is important to keep high, to make sure players have access
             to a sufficient variety of cards to build decks (assuming these are
             supported in the pool). Factor 2 is important to keep low, because
@@ -57,7 +57,7 @@ export function DraftAndDeckbuildingTab() {
             amount of cards seen twice is OK). The number of packs should not
             exceed 5 for similar reasons.
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Note that both percentages can be raised by <em>burning</em> cards.
             This is a valuable knob, but it helps to first establish a solid
             baseline for factors 1 and 2.
@@ -66,7 +66,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
             Baseline
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             A 360 card cube drafted with 8 players, 3 packs of 15:
           </Typography>
           <Box component="ol" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
@@ -81,7 +81,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
             Commander Legends format
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             A 480 card pool drafted with 8 players, 3 packs of 20, pick 2 each
             time:
           </Typography>
@@ -93,7 +93,7 @@ export function DraftAndDeckbuildingTab() {
               0 cards seen thrice
             </Typography>
           </Box>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             This is fine! But what about with 4 players?
           </Typography>
           <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -118,7 +118,7 @@ export function DraftAndDeckbuildingTab() {
               0 cards seen thrice
             </Typography>
           </Box>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             The downside here is the limited pool (both options only utilize 50%
             of the cube). We can improve things by burning. A 360 card pool
             (75%), 5 packs of 18, burn 6:
@@ -131,7 +131,7 @@ export function DraftAndDeckbuildingTab() {
               0 cards seen thrice
             </Typography>
           </Box>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             What about 6 players? 3 packs of 20 works OK:
           </Typography>
           <Box component="ol" sx={{ mt: 0, mb: 0, color: "text.secondary" }}>
@@ -150,7 +150,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6">Standard pick rules</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Assuming a 480 card cube with a pool size of 60. Values show % of
             cards seen per player.
           </Typography>
@@ -261,7 +261,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6" gutterBottom>
             40, 60 or 100?
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             This is a factor of consistency. Do you like consistent commander
             decks that play more like 60 card constructed? Or do you like the
             singleton nature of commander? The one number I would not recommend
@@ -275,7 +275,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
             A sidenote on including commanders
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Following official commander rules, your commander or commander
             pairing is part of your deck, making them cards 100 and 99.
             Converting heuristics for the amount of lands you need to run,
@@ -291,20 +291,20 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6">Life total</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             This is a simpler decision, and really it comes down to how quickly
             you want games to end. There is not really any complex logic behind
             Commander&apos;s 40 life. Official formats Commander Legends and
-            Commander Masters have stuck with 40, but{" "}
-            <em>Brawl</em> used 25, and some multiplayer formats like Conspiracy
-            simply used 20. The lower you go, the sooner games will end — and
-            how soon you like that is completely up to you.
+            Commander Masters have stuck with 40, but <em>Brawl</em> used 25,
+            and some multiplayer formats like Conspiracy simply used 20. The
+            lower you go, the sooner games will end — and how soon you like that
+            is completely up to you.
           </Typography>
 
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
             A sidenote on Commander damage
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Commander Damage being 21 has a bit of a backstory: 21 is 3 hits
             from a 7-power Elder Dragon. Whatever life total you decide to use,
             I recommend keeping the Commander Damage rule. It is a generally
@@ -320,20 +320,20 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6">Colour identity</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             When given the problem some thought, most players agree that the
             colour identity rule is imperfect. For example, hybrid cards or flip
             cards with a monocolour front are often brought up as examples where
             players would change the rule. Rule 0 is all well and good, but the
-            vast majority of Commander players do not use it for checking whether
-            they can run a given card.
+            vast majority of Commander players do not use it for checking
+            whether they can run a given card.
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             Modifying rules comes with a complexity cost. Your players will need
-            time adjusting, especially players new to cube who are also adjusting
-            to drafting, different deck size, etc. That said, this is cube and
-            you are free to do what you want. Here are some popular options for
-            handling color identity.
+            time adjusting, especially players new to cube who are also
+            adjusting to drafting, different deck size, etc. That said, this is
+            cube and you are free to do what you want. Here are some popular
+            options for handling color identity.
           </Typography>
 
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
@@ -351,7 +351,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6" gutterBottom>
             Colour identity restricts your basics
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             This option is perhaps the most common modification of the color
             identity rule, used by Sam Black in his commander cube and also
             featured in Tiny Leaders Cube. The rule: your color identity
@@ -362,7 +362,7 @@ export function DraftAndDeckbuildingTab() {
           <Typography variant="h6" gutterBottom>
             Let go of colour identity altogether
           </Typography>
-          <Typography variant="body1" color="text.secondary" gutterBottom>
+          <Typography variant="body1" color="text.primary" gutterBottom>
             There is something to be said for this. In cube, your land base
             needs to be drafted just like your nonlands, and basics won&apos;t
             get you very far on a splash. So in a way, this is similar to the
