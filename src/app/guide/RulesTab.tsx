@@ -44,11 +44,14 @@ export function RulesTab() {
             Deck size is the first rule you may want to change from constructed
             Commander. In the average game, you don&apos;t get to see the bottom
             half of a 100 card deck. This is fine when playing a deck multiple
-            times, but not so much when you only play it once or twice. Another
-            consideration is that 100 card decks require much larger draft
-            pools, leading to a much longer draft and deckbuilding phase, with
-            more decisions of which you may not see the impact when you only
-            play one or two games.
+            times, but not so much when you only play it once or twice.
+          </Typography>
+          <Typography variant="body1">
+            Another factor is that the consistency of decks will already be
+            lower than in constructed Commander due to the nature of draft. 100
+            card decks will need bigger draft pools, maybe close to 100 cards (5
+            packs of 20). Drafting and deckbuilding will take very long, and
+            games will more often feature the &quot;duds&quot; of a draft pool.
           </Typography>
           <Typography
             variant="subtitle2"
@@ -64,8 +67,9 @@ export function RulesTab() {
           <ProsCons
             type="con"
             items={[
-              "Requires a longer draft and deckbuilding phase",
+              "Drafting and deckbuilding takes more time",
               "You will likely not see all of your cards in the first one or two games",
+              "Hard to make consistent limited decks of this size",
             ]}
           />
           <Typography variant="h4" sx={{ mt: 3 }} gutterBottom>
@@ -178,6 +182,17 @@ export function RulesTab() {
             ). If you like slow games just fine or your format is powerful
             enough, just stick to 40.
           </Typography>
+          <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
+            A sidenote on Commander damage
+          </Typography>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Commander Damage being 21 has a bit of a backstory: 21 is 3 hits
+            from a 7-power Elder Dragon. Whatever life total you decide to use,
+            I recommend keeping the Commander Damage rule. It is a generally
+            agreed useful tool in the format, allowing decks to break through
+            very high life totals and offering another angle of strategy for
+            Voltron decks and others.
+          </Typography>
         </AccordionDetails>
       </Accordion>
 
@@ -188,10 +203,7 @@ export function RulesTab() {
         <AccordionDetails>
           <Typography variant="body1" gutterBottom>
             All the problems listed on this page could in theory be solved by
-            rules modifications. Not letting players lose to drawing from an
-            empty library, not counting Commanders in the deck&apos;s card
-            count, etc. And how tempting it is to finally tackle your gripes
-            with Commander rules like with hybrid mana! But I would echo{" "}
+            rules modifications. But I would echo{" "}
             <Link
               target="_blank"
               href={
@@ -201,18 +213,19 @@ export function RulesTab() {
               Lucky Paper Radio
             </Link>{" "}
             in saying that rules modifications should be used with care. They
-            can easily create greater complexity than they (hope to) solve.
+            can easily create greater complexity than they (hope to) solve. That
+            said, there are some rules modifications that have found adoption in
+            the community. I will discuss two.
           </Typography>
           <Typography variant="h4" sx={{ mt: 3 }} gutterBottom>
             Colour identity
           </Typography>
           <Typography variant="body1" gutterBottom>
-            That said, there is one problem worth addressing. Colour identity is
-            a strange beast of Magic rules. A somewhat artificial restriction on
-            card inclusions in the first place, in draft it can incentivise
-            &quot;just&quot; playing commanders with more colours to have access
-            to more good cards - hurting the viability of mono and two coloured
-            commanders.
+            Colour identity is a strange beast of Magic rules. A somewhat
+            artificial restriction on card inclusions in the first place, in
+            draft it can incentivise &quot;just&quot; playing commanders with
+            more colours to have access to more good cards - hurting the
+            viability of mono and two coloured commanders.
           </Typography>
           <Typography variant="body1" gutterBottom>
             The most common rules modification is one that tackles exactly this
@@ -243,6 +256,23 @@ export function RulesTab() {
             limited phenomenon) as well as card options that are not even legal
             in constructed Commander, with a clear tradeoff: they have to draft
             their own off-colour fixing.
+          </Typography>
+          <Typography variant="h4" sx={{ mt: 3 }} gutterBottom>
+            Deck count excludes Commander(s)
+          </Typography>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Following official commander rules, your Commander or Commander
+            pairing is part of your deck, making them cards 100 and 99.
+            Converting heuristics for the amount of lands you need to run,
+            you&apos;ll find that this throws the calculation off slightly. Some
+            people therefore choose to have the commander(s) count &quot;on
+            top&quot; of the deck count, making it the 61st and 62nd card(s)
+            when playing 60 card decks, for example.
+          </Typography>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            I felt this rules modification deserved a mention, although I do not
+            recommend trying it unless you explicitly encounter the problem of
+            players misjudging their land counts in your playgroup.
           </Typography>
         </AccordionDetails>
       </Accordion>
