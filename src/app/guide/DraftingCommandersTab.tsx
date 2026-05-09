@@ -6,6 +6,7 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { ProsCons } from "@/components/ProsCons/ProsCons";
 import { BackgroundsCalculator } from "@/components/Design/BackgroundsCalculator";
 import { BaselineCalculator } from "@/components/Design/BaselineCalculator";
 import { PartnersCalculator } from "@/components/Design/PartnersCalculator";
@@ -84,30 +85,19 @@ export function DraftingCommandersTab() {
             steep drop in power level. In a high powered cube, you won&apos;t
             want to play most of them.
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Pros:
+          <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+            Pros and cons
           </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 1, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Very high number of commander pairings per card slot
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              No rules modifications required
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              No additional sorting effort required
-            </Typography>
-          </Box>
-          <Typography variant="body2" color="text.secondary">
-            Cons:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 0, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              The power level may not match your goals
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              The cards may not have the flavor or mechanics you want
-            </Typography>
+          <Box sx={{ mb: 1 }}>
+            <ProsCons type="pro" items={[
+              "Very high number of commander pairings per card slot",
+              "No rules modifications required",
+              "No additional sorting effort required",
+            ]} />
+            <ProsCons type="con" items={[
+              "The power level may not match your goals",
+              "The cards may not have the flavor or mechanics you want",
+            ]} />
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -128,30 +118,19 @@ export function DraftingCommandersTab() {
             buy, sleeve, and sort separately to the cube designer, and a
             slightly longer draft phase for the players.
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Pros:
+          <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+            Pros and cons
           </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 1, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Guarantees players see sufficient and equal commander options
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              You have tight control over the power level
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              No rules modifications, just an extra pack
-            </Typography>
-          </Box>
-          <Typography variant="body2" color="text.secondary">
-            Cons:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 0, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              More cards to maintain
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Higher sorting effort
-            </Typography>
+          <Box sx={{ mb: 1 }}>
+            <ProsCons type="pro" items={[
+              "Guarantees players see sufficient and equal commander options",
+              "You have tight control over the power level",
+              "No rules modifications, just an extra pack",
+            ]} />
+            <ProsCons type="con" items={[
+              "More cards to maintain",
+              "Higher sorting effort",
+            ]} />
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -185,36 +164,21 @@ export function DraftingCommandersTab() {
             or even create two-card combos, so this method requires more active
             power outlier monitoring.
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Pros:
+          <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 2, mb: 1 }}>
+            Pros and cons
           </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 1, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              High number of commander pairings per card slot
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              High number of options available across all power levels
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Has an official precedent (Commander Masters)
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              No additional sorting effort required
-            </Typography>
-          </Box>
-          <Typography variant="body2" color="text.secondary">
-            Cons:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 0, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Added complexity, especially for new players
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Power level higher on average; outliers are likely
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              Easy to accidentally create a 2-card combo in the command zone
-            </Typography>
+          <Box sx={{ mb: 1 }}>
+            <ProsCons type="pro" items={[
+              "High number of commander pairings per card slot",
+              "High number of options available across all power levels",
+              "Has an official precedent (Commander Masters)",
+              "No additional sorting effort required",
+            ]} />
+            <ProsCons type="con" items={[
+              "Added complexity, especially for new players",
+              "Power level higher on average; outliers are likely",
+              "Easy to accidentally create a 2-card combo in the command zone",
+            ]} />
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -241,7 +205,7 @@ export function DraftingCommandersTab() {
       <Typography variant="body1" color="text.primary">
         There is no single best way to solve the problem at hand. Wizards of the
         Coast has attempted two of these options in official products, but the
-        community does not agree these are universally good. Each has certain
+        community does not agree on a single best one. Each has certain
         consequences for your complexity, power level, mechanics and flavour.
         You will have to choose the option that&apos;s best for you, or perhaps
         more importantly: your players!
