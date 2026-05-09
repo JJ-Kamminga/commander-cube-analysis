@@ -8,10 +8,12 @@ import { GoalsTab } from "./GoalsTab";
 import { DraftingCommandersTab } from "./DraftingCommandersTab";
 import { DraftAndDeckbuildingTab } from "./DraftAndDeckbuildingTab";
 import { CardChoicesTab } from "./CardChoicesTab";
+import { RulesTab } from "./RulesTab";
 
 const tabs = [
   "Goals",
   "Drafting commanders",
+  "Rules",
   "Draft and deckbuilding",
   "Card choices",
 ];
@@ -48,8 +50,9 @@ export default function GuidePage() {
       <Box sx={{ py: 3 }}>
         {activeTab === 0 && <GoalsTab />}
         {activeTab === 1 && <DraftingCommandersTab />}
-        {activeTab === 2 && <DraftAndDeckbuildingTab />}
-        {activeTab === 3 && <CardChoicesTab />}
+        {activeTab === 2 && <RulesTab />}
+        {activeTab === 3 && <DraftAndDeckbuildingTab />}
+        {activeTab === 4 && <CardChoicesTab />}
 
         {(activeTab > 0 || activeTab < tabs.length - 1) && (
           <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}>

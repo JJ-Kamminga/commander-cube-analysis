@@ -18,21 +18,6 @@ export function DraftAndDeckbuildingTab() {
       <Typography variant="h3" gutterBottom>
         Draft and deckbuilding
       </Typography>
-      <Typography variant="body1" color="text.primary" gutterBottom>
-        The knobs you can turn:
-      </Typography>
-      <Box component="ol" sx={{ mt: 0, mb: 3, color: "text.secondary" }}>
-        <Typography component="li" variant="body1" color="text.secondary">
-          Deck size
-        </Typography>
-        <Typography component="li" variant="body1" color="text.secondary">
-          Life total
-        </Typography>
-        <Typography component="li" variant="body1" color="text.secondary">
-          Colour identity
-        </Typography>
-      </Box>
-
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Draft format</Typography>
