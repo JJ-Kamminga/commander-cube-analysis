@@ -16,24 +16,77 @@ export function DraftAndDeckbuildingTab() {
   return (
     <>
       <Typography variant="h3" gutterBottom>
-        Draft and deckbuilding
+        Drafting your cube
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        If you have drafted in person before, you know that getting the format
+        right for the player count is a delicate problem. The common three packs
+        of fifteen cards (I will write this as 3x15 from here on out) is
+        designed explicitly for a pod of 8 players playing 40 card decks. As
+        soon as we want to support 60 card decks, we need to add many more cards
+        to the pool. And to make things more complicating, Commander is a
+        4-player format, and most cube designers need to consider how their cube
+        will be drafted with 4 players.{" "}
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        As soon as we start changing the numbers on the player count and pool
+        size, two problems emerge.
+      </Typography>
+      <Typography variant="h4" gutterBottom>
+        1. Cards wheeling more than once
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        Wheeling is considered an essential part of drafting Magic: The
+        Gathering, letting players speculate on cards they want that may make it
+        around the table. However, wheeling gets much less rewarding and
+        skilltesting once cards start wheeling more than once. But this is
+        exactly what happens when we add more cards to the draft pool.
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        Example. Baseline: Given we want 40 card decks, we want 40 card pools.
+        If 8 players draft 3 packs of 20, they will wheel 7 cards twice, and no
+        cards thrice.
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        Example. Given we want 60 card decks, we want 60 card pools. Now if 8
+        players draft 3 packs of 20, they will wheel 12 cards twice, and 4 cards
+        thrice.
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        In the previous example, if instead 4 players draft 3 packs of 20, they
+        will wheel 16 cards twice, 12 cards thrice - and oof, this pack just
+        keeps going round and round.
+      </Typography>
+      <Typography variant="h4" gutterBottom>
+        2. A low percentage of cards seen per player
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        A cube is typically designed to be drafted in full. But when faced with
+        lower player counts, we cannot always draft the whole cube. In any cube,
+        this will hurt strategies that rely on synergies or even tight ratios of
+        cards. But in synergy heavy cubes, this problem is excasserbated.
+      </Typography>
+      <Typography>
+        Example: reanimator decks need a tight balance between self-mill,
+        reanimation and targets. Spellslinger decks need a tight balance of
+        creatures and spells.
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        The problem is that when we decrease the number of players, the
+        percentage of the cube that is drafted becomes lower, and not all cubes
+        are made for this. In addition, when we start introducing other tools
+        like &quot;pick-2&quot; (see below), the number of cards each player{" "}
+        <i>individually</i> sees of the cube drops even lower.
+      </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        I will discuss some techniques to counter these problems, and how to
+        adjust for varying player counts.
       </Typography>
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Draft format</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography variant="body1" color="text.primary" gutterBottom>
-            The following factors should be considered for the draft format:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
-            <Typography component="li" variant="body1" color="text.secondary">
-              % of cards seen per player (of the draft pool)
-            </Typography>
-            <Typography component="li" variant="body1" color="text.secondary">
-              Amount of cards seen thrice
-            </Typography>
-          </Box>
           <Typography variant="body1" color="text.primary" gutterBottom>
             Factor 1 is important to keep high, to make sure players have access
             to a sufficient variety of cards to build decks (assuming these are

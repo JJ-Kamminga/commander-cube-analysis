@@ -11,10 +11,10 @@ import { CardChoicesTab } from "./CardChoicesTab";
 import { RulesTab } from "./RulesTab";
 
 const tabs = [
-  "Goals",
+  "Gameplay goals",
   "Drafting commanders",
-  "Rules",
-  "Draft and deckbuilding",
+  "Rules and modifications",
+  "Draft format",
   "Card choices",
 ];
 
