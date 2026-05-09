@@ -10,13 +10,9 @@ export function RulesTab() {
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         Another thing to consider early on is the rules of the game. With this I
-        mean:
+        primarily mean deck size and life total, but there are more tweaks and
+        modifications we can make.
       </Typography>
-      <List>
-        <ListItem>Deck size</ListItem>
-        <ListItem>Life total</ListItem>
-        <ListItem>Colour identity</ListItem>
-      </List>
       <Typography variant="h3" gutterBottom>
         Deck size
       </Typography>
@@ -113,8 +109,8 @@ export function RulesTab() {
         into the command zone and perhaps adding an extra land or even two, the
         amount of playables in your deck is quite low. The smaller deck in
         conjunction with Commander games generally taking longer than 1v1 games
-        also makes "natural" decking out a real possibility - not what most
-        Commander players sign up for.
+        also makes &ldquo;natural&ldquo; decking out a real possibility - not
+        what most Commander players sign up for.
       </Typography>
       <Typography
         variant="subtitle2"
@@ -138,7 +134,83 @@ export function RulesTab() {
         ]}
       />
       <Typography variant="h3" gutterBottom>
+        Life total
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        Life total is less of an intricate discussion, because it is ultimately
+        quite simple: lower life totals lead to shorter games. If you enjoy
+        that, consider 20 (as in{" "}
+        <Link target="_blank" href={"https://mtg.wiki/page/Conspiracy_Draft"}>
+          Conspiracy Draft
+        </Link>{" "}
+        and any other format), 25 (as in{" "}
+        <Link target="_blank" href={"https://mtg.wiki/page/Brawl"}>
+          Brawl
+        </Link>{" "}
+        and Tiny Leaders ) or 30 (as in{" "}
+        <Link target="_blank" href={"https://mtg.wiki/page/Standard_Brawl"}>
+          multiplayer Standard Brawl
+        </Link>
+        ). If you like slow games just fine or your format is powerful enough,
+        just stick to 40.
+      </Typography>
+      <Typography variant="h3" gutterBottom>
         Rules modifications
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        All the problems listed on this page could in theory be solved by rules
+        modifications. Not letting players lose to drawing from an empty
+        library, not counting Commanders in the deck&apos;s card count, etc. And
+        how tempting it is to finally tackle your gripes with Commander rules
+        like with hybrid mana! But I would echo{" "}
+        <Link
+          target="_blank"
+          href={
+            "https://luckypaper.co/podcast/152-the-risks-and-rewards-of-custom-rules-in-cube/"
+          }
+        >
+          Lucky Paper Radio
+        </Link>{" "}
+        in saying that rules modifications should be used with care. They can
+        easily create greater complexity than they (hope to) solve.
+      </Typography>
+      <Typography variant="h4" gutterBottom>
+        Colour identity
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        That said, there is one problem worth addressing. Colour identity is a
+        strange beast of Magic rules. A somewhat artificial restriction on card
+        inclusions in the first place, in draft it can incentivise
+        &quot;just&quot; playing commanders with more colours to have access to
+        more good cards - hurting the viability of mono and two coloured
+        commanders.
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        The most common rules modification is one that tackles exactly this
+        problem. I have not been able to verify who invented this rule, but it
+        has gained traction through some popular cubes, among which Sam
+        Black&apos;s{" "}
+        <Link target="_blank" href={"https://cubecobra.com/cube/list/38rph"}>
+          Commander Cube
+        </Link>{" "}
+        and Gwen Dekker&apos;s{" "}
+        <Link
+          target="_blank"
+          href={"https://cubecobra.com/cube/list/tinyleaders"}
+        >
+          Tiny Leaders
+        </Link>{" "}
+        cube. It goes as follows:{" "}
+        <b>
+          you may play any card in your deck, but you may only include basic
+          lands that match your Commander&apos; colour identity.
+        </b>
+      </Typography>
+      <Typography variant="body1" gutterBottom>
+        This rule gives players interesting options for splashes (a common
+        limited phenomenon) as well as card options that are not even legal in
+        constructed Commander, with a clear tradeoff: they have to draft their
+        own off-colour fixing.
       </Typography>
     </>
   );
