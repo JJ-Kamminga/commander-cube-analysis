@@ -11,6 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { WheelingCalculator } from "@/components/Design/WheelingCalculator";
+import { DraftPoolCalculator } from "@/components/Design/DraftPoolCalculator";
 
 export function DraftAndDeckbuildingTab() {
   return (
@@ -33,7 +35,7 @@ export function DraftAndDeckbuildingTab() {
         size, two problems emerge.
       </Typography>
       <Typography variant="h4" gutterBottom>
-        1. Cards wheeling more than once
+        Problem 1: Cards wheeling more than once
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         Wheeling is considered an essential part of drafting Magic: The
@@ -43,34 +45,58 @@ export function DraftAndDeckbuildingTab() {
         exactly what happens when we add more cards to the draft pool.
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
-        Example. Baseline: Given we want 40 card decks, we want 40 card pools.
-        If 8 players draft 3 packs of 20, they will wheel 7 cards twice, and no
-        cards thrice.
+        As a baseline, we have 8 players drafting packs of 15. 7 Cards wheel,
+        and nothing makes it around a third time:
       </Typography>
+      <WheelingCalculator
+        defaultPlayers={8}
+        defaultPacks={3}
+        defaultCardsPerPack={15}
+      />
       <Typography variant="body1" color="text.primary" gutterBottom>
-        Example. Given we want 60 card decks, we want 60 card pools. Now if 8
-        players draft 3 packs of 20, they will wheel 12 cards twice, and 4 cards
-        thrice.
+        Now when we scale up to 60-card decks, keeping 3 packs to keep the
+        example clear, we end up with 20-card packs. Not only do we have more
+        cards wheeling, we have cards wheeling twice:
       </Typography>
+      <WheelingCalculator
+        defaultPlayers={8}
+        defaultPacks={3}
+        defaultCardsPerPack={20}
+      />
       <Typography variant="body1" color="text.primary" gutterBottom>
-        In the previous example, if instead 4 players draft 3 packs of 20, they
-        will wheel 16 cards twice, 12 cards thrice - and oof, this pack just
-        keeps going round and round.
+        This may be acceptable with 8 players, but when we lower the player
+        count things start to get annoying. This pack just keeps going round and
+        round:
       </Typography>
+      <WheelingCalculator
+        defaultPlayers={4}
+        defaultPacks={3}
+        defaultCardsPerPack={20}
+      />
+      We need to find a way to increase the pool size without causing endless
+      wheels, preferably having cards wheel no more than once.
       <Typography variant="h4" gutterBottom>
-        2. A low percentage of cards seen per player
+        Problem 2: A low percentage of cards seen per player
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         A cube is typically designed to be drafted in full. But when faced with
         lower player counts, we cannot always draft the whole cube. In any cube,
         this will hurt strategies that rely on synergies or even tight ratios of
-        cards. But in synergy heavy cubes, this problem is excasserbated.
+        cards, and in synergy heavy cubes, this problem is exacerbated.
       </Typography>
       <Typography>
-        Example: reanimator decks need a tight balance between self-mill,
+        Explainer: reanimator decks need a tight balance between self-mill,
         reanimation and targets. Spellslinger decks need a tight balance of
         creatures and spells.
       </Typography>
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        This problem is not unique to Commander cubes, but Commander games are
+        best played with 4, and so it is natural to try to support 4 player
+        draft pods with Commander cubes. Larger cubes that also want to support
+        8 player draft pods that can split into two game pods, can expect to
+        draft only a small portion of their cube at a time:
+      </Typography>
+      <DraftPoolCalculator defaultPlayers={4} />
       <Typography variant="body1" color="text.primary" gutterBottom>
         The problem is that when we decrease the number of players, the
         percentage of the cube that is drafted becomes lower, and not all cubes
@@ -182,7 +208,6 @@ export function DraftAndDeckbuildingTab() {
           </Box>
         </AccordionDetails>
       </Accordion>
-
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6">Standard pick rules</Typography>
