@@ -5,19 +5,27 @@ import { Box, TextField, Typography } from "@mui/material";
 
 type Props = {
   defaultPlayers?: number;
-  defaultPacks?: number;
   defaultCardsPerPack?: number;
+  /** When provided, the burn input is shown with this default. */
+  defaultBurnPerPack?: number;
 };
 
 export function WheelingCalculator({
   defaultPlayers = 8,
   defaultCardsPerPack = 15,
+  defaultBurnPerPack,
 }: Props) {
+  const showBurn = defaultBurnPerPack !== undefined;
+
   const [players, setPlayers] = useState(defaultPlayers);
   const [cardsPerPack, setCardsPerPack] = useState(defaultCardsPerPack);
+  const [burnPerPack, setBurnPerPack] = useState(defaultBurnPerPack ?? 0);
 
-  const seenTwice = Math.max(0, cardsPerPack - players);
-  const seenThrice = Math.max(0, cardsPerPack - 2 * players);
+  // Each pass removes (1 + burn) cards, so a pack comes back around with
+  // (1 + burn) * N fewer cards than it started with.
+  const removalPerPass = 1 + burnPerPack;
+  const seenTwice = Math.max(0, cardsPerPack - removalPerPass * players);
+  const seenThrice = Math.max(0, cardsPerPack - removalPerPass * 2 * players);
 
   return (
     <Box
@@ -50,6 +58,17 @@ export function WheelingCalculator({
         sx={{ width: 140 }}
         slotProps={{ htmlInput: { min: 1 } }}
       />
+      {showBurn && (
+        <TextField
+          label="Burn per pass"
+          type="number"
+          size="small"
+          value={burnPerPack}
+          onChange={(e) => setBurnPerPack(Math.max(0, Number(e.target.value)))}
+          sx={{ width: 130 }}
+          slotProps={{ htmlInput: { min: 0 } }}
+        />
+      )}
       <Typography>=</Typography>
       <Box>
         <Typography variant="h6" component="span" color="primary">

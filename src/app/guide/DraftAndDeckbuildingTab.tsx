@@ -2,12 +2,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -50,7 +44,6 @@ export function DraftAndDeckbuildingTab() {
       </Typography>
       <WheelingCalculator
         defaultPlayers={8}
-        defaultPacks={3}
         defaultCardsPerPack={15}
       />
       <Typography variant="body1" color="text.primary" gutterBottom>
@@ -60,7 +53,6 @@ export function DraftAndDeckbuildingTab() {
       </Typography>
       <WheelingCalculator
         defaultPlayers={8}
-        defaultPacks={3}
         defaultCardsPerPack={20}
       />
       <Typography variant="body1" color="text.primary" gutterBottom>
@@ -70,7 +62,6 @@ export function DraftAndDeckbuildingTab() {
       </Typography>
       <WheelingCalculator
         defaultPlayers={4}
-        defaultPacks={3}
         defaultCardsPerPack={20}
       />
       We need to find a way to increase the pool size without causing endless
@@ -105,9 +96,9 @@ export function DraftAndDeckbuildingTab() {
       </Typography>
       <DraftPoolCalculator defaultPlayers={4} />
       <Typography variant="body1" color="text.primary" gutterBottom>
-        Also, when we start introducing other tools like &quot;pick-2&quot; to
-        tackle the <i>wheel problem</i> (see below), the number of cards each
-        player individually sees of the cube drops even lower.
+        When we start introducing pick-2 rules to tackle the wheel problem, the
+        number of cards each player individually sees of the cube drops even
+        lower. The next section explores that trade-off in detail.
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         I will discuss some techniques to counter these problems, and how to
@@ -119,205 +110,195 @@ export function DraftAndDeckbuildingTab() {
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="body1" color="text.primary" gutterBottom>
-            Factor 1 is important to keep high, to make sure players have access
-            to a sufficient variety of cards to build decks (assuming these are
-            supported in the pool). Factor 2 is important to keep low, because
-            seeing cards thrice is considered a bad experience (whereas some
-            amount of cards seen twice is OK). The number of packs should not
-            exceed 5 for similar reasons.
+            The pool-seen percentage is important to keep high, to make sure
+            players have access to a sufficient variety of cards to build decks.
+            The cards-seen-thrice count is important to keep low, because seeing
+            cards thrice is considered a bad experience (whereas some amount of
+            cards seen twice is OK). The number of packs should not exceed 5 for
+            similar reasons.
           </Typography>
           <Typography variant="body1" color="text.primary" gutterBottom>
-            Note that both percentages can be raised by <em>burning</em> cards.
-            This is a valuable knob, but it helps to first establish a solid
-            baseline for factors 1 and 2.
+            Note that the pool percentage can be raised by <em>burning</em>{" "}
+            cards. This is a valuable knob, but it helps to first establish a
+            solid baseline.
           </Typography>
-
-          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            Baseline
-          </Typography>
-          <Typography variant="body1" color="text.primary" gutterBottom>
-            A 360 card cube drafted with 8 players, 3 packs of 15:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
-            <Typography component="li" variant="body1" color="text.secondary">
-              77% of cards seen per player
-            </Typography>
-            <Typography component="li" variant="body1" color="text.secondary">
-              0 cards seen thrice
-            </Typography>
-          </Box>
-
-          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            Commander Legends format
-          </Typography>
-          <Typography variant="body1" color="text.primary" gutterBottom>
-            A 480 card pool drafted with 8 players, 3 packs of 20, pick 2 each
-            time:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 2, color: "text.secondary" }}>
-            <Typography component="li" variant="body1" color="text.secondary">
-              65% of cards seen per player
-            </Typography>
-            <Typography component="li" variant="body1" color="text.secondary">
-              0 cards seen thrice
-            </Typography>
-          </Box>
-          <Typography variant="body1" color="text.primary" gutterBottom>
-            This is fine! But what about with 4 players?
-          </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            3 packs of 20:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 1, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              85% of cards seen per player
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              4 cards seen thrice
-            </Typography>
-          </Box>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            5 packs of 12 (preferred):
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 1, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              75% of cards seen per player
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              0 cards seen thrice
-            </Typography>
-          </Box>
-          <Typography variant="body1" color="text.primary" gutterBottom>
-            The downside here is the limited pool (both options only utilize 50%
-            of the cube). We can improve things by burning. A 360 card pool
-            (75%), 5 packs of 18, burn 6:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 1, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              83% of cards seen per player
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              0 cards seen thrice
-            </Typography>
-          </Box>
-          <Typography variant="body1" color="text.primary" gutterBottom>
-            What about 6 players? 3 packs of 20 works OK:
-          </Typography>
-          <Box component="ol" sx={{ mt: 0, mb: 0, color: "text.secondary" }}>
-            <Typography component="li" variant="body2" color="text.secondary">
-              75% of cards seen per player
-            </Typography>
-            <Typography component="li" variant="body2" color="text.secondary">
-              0 cards seen thrice
-            </Typography>
-          </Box>
+          <DraftPoolCalculator
+            defaultCubeSize={360}
+            defaultPlayers={8}
+            defaultPacks={3}
+            defaultCardsPerPack={15}
+          />
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6">Standard pick rules</Typography>
+          <Typography variant="h6">Pick style</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Typography variant="body1" color="text.primary" gutterBottom>
-            Assuming a 480 card cube with a pool size of 60. Values show % of
-            cards seen per player.
+            The three main pick styles are named after the products that
+            popularised them. They differ in how many cards each player takes
+            from a pack per pass, which affects both how many cards are seen and
+            how quickly packs are exhausted.
           </Typography>
 
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-            Drafted with 8 players
+            Standard (pick 1 each time)
           </Typography>
-          <Table size="small" sx={{ mb: 3 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Format</TableCell>
-                <TableCell align="center">1 card each time</TableCell>
-                <TableCell align="center">2 cards each time</TableCell>
-                <TableCell align="center">First pick two cards</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>3 × 20</TableCell>
-                <TableCell align="center">83%</TableCell>
-                <TableCell align="center">65%</TableCell>
-                <TableCell align="center">78%</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>5 × 12</TableCell>
-                <TableCell align="center">77%</TableCell>
-                <TableCell align="center">53%</TableCell>
-                <TableCell align="center">71%</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            The default. Each player picks one card per pass. Packs last the
+            longest, so each player sees the most cards — but it also means
+            larger deck sizes require larger packs, which drives up wheeling.
+          </Typography>
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={8}
+            defaultPacks={3}
+            defaultCardsPerPack={20}
+            defaultPickStyle="standard"
+          />
 
-          <Typography variant="h6" gutterBottom>
-            Drafted with 4 players
+          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            Double Masters (pick 2 on the opening pick, then pick 1)
           </Typography>
-          <Table size="small" sx={{ mb: 3 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Format</TableCell>
-                <TableCell align="center">1 card each time</TableCell>
-                <TableCell align="center">2 cards each time</TableCell>
-                <TableCell align="center">First pick two cards</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>3 × 20</TableCell>
-                <TableCell align="center">46%</TableCell>
-                <TableCell align="center">43%</TableCell>
-                <TableCell align="center">44%</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>4 × 15</TableCell>
-                <TableCell align="center">45%</TableCell>
-                <TableCell align="center">53%</TableCell>
-                <TableCell align="center">—</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>5 × 12</TableCell>
-                <TableCell align="center">44%</TableCell>
-                <TableCell align="center">44%</TableCell>
-                <TableCell align="center">—</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            The opener picks 2 cards when first cracking the pack; all
+            subsequent picks are 1. This gives the opener a small advantage in
+            options while keeping packs moving at roughly the same speed as
+            standard. The impact on cards seen per player is modest compared to
+            Commander Legends.
+          </Typography>
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={8}
+            defaultPacks={3}
+            defaultCardsPerPack={20}
+            defaultPickStyle="double-masters"
+          />
 
-          <Typography variant="h6" gutterBottom>
-            Drafted with 4 players, with burn drafting
+          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            Commander Legends (pick 2 each time)
           </Typography>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Format</TableCell>
-                <TableCell align="center">1 card each time</TableCell>
-                <TableCell align="center">2 cards each time</TableCell>
-                <TableCell align="center">First pick two cards</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>5 × 16, burn 4</TableCell>
-                <TableCell align="center">60%</TableCell>
-                <TableCell align="center">54%</TableCell>
-                <TableCell align="center">57%</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>5 × 20, burn 8</TableCell>
-                <TableCell align="center">77%</TableCell>
-                <TableCell align="center">71%</TableCell>
-                <TableCell align="center">74%</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>5 × 15, burn 3</TableCell>
-                <TableCell align="center">56%</TableCell>
-                <TableCell align="center">50%</TableCell>
-                <TableCell align="center">53%</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Every player picks 2 cards every pass. Packs are exhausted in half
+            as many passes, so each player sees significantly fewer cards — but
+            also ends up with twice as many picks, enabling larger decks without
+            needing twice as many packs. This is the main reason Commander cubes
+            adopt this format.
+          </Typography>
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={8}
+            defaultPacks={3}
+            defaultCardsPerPack={20}
+            defaultPickStyle="commander-legends"
+          />
+
+          <Typography variant="body1" color="text.primary" gutterBottom sx={{ mt: 2 }}>
+            Compare the three with 4 players instead of 8. The drop in cards
+            seen per player becomes much more pronounced, especially with
+            Commander Legends pick rules:
+          </Typography>
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={4}
+            defaultPacks={3}
+            defaultCardsPerPack={20}
+            defaultPickStyle="standard"
+          />
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={4}
+            defaultPacks={3}
+            defaultCardsPerPack={20}
+            defaultPickStyle="double-masters"
+          />
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={4}
+            defaultPacks={3}
+            defaultCardsPerPack={20}
+            defaultPickStyle="commander-legends"
+          />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6">Burning</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Burning is a technique where each player discards one or more cards
+            face-down when passing a pack, without picking them. Every burned
+            card reduces the pack by one extra card per pass, which makes the
+            pack exhaust faster — as if it were smaller.
+          </Typography>
+
+          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            Burning reduces wheeling
+          </Typography>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Because burning effectively shrinks the pack from the perspective of
+            wheeling, it is a direct solution to Problem 1. With 4 players and
+            20-card packs, cards wheel relentlessly without burn:
+          </Typography>
+          <WheelingCalculator
+            defaultPlayers={4}
+            defaultCardsPerPack={20}
+            defaultBurnPerPack={0}
+          />
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Burning 4 cards per pass removes exactly as many cards as there are
+            players each pass, leaving nothing to wheel:
+          </Typography>
+          <WheelingCalculator
+            defaultPlayers={4}
+            defaultCardsPerPack={20}
+            defaultBurnPerPack={4}
+          />
+
+          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            Burning enables larger packs, raising cube coverage
+          </Typography>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            The real payoff is that burning lets you use packs that draw from
+            more of the cube. Without burn, keeping 4-player wheeling under
+            control forces you to use small packs — which means most of the
+            cube sits unplayed:
+          </Typography>
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={4}
+            defaultPacks={5}
+            defaultCardsPerPack={12}
+            defaultBurnPerPack={0}
+          />
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Switching to 20-card packs with burn 4 keeps wheeling at zero while
+            pulling 83% of the cube into the pool instead of 50%, and raising
+            the share of the cube each player sees:
+          </Typography>
+          <DraftPoolCalculator
+            defaultCubeSize={480}
+            defaultPlayers={4}
+            defaultPacks={5}
+            defaultCardsPerPack={20}
+            defaultBurnPerPack={4}
+          />
+
+          <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
+            The cost: complexity
+          </Typography>
+          <Typography variant="body1" color="text.primary" gutterBottom>
+            Burning adds a step to every single pass of the draft. Players must
+            remember to burn, agree on whether burns are face-up or face-down,
+            and resist the temptation to pick up a burned card they later
+            regret passing. In a casual environment — especially with new
+            players — this overhead can noticeably slow down and complicate the
+            draft. Burning is a powerful tool, but it is worth asking whether
+            adjusting the pack format achieves a similar result with less
+            explanation.
+          </Typography>
         </AccordionDetails>
       </Accordion>
     </>
