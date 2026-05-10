@@ -90,19 +90,24 @@ export function DraftAndDeckbuildingTab() {
         creatures and spells.
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
-        This problem is not unique to Commander cubes, but Commander games are
-        best played with 4, and so it is natural to try to support 4 player
-        draft pods with Commander cubes. Larger cubes that also want to support
-        8 player draft pods that can split into two game pods, can expect to
-        draft only a small portion of their cube at a time:
+        As a baseline, let&apos;s look at a standard 1v1 draft pod of a 360-card
+        cube.
+      </Typography>
+      <DraftPoolCalculator defaultCubeSize={360} defaultCardsPerPack={15} />
+      <Typography variant="body1" color="text.primary" gutterBottom>
+        Any cube drafted with less players than the maximum will see this ratio
+        drop, not just Commander cubes. But Commander games are typically played
+        with 4, and so it is natural to want to support 4-player draft pods with
+        Commander cubes. Larger cubes that also want to support 8-player draft
+        pods that can split into two game pods, can expect to draft only a small
+        portion of their cube at a time, and have players see only a small
+        portion of the cube:
       </Typography>
       <DraftPoolCalculator defaultPlayers={4} />
       <Typography variant="body1" color="text.primary" gutterBottom>
-        The problem is that when we decrease the number of players, the
-        percentage of the cube that is drafted becomes lower, and not all cubes
-        are made for this. In addition, when we start introducing other tools
-        like &quot;pick-2&quot; (see below), the number of cards each player{" "}
-        <i>individually</i> sees of the cube drops even lower.
+        Also, when we start introducing other tools like &quot;pick-2&quot; to
+        tackle the <i>wheel problem</i> (see below), the number of cards each
+        player individually sees of the cube drops even lower.
       </Typography>
       <Typography variant="body1" color="text.primary" gutterBottom>
         I will discuss some techniques to counter these problems, and how to
