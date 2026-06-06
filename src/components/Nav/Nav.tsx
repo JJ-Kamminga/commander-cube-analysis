@@ -1,24 +1,32 @@
-'use client';
+"use client";
 
-import { Avatar, Container, Grid2, Box, Button, Typography } from "@mui/material";
+import {
+  Avatar,
+  Container,
+  Grid2,
+  Box,
+  Button,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, DesignServices, Analytics } from '@mui/icons-material';
+import { Home, DesignServices, Analytics } from "@mui/icons-material";
 
 export function Nav() {
   const pathname = usePathname();
 
   const navLinks = [
-    { href: '/', label: 'Home', icon: <Home /> },
-    { href: '/design', label: 'Design', icon: <DesignServices /> },
-    { href: '/analyze', label: 'Analyze', icon: <Analytics /> },
+    { href: "/", label: "Home", icon: <Home /> },
+    { href: "/guide", label: "Guide", icon: <Home /> },
+    { href: "/design", label: "Design", icon: <DesignServices /> },
+    { href: "/analyze", label: "Analyze", icon: <Analytics /> },
   ];
 
   return (
-    <Container component='nav' sx={{ padding: 5 }}>
+    <Container component="nav" sx={{ padding: 5 }}>
       <Grid2 container spacing={2} alignItems="center">
         <Grid2 size={{ xs: 12, md: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
               src="/ddh-65-deep-analysis.jpg"
               alt="Illustration of Deep Analysis by Jesper Ejsing"
@@ -32,10 +40,10 @@ export function Nav() {
         <Grid2 size={{ xs: 12, md: 8 }}>
           <Box
             sx={{
-              display: 'flex',
+              display: "flex",
               gap: 1,
-              justifyContent: { xs: 'center', md: 'flex-end' },
-              flexWrap: 'wrap'
+              justifyContent: { xs: "center", md: "flex-end" },
+              flexWrap: "wrap",
             }}
           >
             {navLinks.map((link) => (
@@ -44,8 +52,8 @@ export function Nav() {
                 component={Link}
                 href={link.href}
                 startIcon={link.icon}
-                variant={pathname === link.href ? 'contained' : 'outlined'}
-                sx={{ minWidth: '120px' }}
+                variant={pathname === link.href ? "contained" : "outlined"}
+                sx={{ minWidth: "120px" }}
               >
                 {link.label}
               </Button>
