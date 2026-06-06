@@ -11,8 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
-type PickStyle = "standard" | "double-masters" | "commander-legends";
+import { type PickStyle, seenPerPlayer } from "@/utils/draft";
 
 type Props = {
   defaultCubeSize?: number;
@@ -21,35 +20,11 @@ type Props = {
   defaultCardsPerPack?: number;
   /** When provided, the pick style selector is shown with this default. */
   defaultPickStyle?: PickStyle;
-  /** When provided, the burn input is shown with this default. */
-  defaultBurnPerPack?: number;
+  /** Each player burns this many cards alongside their pick. Shows the "Burn per pick" input. */
+  defaultBurnPerPick?: number;
+  /** When this many cards remain in the pack, they are burned rather than passed. Must be less than players. Shows the "Burn at end of pack" input. */
+  defaultBurnAtEndOfPack?: number;
 };
-
-function seenPerPlayerPerRound(
-  players: number,
-  cardsPerPack: number,
-  pickStyle: PickStyle,
-  burn: number
-): number {
-  const N = players;
-  const S = cardsPerPack;
-  const B = burn;
-  // Each formula sums unique cards player 1 sees from each of the N packs in a round.
-  // Each pass removes (picks + B) cards, so pack j arrives with that many fewer cards.
-  //   Standard (pick 1):        removes 1+B per pass → pack j has S−(1+B)j cards left
-  //   Commander Legends (pick 2): removes 2+B per pass → pack j has S−(2+B)j cards left
-  //   Double Masters (pick 2 first, then 1):
-  //     opener removes 2+B; subsequent passes remove 1+B
-  //     → pack j≥1 has S−[(2+B)+(j−1)(1+B)] = S−(j+1)−Bj cards left; j=0 has S
-  switch (pickStyle) {
-    case "standard":
-      return N * S - (1 + B) * ((N * (N - 1)) / 2);
-    case "commander-legends":
-      return N * S - (2 + B) * ((N * (N - 1)) / 2);
-    case "double-masters":
-      return N * S - (N * (N + 1)) / 2 + 1 - B * ((N * (N - 1)) / 2);
-  }
-}
 
 export function DraftPoolCalculator({
   defaultCubeSize = 480,
@@ -57,28 +32,37 @@ export function DraftPoolCalculator({
   defaultPacks = 3,
   defaultCardsPerPack = 20,
   defaultPickStyle,
-  defaultBurnPerPack,
+  defaultBurnPerPick,
+  defaultBurnAtEndOfPack,
 }: Props) {
   const showPickStyle = defaultPickStyle !== undefined;
-  const showBurn = defaultBurnPerPack !== undefined;
 
   const [cubeSize, setCubeSize] = useState(defaultCubeSize);
   const [players, setPlayers] = useState(defaultPlayers);
   const [packs, setPacks] = useState(defaultPacks);
   const [cardsPerPack, setCardsPerPack] = useState(defaultCardsPerPack);
-  const [pickStyle, setPickStyle] = useState<PickStyle>(defaultPickStyle ?? "standard");
-  const [burnPerPack, setBurnPerPack] = useState(defaultBurnPerPack ?? 0);
+  const [pickStyle, setPickStyle] = useState<PickStyle>(
+    defaultPickStyle ?? "standard",
+  );
+  const [burnPerPick, setBurnPerPick] = useState(defaultBurnPerPick ?? 0);
+  const [burnAtEnd, setBurnAtEnd] = useState(defaultBurnAtEndOfPack ?? 0);
 
   const poolSize = players * packs * cardsPerPack;
   const percentOfCubeInPool =
     cubeSize > 0 ? Math.round((poolSize / cubeSize) * 100) : 0;
 
-  const seenPerPlayer =
-    packs * seenPerPlayerPerRound(players, cardsPerPack, pickStyle, burnPerPack);
+  const seen = seenPerPlayer(
+    players,
+    cardsPerPack,
+    packs,
+    pickStyle,
+    burnPerPick,
+    burnAtEnd,
+  );
   const percentOfPoolSeen =
-    poolSize > 0 ? Math.round((seenPerPlayer / poolSize) * 100) : 0;
+    poolSize > 0 ? Math.round((seen / poolSize) * 100) : 0;
   const percentOfCubeSeen =
-    cubeSize > 0 ? Math.round((seenPerPlayer / cubeSize) * 100) : 0;
+    cubeSize > 0 ? Math.round((seen / cubeSize) * 100) : 0;
 
   return (
     <Box
@@ -107,7 +91,11 @@ export function DraftPoolCalculator({
         type="number"
         size="small"
         value={players}
-        onChange={(e) => setPlayers(Math.max(1, Number(e.target.value)))}
+        onChange={(e) => {
+          const p = Math.max(1, Number(e.target.value));
+          setPlayers(p);
+          setBurnAtEnd((b) => Math.min(b, p - 1));
+        }}
         sx={{ width: 100 }}
         slotProps={{ htmlInput: { min: 1 } }}
       />
@@ -138,20 +126,39 @@ export function DraftPoolCalculator({
             onChange={(e) => setPickStyle(e.target.value as PickStyle)}
           >
             <MenuItem value="standard">Standard (pick 1)</MenuItem>
-            <MenuItem value="double-masters">Double Masters (pick 2 first)</MenuItem>
-            <MenuItem value="commander-legends">Commander Legends (pick 2)</MenuItem>
+            <MenuItem value="double-masters">
+              Double Masters (pick 2 first)
+            </MenuItem>
+            <MenuItem value="commander-legends">
+              Commander Legends (pick 2)
+            </MenuItem>
           </Select>
         </FormControl>
       )}
-      {showBurn && (
+      {defaultBurnPerPick !== undefined && (
         <TextField
-          label="Burn per pass"
+          label="Burn per pick"
           type="number"
           size="small"
-          value={burnPerPack}
-          onChange={(e) => setBurnPerPack(Math.max(0, Number(e.target.value)))}
+          value={burnPerPick}
+          onChange={(e) => setBurnPerPick(Math.max(0, Number(e.target.value)))}
           sx={{ width: 130 }}
           slotProps={{ htmlInput: { min: 0 } }}
+        />
+      )}
+      {defaultBurnAtEndOfPack !== undefined && (
+        <TextField
+          label="Burn at end of pack"
+          type="number"
+          size="small"
+          value={burnAtEnd}
+          onChange={(e) =>
+            setBurnAtEnd(
+              Math.min(players - 1, Math.max(0, Number(e.target.value))),
+            )
+          }
+          sx={{ width: 160 }}
+          slotProps={{ htmlInput: { min: 0, max: players - 1 } }}
         />
       )}
       <Typography>=</Typography>

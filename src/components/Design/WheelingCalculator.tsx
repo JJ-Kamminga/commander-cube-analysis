@@ -2,30 +2,29 @@
 
 import { useState } from "react";
 import { Box, TextField, Typography } from "@mui/material";
+import { wheelingCards } from "@/utils/draft";
 
 type Props = {
   defaultPlayers?: number;
   defaultCardsPerPack?: number;
-  /** When provided, the burn input is shown with this default. */
-  defaultBurnPerPack?: number;
+  /** Each player burns this many cards alongside their pick. Shows the "Burn per pick" input. */
+  defaultBurnPerPick?: number;
+  /** When this many cards remain in the pack, they are burned rather than passed. Must be less than players. Shows the "Burn at end of pack" input. */
+  defaultBurnAtEndOfPack?: number;
 };
 
 export function WheelingCalculator({
   defaultPlayers = 8,
   defaultCardsPerPack = 15,
-  defaultBurnPerPack,
+  defaultBurnPerPick,
+  defaultBurnAtEndOfPack,
 }: Props) {
-  const showBurn = defaultBurnPerPack !== undefined;
-
   const [players, setPlayers] = useState(defaultPlayers);
   const [cardsPerPack, setCardsPerPack] = useState(defaultCardsPerPack);
-  const [burnPerPack, setBurnPerPack] = useState(defaultBurnPerPack ?? 0);
+  const [burnPerPick, setBurnPerPick] = useState(defaultBurnPerPick ?? 0);
+  const [burnAtEnd, setBurnAtEnd] = useState(defaultBurnAtEndOfPack ?? 0);
 
-  // Each pass removes (1 + burn) cards, so a pack comes back around with
-  // (1 + burn) * N fewer cards than it started with.
-  const removalPerPass = 1 + burnPerPack;
-  const seenTwice = Math.max(0, cardsPerPack - removalPerPass * players);
-  const seenThrice = Math.max(0, cardsPerPack - removalPerPass * 2 * players);
+  const { seenTwice, seenThrice } = wheelingCards(cardsPerPack, players, burnPerPick, burnAtEnd);
 
   return (
     <Box
@@ -45,7 +44,11 @@ export function WheelingCalculator({
         type="number"
         size="small"
         value={players}
-        onChange={(e) => setPlayers(Math.max(1, Number(e.target.value)))}
+        onChange={(e) => {
+          const p = Math.max(1, Number(e.target.value));
+          setPlayers(p);
+          setBurnAtEnd((b) => Math.min(b, p - 1));
+        }}
         sx={{ width: 100 }}
         slotProps={{ htmlInput: { min: 1 } }}
       />
@@ -58,15 +61,28 @@ export function WheelingCalculator({
         sx={{ width: 140 }}
         slotProps={{ htmlInput: { min: 1 } }}
       />
-      {showBurn && (
+      {defaultBurnPerPick !== undefined && (
         <TextField
-          label="Burn per pass"
+          label="Burn per pick"
           type="number"
           size="small"
-          value={burnPerPack}
-          onChange={(e) => setBurnPerPack(Math.max(0, Number(e.target.value)))}
+          value={burnPerPick}
+          onChange={(e) => setBurnPerPick(Math.max(0, Number(e.target.value)))}
           sx={{ width: 130 }}
           slotProps={{ htmlInput: { min: 0 } }}
+        />
+      )}
+      {defaultBurnAtEndOfPack !== undefined && (
+        <TextField
+          label="Burn at end of pack"
+          type="number"
+          size="small"
+          value={burnAtEnd}
+          onChange={(e) =>
+            setBurnAtEnd(Math.min(players - 1, Math.max(0, Number(e.target.value))))
+          }
+          sx={{ width: 160 }}
+          slotProps={{ htmlInput: { min: 0, max: players - 1 } }}
         />
       )}
       <Typography>=</Typography>
