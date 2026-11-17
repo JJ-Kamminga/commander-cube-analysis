@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { Box, Button, Container, Tab, Tabs, Typography } from "@mui/material";
@@ -22,6 +22,8 @@ const tabs = [
 
 export default function GuidePage() {
   const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window == 'undefined') return 0
+
     const stored = localStorage.getItem("guide:activeTab");
     const parsed = stored !== null ? parseInt(stored, 10) : NaN;
     return !isNaN(parsed) && parsed < tabs.length ? parsed : 0;
@@ -29,13 +31,17 @@ export default function GuidePage() {
 
   const handleTabChange = (_: React.SyntheticEvent, value: number) => {
     setActiveTab(value);
-    localStorage.setItem("guide:activeTab", String(value));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("guide:activeTab", String(value));
+    }
   };
 
   const goToTab = (index: number) => {
     setActiveTab(index);
-    localStorage.setItem("guide:activeTab", String(index));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("guide:activeTab", String(index));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
