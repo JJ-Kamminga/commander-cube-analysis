@@ -48,16 +48,6 @@ export default function HomePage() {
           </Button>
           <Button
             component={Link}
-            href="/design"
-            variant="contained"
-            size="large"
-            startIcon={<DesignServices />}
-            sx={{ px: 4, py: 1.5 }}
-          >
-            Commander Cube design tool
-          </Button>
-          <Button
-            component={Link}
             href="/analyze"
             variant="contained"
             size="large"

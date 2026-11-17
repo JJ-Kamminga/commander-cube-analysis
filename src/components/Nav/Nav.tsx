@@ -10,15 +10,14 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, DesignServices, Analytics } from "@mui/icons-material";
+import { Home, Analytics } from "@mui/icons-material";
 
 export function Nav() {
   const pathname = usePathname();
 
   const navLinks = [
     { href: "/", label: "Home", icon: <Home /> },
-    { href: "/guide", label: "Guide", icon: <Home /> },
-    { href: "/design", label: "Design", icon: <DesignServices /> },
+    { href: "/guide", label: "Design Guide", icon: <Home /> },
     { href: "/analyze", label: "Analyze", icon: <Analytics /> },
   ];
 
