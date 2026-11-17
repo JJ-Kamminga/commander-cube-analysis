@@ -6,15 +6,17 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { GoalsTab } from "./GoalsTab";
 import { DraftingCommandersTab } from "./DraftingCommandersTab";
-import { DraftAndDeckbuildingTab } from "./DraftAndDeckbuildingTab";
+import { DraftProblemsTab } from "./DraftChallengesTab";
 import { CardChoicesTab } from "./CardChoicesTab";
 import { RulesTab } from "./RulesTab";
+import { DraftTechniquesTab } from "./DraftTechniquesTab";
 
 const tabs = [
   "Gameplay goals",
   "Drafting commanders",
   "Rules and modifications",
-  "Draft format",
+  "Draft challenges",
+  "Draft format techniques",
   "Card choices",
 ];
 
@@ -51,8 +53,9 @@ export default function GuidePage() {
         {activeTab === 0 && <GoalsTab />}
         {activeTab === 1 && <DraftingCommandersTab />}
         {activeTab === 2 && <RulesTab />}
-        {activeTab === 3 && <DraftAndDeckbuildingTab />}
-        {activeTab === 4 && <CardChoicesTab />}
+        {activeTab === 3 && <DraftProblemsTab />}
+        {activeTab === 4 && <DraftTechniquesTab />}
+        {activeTab === 5 && <CardChoicesTab />}
 
         {(activeTab > 0 || activeTab < tabs.length - 1) && (
           <Box sx={{ mt: 4, display: "flex", justifyContent: "space-between" }}>

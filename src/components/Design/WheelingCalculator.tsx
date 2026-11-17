@@ -16,15 +16,15 @@ type Props = {
 export function WheelingCalculator({
   defaultPlayers = 8,
   defaultCardsPerPack = 15,
-  defaultBurnPerPick,
-  defaultBurnAtEndOfPack,
+  //defaultBurnPerPick,
+  //defaultBurnAtEndOfPack,
 }: Props) {
   const [players, setPlayers] = useState(defaultPlayers);
   const [cardsPerPack, setCardsPerPack] = useState(defaultCardsPerPack);
-  const [burnPerPick, setBurnPerPick] = useState(defaultBurnPerPick ?? 0);
-  const [burnAtEnd, setBurnAtEnd] = useState(defaultBurnAtEndOfPack ?? 0);
+  // const [burnPerPick, setBurnPerPick] = useState(defaultBurnPerPick ?? 0);
+  // const [burnAtEnd, setBurnAtEnd] = useState(defaultBurnAtEndOfPack ?? 0);
 
-  const { seenTwice, seenThrice } = wheelingCards(cardsPerPack, players, burnPerPick, burnAtEnd);
+  const { seenTwice, seenThrice } = wheelingCards(cardsPerPack, players/**, burnPerPick, burnAtEnd */);
 
   return (
     <Box
@@ -47,7 +47,7 @@ export function WheelingCalculator({
         onChange={(e) => {
           const p = Math.max(1, Number(e.target.value));
           setPlayers(p);
-          setBurnAtEnd((b) => Math.min(b, p - 1));
+          // setBurnAtEnd((b) => Math.min(b, p - 1));
         }}
         sx={{ width: 100 }}
         slotProps={{ htmlInput: { min: 1 } }}
@@ -61,7 +61,7 @@ export function WheelingCalculator({
         sx={{ width: 140 }}
         slotProps={{ htmlInput: { min: 1 } }}
       />
-      {defaultBurnPerPick !== undefined && (
+      {/*{defaultBurnPerPick !== undefined && (
         <TextField
           label="Burn per pick"
           type="number"
@@ -84,7 +84,7 @@ export function WheelingCalculator({
           sx={{ width: 160 }}
           slotProps={{ htmlInput: { min: 0, max: players - 1 } }}
         />
-      )}
+      )}*/}
       <Typography>=</Typography>
       <Box>
         <Typography variant="h6" component="span" color="primary">
